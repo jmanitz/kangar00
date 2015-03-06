@@ -5,30 +5,33 @@
 #################################################
 
 # object constructor
-GWASdata <- setClass('GWASdata', slots=c(pheno='data.frame', geno='databel', anno='data.frame', desc='character'))
+GWASdata <- setClass('GWASdata', slots=c(pheno='data.frame', geno='databel', desc='character'))
 
 # pheno .. data.frame specifying ids, phenotypes and covariates e.g. ID, pheno, sex, pack.years
 # geno .. genotype information in databel format
 # anno .. data.frame; annotation file mapping SNP -> genes -> pathways
 # desc ... character giving GWAS description and information
 
+#GWASdata@geno
+#geno <- setClass('geno', slots='databel')
+#attr(geno, 'anno') <- anno # data.frame
+
 # validy checks
-setValidity('GWASdata', function(object){  # to be defined !!
+setValidity('GWASdata', function(object){  # !! this function needs improvement !!
 	msg  <- NULL
 	valid <- TRUE
-# validy=check.GWASdata(dat=geno,anno=anno,ids=rownames(pheno)) # to be defined !!
-#check.GWASdata <- function(dat,anno,ids){ 
-# !! this function needs improvement !!
 
-#        test1 <- try(databel(dat))
-#        if(is(test1) == "try-error"){
-#                stop("Did not find databel data!")
-#        }
-# 	 # check whether GWASdata@geno has missings or not
-        if(!is.data.frame(object@anno)){
+        # check annotation
+	if(is.null(attr(object@geno,'anno'))){ #does an additional attribute with annotation exists for databel object?
 		valid <- FALSE
-                msg <- c(msg, "anno need to be a data frame!")
-        }
+                msg <- c(msg, "databel object geno needs an additional attribute: data.frame 'anno'")
+	}
+	if(is.data.frame(attr(object@geno,'anno'))){
+		valid <- FALSE
+                msg <- c(msg, "geno attribute anno need to be a data frame")
+	}
+
+# 	 # check whether GWASdata@geno has missings or not !todo!
 #	ids <- rownames(object@pheno)
 #        if(!("vector" %in% is(ids))){
 #		valid <- FALSE
@@ -39,6 +42,7 @@ setValidity('GWASdata', function(object){  # to be defined !!
 #                stop("There are pathway ID's not in the Annotation file!")
 #        }
 #        disconnect(test1)
+
 	if(valid) TRUE else msg
 })
 
