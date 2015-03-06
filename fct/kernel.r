@@ -64,8 +64,7 @@ setMethod('summary', signature='kernel',
           })
 
 # plot method
-setGeneric('plot', function(object, ...) standardGeneric('plot'))
-importFrom(graphics, "plot")
+#setGeneric('plot', function(object, ...) standardGeneric('plot'))
 
 setMethod('plot', signature='kernel',
           definition = function(object, hclust=FALSE, ...){
@@ -79,8 +78,8 @@ setMethod('plot', signature='kernel',
           })
 
 # create linear kernel # subclass of kernel?
-kernel.lin <- function(GWASdata, pathway, parallel=c('none','cpu','gpu'), ...){
-    parallel <- match.arg(parallel)
+kernel.lin <- function(GWASdata, pathway, parallel='none', ...){
+    parallel <- match.arg(parallel,c('none','cpu','gpu'))
     # which SNPs are in specified pathway
     SNPset <-GWASdata@anno$rsNumber[which(GWASdata@anno$Pathway==pathway@id)]
     # subset genotype data for specified SNP set
@@ -90,7 +89,7 @@ kernel.lin <- function(GWASdata, pathway, parallel=c('none','cpu','gpu'), ...){
 	k <- tcrossprod(z)
     }
     if(parallel=='cpu'){
-	stop('sorry, not yet defined')
+	print('sorry, not yet defined')
     }
     if(parallel=='gpu'){
 	z <- magma(z, gpu=TRUE)
@@ -149,53 +148,52 @@ kernel.sia <- function(GWASdata, pathway, parallel='none', ...){
 
 
 # network-based kernel
-
-kernel.net <- function(GWASdata, pathway, ret=c('kernel','ANA','both')){
-#GWASdata ... GWAS data including SNPs, annotation
-#pathway ... pathway object
-#ret ... return value:  'kernel' returns kernel matrix
-#                       'ANA' returns SNP to pathway mapping
-#                       'both' returns both		
-	dat <- GWASdata@geno
-	anno <- GWASdata@anno
-	n <- pathway@id
-
-    ### genotype matrix Z, like in LIN.kernel
-    # which SNPs are in specified pathway
-    SNPset <-GWASdata@anno$rsNumber[which(GWASdata@anno$Pathway==pathway@id)]
-    # subset genotype data for specified SNP set 
-    Z <- as(GWASdata@geno[,as.character(SNPset)],'matrix') 
+kernel.net <- function(GWASdata, pathway){
+    source("src/get.ana.r")
+	  dat <- GWASdata@geno
+	  anno <- GWASdata@anno
+	  n <- pathway@id
+ 
+    #genotype matrix Z, which SNPs are in specified pathway
+    SNPset <- GWASdata@anno$rsNumber[which(GWASdata@anno$Pathway==pathway@id)]
+    #subset genotype data for specified SNP set 
+    Z <- as(GWASdata@geno[,as.character(SNPset)],'matrix')  
     
-    ### network structure in N:
-#    N <- prepare.network(anno, n)
+    ANA <- get.ana(anno, SNPset, pathway)
+    K = Z %*% ANA %*% t(Z)    
+    #return kernel object
+    return(kernel(type='network',kernel=K,pathway=pathway))
+}
+
+#function to produce middle part of net kernel:
+get.ana <- function(anno, SNPset, pathway){
+
     N <- as.matrix(pathway@adj)
     N[N!=0] <- pathway@sign
-    
+              
     #remove genes that have no SNPs (not in anno):
-    all.genes  <- data.frame(colnames(N))    
-    anno.genes <- data.frame(unique(anno[anno[,1]==n,2]),0)  
-    detect <- merge(all.genes, anno.genes, by.x=1, by.y=1, all.x=T)
-    remov  <- as.character(detect[is.na(detect[,2]),1])  
-
-    #rewire: !! this should be implemented more efficient !!
-    if(length(remov)!=0){
+    all.genes  <- colnames(N)  
+    anno.genes <-unique(GWASdata@anno[which(GWASdata@anno$Pathway==pathway@id),2])
+    remov <- all.genes[which(all.genes %in% anno.genes==FALSE)]      
+        
+    #rewire: möglicherweiswe über matrizenmultiplikation?!
+    if(length(remov)!=0){    
     for(g in remov){
         z <- which(colnames(N)==g)
-        vec <- rbind( N[z,],seq(1:length(N[z,])) )
-        vec <- vec[,vec[1,]!=0]
-        if(length(vec)>0){
-          for(i in 1:(length(vec[1,])-1) ){
+        vec <- rbind( N[z,],seq(1:length(N[z,])) ) #column of gene to be removed
+        vec <- vec[,vec[1,]!=0] #where gene has edges
+        if(length(vec)>0){      #only if edges exist
+          for(i in 1:(length(vec[1,])-1) ){   #i ist aktuelle edge
               for( j in (i+1):length(vec[1,]) ){
-               if(N[vec[2,i],vec[2,j]]!=0){print("Edge will be removed!")}
-               N[vec[2,i],vec[2,j]] <- N[vec[2,i],vec[2,j]] + vec[1,i]*vec[1,j]
-               N[vec[2,j],vec[2,i]] <- N[vec[2,j],vec[2,i]] + vec[1,i]*vec[1,j]}   
+               if(N[vec[2,i],vec[2,j]]!=0){warning("Edge will be removed!")}                      N[vec[2,i],vec[2,j]] <- N[vec[2,i],vec[2,j]] + vec[1,i]*vec[1,j]
+               N[vec[2,j],vec[2,i]] <- N[vec[2,j],vec[2,i]] + vec[1,i]*vec[1,j]}  
           }    #additive
         }} 
      N <- N[-z,-z] }
+     
     #check, if both directions exist and have same relation (value 2/-2):
     N[N>1]    <-  1 
-    N[N<(-1)] <- -1 
-    
+    N[N<(-1)] <- -1    
     # include main effects
     diag(N) <- 1  
     
@@ -205,31 +203,13 @@ kernel.net <- function(GWASdata, pathway, ret=c('kernel','ANA','both')){
         rho <- 1/(1-lambda)
         N <- rho*N + (1-rho)*diag(dim(N)[1])
     }    
-    
-    ### SNP -> gene mapping A:
-    # define empty mapping matrix
-    A <- matrix(data=0, nrow=ncol(Z), ncol=nrow(N)) #[1572x62]
-    colnames(A) <- rownames(N) #genes ids, use same order as in N
-    rownames(A) <- colnames(Z) #snp ids, use same order as in Z
-    #fill: !!todo!!
-#annoSet <-sim@anno[which(sim@anno$Pathway==pnet@id),]
-#Ag <- table(annoSet[,c(2,4)])
-#A2 <- Ag[rowSums(table(annoSet[,c(2,4)]))>0,]
-
-    for(i in 1:ncol(A)){ 
-	snpsi <-as.character(unique(anno[anno[,2]==paste(colnames(A)[i],sep=""),4]))#snps gen i
-	A[snpsi,i] <- 1 #where snp belogs to snipsi set 1 
-    }
+          
+    #A: SNP to gene mapping      
+    A.table <- t(table(anno))
+    A <- A.table[SNPset,rownames(N)]    #= A.table[colnames(Z),rownames(N)]
 
     #A*: size-adjustement for no of SNPs in each gene
     A.star <- A/colSums(A)
-#    A.star <- A
-#    for(i in 1:ncol(A)){
-#	A.star[,i] <- A[,i]/sum(A[,i])
-#    }
-    #kernel: K = ZA*NA*'Z'
-    ZA <- Z%*%A.star 
-    K <- ZA %*% N %*% t(ZA) # tcrossprod?
-    # return kernel object
-    return(kernel(type='network',kernel=K,pathway=pathway))
+    
+return(A.star %*% N %*% t(A.star))
 }
