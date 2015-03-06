@@ -119,7 +119,7 @@ kernel.lin <- function(data, pathway, parallel=c('none','cpu','gpu'), ...) {
 
     if (!inherits(data, "databel"))
         stop("not a databel object")
-    if (!is.null(attr(data, "anno")))
+    if (is.null(attr(data, "anno")))
          stop("SNP data needs annotation as ",
               sQuote('attr(, "anno")'))
 
