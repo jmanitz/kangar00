@@ -64,7 +64,7 @@ setMethod('summary', signature='kernel',
           })
 
 # plot method
-#setGeneric('plot', function(object, ...) standardGeneric('plot'))
+setGeneric('plot', function(object, ...) standardGeneric('plot'))
 
 setMethod('plot', signature='kernel',
           definition = function(object, hclust=FALSE, ...){
@@ -78,8 +78,8 @@ setMethod('plot', signature='kernel',
           })
 
 # create linear kernel # subclass of kernel?
-kernel.lin <- function(GWASdata, pathway, parallel='none', ...){
-    parallel <- match.arg(parallel,c('none','cpu','gpu'))
+kernel.lin <- function(GWASdata, pathway, parallel=c('none','cpu','gpu'), ...){
+    parallel <- match.arg(parallel)
     # which SNPs are in specified pathway
     SNPset <-GWASdata@anno$rsNumber[which(GWASdata@anno$Pathway==pathway@id)]
     # subset genotype data for specified SNP set
@@ -89,7 +89,7 @@ kernel.lin <- function(GWASdata, pathway, parallel='none', ...){
 	k <- tcrossprod(z)
     }
     if(parallel=='cpu'){
-	print('sorry, not yet defined')
+	stop('sorry, not yet defined')
     }
     if(parallel=='gpu'){
 	z <- magma(z, gpu=TRUE)
