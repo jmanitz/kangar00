@@ -24,6 +24,7 @@ setValidity('GWASdata', function(object){  # to be defined !!
 #        if(is(test1) == "try-error"){
 #                stop("Did not find databel data!")
 #        }
+# 	 # check whether GWASdata@geno has missings or not
         if(!is.data.frame(object@anno)){
 		valid <- FALSE
                 msg <- c(msg, "anno need to be a data frame!")
