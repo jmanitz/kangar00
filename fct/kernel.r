@@ -176,7 +176,7 @@ get.ana <- function(anno, SNPset, pathway){
     anno.genes <-unique(GWASdata@anno[which(GWASdata@anno$Pathway==pathway@id),2])
     remov <- all.genes[which(all.genes %in% anno.genes==FALSE)]      
 
-    #rewire: moeglicherweiswe über matrizenmultiplikation
+    #rewire: may be use matrix multiplication
     if(length(remov)!=0){    
     for(g in remov){
         z <- which(colnames(N)==g)
@@ -184,7 +184,7 @@ get.ana <- function(anno, SNPset, pathway){
         vec <- vec[,vec[1,]!=0] #where gene has edges
         if(length(vec)>0){      #only if edges exist
           for(i in 1:(length(vec[1,])-1) ){   #i ist aktuelle edge
-              for( j in (i+1):length(vec[1,]) ){
+              for( j in (i+1):length(vec[1,])){
                if(N[vec[2,i],vec[2,j]]!=0){
 		warning('Edge will be removed!')
 		}
