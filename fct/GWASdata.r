@@ -9,7 +9,13 @@ GWASdata <- setClass('GWASdata', slots=c(pheno='data.frame', geno='databel', des
 
 # pheno .. data.frame specifying ids, phenotypes and covariates e.g. ID, pheno, sex, pack.years
 # geno .. genotype information in databel format
-# anno .. data.frame; annotation file mapping SNP -> genes -> pathways
+# anno .. annotation file mapping SNP -> genes -> pathways
+#         data.frame with variables:
+#             pathway ... pathway id
+#             gene    ... gene name (which version?)
+#             chr     ... chromosome
+#             snp     ... rsNumber
+#             position... SNP position
 # desc ... character giving GWAS description and information
 
 #GWASdata@geno
@@ -21,16 +27,22 @@ setValidity('GWASdata', function(object){  # !! this function needs improvement 
 	msg  <- NULL
 	valid <- TRUE
 
-        # check annotation
+        # check annotation file
 	if(is.null(attr(object@geno,'anno'))){ #does an additional attribute with annotation exists for databel object?
 		valid <- FALSE
                 msg <- c(msg, "databel object geno needs an additional attribute: data.frame 'anno'")
 	}
-	if(is.data.frame(attr(object@geno,'anno'))){
+	if(!is.data.frame(attr(object@geno,'anno'))){
 		valid <- FALSE
                 msg <- c(msg, "geno attribute anno need to be a data frame")
 	}
-
+        anno.names <- c('pathway','gene','chr','snp','position')
+        # check anno data frame variable names
+        if(!all(anno.names %in% colnames(anno))){
+		valid <- FALSE
+                msg <- c(msg, paste("anno variable names to not match:",anno.names))
+                anno <- anno[,match(colnames(anno), anno.names)]  
+        }
 # 	 # check whether GWASdata@geno has missings or not !todo!
 #	ids <- rownames(object@pheno)
 #        if(!("vector" %in% is(ids))){
@@ -78,11 +90,13 @@ setMethod('GeneSNPsize', signature='GWASdata',
 # Create list of pathway names + snp size and genes size
 # counts number of Genes/SPNs in each pathway 
           definition <- function(object){
-              anno <- object@anno    #Annotation file
-              anno <- anno[!duplicated(anno[,1:4]),]
-              nrsnps <- table(anno[,1])
-              anno <- anno[!duplicated(anno[,1:2]),]
-              nrgenes <- table(anno[,1])
+              anno <- attr(object@geno, 'anno')    #Annotation file
+#              anno <- anno[!duplicated(anno[,1:4]),]
+#              nrsnps <- table(anno[,1])
+              nrsnps <- table(unique(anno[,c('pathway','gene','snp')])$pathway)
+#              anno <- anno[!duplicated(anno[,1:2]),]
+#              nrgenes <- table(anno[,1])
+              nrgenes <- table(unique(anno[,c('pathway','gene')])$pathway)
               tab <- cbind(nrgenes,nrsnps)
 	      colnames(tab) <- c('genes','SNPs')
               return(tab) 
