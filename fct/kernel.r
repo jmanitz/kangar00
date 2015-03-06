@@ -106,6 +106,8 @@ kernel.lin <- function(data, pathway, parallel=c('none','cpu','gpu'), ...) {
 	     z <- magma(z, gpu=TRUE)
 	     k <- tcrossprod(z)
     }
+
+    k <- make_posdev(k)
     #return kernel object
     return(kernel(type='linear', kernel=k, pathway=pathway))
 }
@@ -115,7 +117,7 @@ kernel.lin <- function(data, pathway, parallel=c('none','cpu','gpu'), ...) {
 # create size-adjusted kernel
 kernel.sia <- function(GWASdata, pathway, parallel='none', ...){
     parallel <- match.arg(parallel,c('none','cpu','gpu'))
-    
+
     if (inherits(data, "GWASdata")) {
         data <- data@geno }
     if (!inherits(data, "databel"))
@@ -125,15 +127,15 @@ kernel.sia <- function(GWASdata, pathway, parallel='none', ...){
               sQuote('attr(, "anno")'))
 
   anno <- attr(data, "anno")
-  
+
   EffectiveSNPs <- function(g, data@geno, genes){
       SNPset <- anno$snp[which(anno$gene==g)]
       z <- as(data@geno[,as.character(SNPset)],'matrix')
       #z <- as(dat[,as.character( genes[genes[,1]==g,2] )], "matrix")
-      z <- z[, apply(z,2,sum)/(2*dim(z)[1]) >= 0.001 ] #only snps maf >= 0.1%     
+      z <- z[, apply(z,2,sum)/(2*dim(z)[1]) >= 0.001 ] #only snps maf >= 0.1%
       e.val <- eigen(cor(z), symmetric=TRUE, only.values=TRUE)$values
-      return(length(e.val)*(1-(length(e.val)-1)*var(e.val)/(length(e.val)^2))) 
-   } 
+      return(length(e.val)*(1-(length(e.val)-1)*var(e.val)/(length(e.val)^2)))
+   }
 
    genes <- anno[anno[,1]==pathway@id,c(2,4)] #genes and snps in pathway
    gene.counts <- table(as.character(genes[!duplicated(genes),1]))
@@ -143,7 +145,7 @@ kernel.sia <- function(GWASdata, pathway, parallel='none', ...){
    effSNPs[,2] <- unlist( lapply(g.10, EffectiveSNPs, data@geno, genes) )
    kerneltimes <- matrix( rep(0,(nrow(data@geno))^2), nrow=nrow(data@geno))
 
-   g.sum <- function(g, data@geno, genes, effSNPs){   
+   g.sum <- function(g, data@geno, genes, effSNPs){
       SNPset <- anno$snp[which(anno$gene==g)]
       z <- as(data@geno[,as.character(SNPset)],'matrix')
       #z <- as(dat[,as.character( genes[genes[,1]==g,2] )], "matrix") #rs in g
@@ -163,16 +165,15 @@ kernel.sia <- function(GWASdata, pathway, parallel='none', ...){
 
   kerneltimes <- Reduce('+', lapply(g.10, g.sum, data@geno, genes, effSNPs))
   k <- exp( sqrt(1/(length(unique(genes[,1])))) * kerneltimes )
-  
+
   #return kernel object
   return(kernel(type='size-adjusted',kernel=k,pathway=pathway))
 }
 
 
 # network-based kernel
-kernel.net <- function(GWASdata, pathway){
-    source("src/get.ana.r") 
-       
+kernel.net <- function(GWASdata, pathway) {
+
     if (inherits(data, "GWASdata")) {
         data <- data@geno }
     if (!inherits(data, "databel"))
@@ -180,14 +181,14 @@ kernel.net <- function(GWASdata, pathway){
     if (is.null(attr(data, "anno")))
          stop("SNP data needs annotation as ",
               sQuote('attr(, "anno")'))
-              
+
     anno <- attr(data, "anno")
-    
+
     #genotype matrix Z, which SNPs are in specified pathway
     SNPset <- anno$snp[which(anno$pathway==pathway@id)]
     #subset genotype data for specified SNP set
     Z <- as(data@geno[,as.character(SNPset)],'matrix')
-    
+
     ANA <- get.ana(anno, SNPset, pathway)
     K = Z %*% ANA %*% t(Z)
     #return kernel object
@@ -230,11 +231,7 @@ get.ana <- function(anno, SNPset, pathway){
     diag(N) <- 1
 
     #ensure positive definiteness by network weighting
-    lambda <- min(eigen(N, only.values=TRUE, symmetric=TRUE)$values)
-    if(lambda<0){ # smallest eigenvalue negative = not semipositive definite
-        rho <- 1/(1-lambda)
-        N <- rho*N + (1-rho)*diag(dim(N)[1])
-    }
+    N <- make_posdev(N)
 
     #A: SNP to gene mapping
     A.table <- t(table(anno))
@@ -243,4 +240,14 @@ get.ana <- function(anno, SNPset, pathway){
     A.star <- A/colSums(A)
 
 return(A.star %*% N %*% t(A.star))
+}
+
+make_posdev <- function(N) {
+    lambda <- min(eigen(N, only.values=TRUE, symmetric=TRUE)$values)
+    # smallest eigenvalue negative = not semipositive definite
+    if (lambda < 0) {
+        rho <- 1/(1-lambda)
+        N <- rho * N + (1-rho) * diag(dim(N)[1])
+    }
+    return(N)
 }
