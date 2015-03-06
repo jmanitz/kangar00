@@ -77,46 +77,12 @@ setMethod('plot', signature='kernel',
               invisible(NULL)
           })
 
+
 # create linear kernel # subclass of kernel?
 kernel.lin <- function(data, pathway, parallel=c('none','cpu','gpu'), ...) {
     parallel <- match.arg(parallel)
     if (inherits(data, "GWASdata")) {
-        data <- data@geno
-    }
-
-    if (!inherits(data, "databel"))
-        stop("not a databel object")
-    if (!is.null(attr(data, "anno")))
-         stop("SNP data needs annotation as ",
-              sQuote('attr(, "anno")'))
-
-    anno <- attr(data, "anno")
-    ## which SNPs are in specified pathway
-    SNPset <- anno$rsNumber[which(anno$Pathway == pathway@id)]
-    ## subset genotype data for specified SNP set
-    z <- as(data[,as.character(SNPset)],'matrix')
-
-    ## K=ZZ' ... kernel matrix = genetic similarity
-    if(parallel=='none'){
-	k <- tcrossprod(z)
-    }
-    if(parallel=='cpu'){
-	stop('sorry, not yet defined')
-    }
-    if(parallel=='gpu'){
-	z <- magma(z, gpu=TRUE)
-	k <- tcrossprod(z)
-    }
-    # return kernel object
-    return(kernel(type='linear', kernel=k, pathway=pathway))
-}
-# create linear kernel # subclass of kernel?
-kernel.lin <- function(data, pathway, parallel=c('none','cpu','gpu'), ...) {
-    parallel <- match.arg(parallel)
-    if (inherits(data, "GWASdata")) {
-        data <- data@geno
-    }
-
+        data <- data@geno }
     if (!inherits(data, "databel"))
         stop("not a databel object")
     if (is.null(attr(data, "anno")))
@@ -129,82 +95,99 @@ kernel.lin <- function(data, pathway, parallel=c('none','cpu','gpu'), ...) {
     ## subset genotype data for specified SNP set
     z <- as(data[,as.character(SNPset)],'matrix')
 
-    ## K=ZZ' ... kernel matrix = genetic similarity
+    # K=ZZ' kernel matrix = genetic similarity
     if(parallel=='none'){
-	k <- tcrossprod(z)
+	     k <- tcrossprod(z)
     }
     if(parallel=='cpu'){
 	stop('sorry, not yet defined')
     }
     if(parallel=='gpu'){
-	z <- magma(z, gpu=TRUE)
-	k <- tcrossprod(z)
+	     z <- magma(z, gpu=TRUE)
+	     k <- tcrossprod(z)
     }
-    # return kernel object
+    #return kernel object
     return(kernel(type='linear', kernel=k, pathway=pathway))
 }
+
 
 
 # create size-adjusted kernel
 kernel.sia <- function(GWASdata, pathway, parallel='none', ...){
     parallel <- match.arg(parallel,c('none','cpu','gpu'))
+    
+    if (inherits(data, "GWASdata")) {
+        data <- data@geno }
+    if (!inherits(data, "databel"))
+        stop("not a databel object")
+    if (is.null(attr(data, "anno")))
+         stop("SNP data needs annotation as ",
+              sQuote('attr(, "anno")'))
 
-	dat <- GWASdata@geno
-	anno <- GWASdata@anno
-	n <- pathway@id
-
-  EffectiveSNPs <- function(g.10, dat, genes){
-     get.eff <- function(g,dat,genes){
-      z <- as(dat[,as.character( genes[genes[,1]==g,2] )], "matrix")
-      z <- z[, apply(z,2,sum)/(2*dim(z)[1]) >= 0.001 ] #only snps maf >= 0.1%
+  anno <- attr(data, "anno")
+  
+  EffectiveSNPs <- function(g, data@geno, genes){
+      SNPset <- anno$snp[which(anno$gene==g)]
+      z <- as(data@geno[,as.character(SNPset)],'matrix')
+      #z <- as(dat[,as.character( genes[genes[,1]==g,2] )], "matrix")
+      z <- z[, apply(z,2,sum)/(2*dim(z)[1]) >= 0.001 ] #only snps maf >= 0.1%     
       e.val <- eigen(cor(z), symmetric=TRUE, only.values=TRUE)$values
-      return(length(e.val)*(1-(length(e.val)-1)*var(e.val)/(length(e.val)^2))) }
-  return( lapply(g.10, get.eff, dat, genes) ) }
+      return(length(e.val)*(1-(length(e.val)-1)*var(e.val)/(length(e.val)^2))) 
+   } 
 
-   genes <- anno[anno[,1]==paste(n,sep=""),c(2,4)] #genes and snps in pathway
+   genes <- anno[anno[,1]==pathway@id,c(2,4)] #genes and snps in pathway
    gene.counts <- table(as.character(genes[!duplicated(genes),1]))
    #counts number of different SNPs per gene
    g.10 <- names(gene.counts[gene.counts >= 10]) #genes with >= 10 snps
    effSNPs <- cbind(g.10,rep(0,length(g.10)))
-   effSNPs[,2] <- unlist(EffectiveSNPs(g.10, dat, genes))#, n.cores, cl))
-   kerneltimes <- matrix( rep(0,(dim(dat)[1])^2), nrow=dim(dat)[1])
+   effSNPs[,2] <- unlist( lapply(g.10, EffectiveSNPs, data@geno, genes) )
+   kerneltimes <- matrix( rep(0,(nrow(data@geno))^2), nrow=nrow(data@geno))
 
-   g.sum <- function(g, dat, genes, effSNPs){
-      z <- as(dat[,as.character( genes[genes[,1]==g,2] )], "matrix") #rs in g
+   g.sum <- function(g, data@geno, genes, effSNPs){   
+      SNPset <- anno$snp[which(anno$gene==g)]
+      z <- as(data@geno[,as.character(SNPset)],'matrix')
+      #z <- as(dat[,as.character( genes[genes[,1]==g,2] )], "matrix") #rs in g
       z <- z[, apply(z,2,sum)/(2*dim(z)[1]) >= 0.001 ] #only snps maf >= 0.1%
 
       a <- matrix( rep(rowSums(z*z),dim(z)[1]),nrow=dim(z)[1])
       distances <- a -2*tcrossprod(z) + t(a)
       distances <- round(distances, digits=3)
 
-      length.gene <- dim(z)[2] #num. snps
+      length.gene <- ncol(z) #num. snps
       eff.length.gene<-as.numeric(effSNPs[which(as.character(effSNPs[,1])==g),2])
       max.eff.length <- max(as.numeric(effSNPs[,2]), na.rm=T)
 
       delta <- sqrt(eff.length.gene/max.eff.length)
       roh  <- (mean(c(distances)))^(-delta)*(eff.length.gene/length.gene)^(-delta)
-      return(-roh*(distances/length.gene)^(delta))  } #for one gene
+    return(-roh*(distances/length.gene)^(delta))  } #for one gene
 
-  kerneltimes <- Reduce('+', lapply(g.10, g.sum, dat, genes, effSNPs))
+  kerneltimes <- Reduce('+', lapply(g.10, g.sum, data@geno, genes, effSNPs))
   k <- exp( sqrt(1/(length(unique(genes[,1])))) * kerneltimes )
-
-  # return kernel object
+  
+  #return kernel object
   return(kernel(type='size-adjusted',kernel=k,pathway=pathway))
 }
 
 
 # network-based kernel
 kernel.net <- function(GWASdata, pathway){
-    source("src/get.ana.r")
-	  dat <- GWASdata@geno
-	  anno <- GWASdata@anno
-	  n <- pathway@id
-
+    source("src/get.ana.r") 
+       
+    if (inherits(data, "GWASdata")) {
+        data <- data@geno }
+    if (!inherits(data, "databel"))
+        stop("not a databel object")
+    if (is.null(attr(data, "anno")))
+         stop("SNP data needs annotation as ",
+              sQuote('attr(, "anno")'))
+              
+    anno <- attr(data, "anno")
+    
     #genotype matrix Z, which SNPs are in specified pathway
-    SNPset <- GWASdata@anno$rsNumber[which(GWASdata@anno$Pathway==pathway@id)]
+    SNPset <- anno$snp[which(anno$pathway==pathway@id)]
     #subset genotype data for specified SNP set
-    Z <- as(GWASdata@geno[,as.character(SNPset)],'matrix')
-
+    Z <- as(data@geno[,as.character(SNPset)],'matrix')
+    
     ANA <- get.ana(anno, SNPset, pathway)
     K = Z %*% ANA %*% t(Z)
     #return kernel object
@@ -219,7 +202,7 @@ get.ana <- function(anno, SNPset, pathway){
 
     #remove genes that have no SNPs (not in anno):
     all.genes  <- colnames(N)
-    anno.genes <-unique(GWASdata@anno[which(GWASdata@anno$Pathway==pathway@id),2])
+    anno.genes <- unique(anno[which(anno$pathway==pathway@id),2])
     remov <- all.genes[which(all.genes %in% anno.genes==FALSE)]
 
     #rewire: may be use matrix multiplication
@@ -256,7 +239,6 @@ get.ana <- function(anno, SNPset, pathway){
     #A: SNP to gene mapping
     A.table <- t(table(anno))
     A <- A.table[SNPset,rownames(N)]    #= A.table[colnames(Z),rownames(N)]
-
     #A*: size-adjustement for no of SNPs in each gene
     A.star <- A/colSums(A)
 
