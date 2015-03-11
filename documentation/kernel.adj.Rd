@@ -1,16 +1,14 @@
 \name{kernel.adj}
 \alias{kernel.adj}
-%- Also NEED an '\alias' for EACH other topic documented here.
 \title{
 Size-adjusted kernel
 }
 \description{
-Calculates the size-adjusted kernel.
+Calculates an object of class \code{kernel} with size-adjusted kernel. 
 }
 \usage{
 kernel.adj(GWASdata, pathway)
 }
-%- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{GWASdata}{
   Object of the class \code{GWASdata}. 
@@ -84,4 +82,4 @@ function (GWASdata, pathway)
 % Add one or more standard keywords, see file 'KEYWORDS' in the
 % R documentation directory.
 \keyword{kernel.adj}
-\keyword{size adjused kernel}% __ONLY ONE__ keyword per line
+\keyword{size adjusted kernel}
