@@ -93,7 +93,8 @@ score.test <- function(
         Y <- nullmodel$y
         X <- nullmodel$x
         mui <-  nullmodel$fitted.values
-        W <- Diagonal(length(mui),mui*(1-mui))
+        #W <- Diagonal(length(mui),mui*(1-mui))  , library(Matrix)
+        W <- (mui*(1-mui)) * diag(length(mui))
         #P <- W-W%*%X%*%solve(t(X)%*%W%*%X)%*%t(X)%*%W 
         WX <- W%*%X
         P <- W-WX%*%solve(t(X)%*% WX, t(X)%*%W) 
