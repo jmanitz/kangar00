@@ -16,9 +16,9 @@ New objects can be created by calls of the form \code{pathway(...)}.
 }
 \section{Slots}{
   \describe{
-    \item{\code{id}:}{Object of class \code{"character"} describing pathway id, e.g. hsa00100 }
+    \item{\code{id}:}{Object of class \code{"character"} describing pathway id, e.g. hsa00100.}
     \item{\code{adj}:}{Adjacency matrix}
-    \item{\code{sign}:}{Object of class \code{"vector"} containing interaction type for each link }
+    \item{\code{sign}:}{Object of class \code{"vector"} containing interaction type for each link.}
   }
 }
 \section{Methods}{
@@ -36,4 +36,6 @@ showClass("pathway")
 }
 \keyword{classes}
 \keyword{pathway class}
+\keyword{pathway methods}
+\keyword{pathway slots}
 
