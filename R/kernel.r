@@ -28,7 +28,7 @@ setValidity('kernel', function(object){
     #          msg <- c(msg, "kernel matrix has to be dimension equal to individuals in GWAS")
     #        }
     # isSymmetric(kernel)
-    if(!isSymmetric(object@kernel)){
+    if(!isSymmetric( round(object@kernel,5) )){
         valid <- FALSE
         msg <- c(msg, "kernel matrix has to be symmetric")
     }
