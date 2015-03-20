@@ -1,2 +1,2 @@
-# kangor00
+# kangar00
 development of kangar00
