@@ -8,6 +8,7 @@
 GWASdata <- setClass('GWASdata', slots=c(pheno='data.frame', geno='databel', desc='character'))
 
 # pheno .. data.frame specifying ids, phenotypes and covariates e.g. ID, pheno, sex, pack.years
+#          Ids have to be in first column!
 # geno .. genotype information in databel format
 # anno .. annotation file mapping SNP -> genes -> pathways
 #         data.frame with variables:
@@ -18,42 +19,51 @@ GWASdata <- setClass('GWASdata', slots=c(pheno='data.frame', geno='databel', des
 #             position... SNP position
 # desc ... character giving GWAS description and information
 
-#GWASdata@geno
-#geno <- setClass('geno', slots='databel')
-#attr(geno, 'anno') <- anno # data.frame
-
 # validy checks
-setValidity('GWASdata', function(object){  # !! this function needs improvement !!
-	msg  <- NULL
+setValidity('GWASdata', function(object){ 
+	msg   <- NULL
 	valid <- TRUE
-
-        # check annotation file
-	if(is.null(attr(object@geno,'anno'))){ #does an additional attribute with annotation exists for databel object?
+ 
+  # check annotation file   
+	if( is.null( attr(object@geno, "anno") ) ){ #does attribute for databel object exists?
 		valid <- FALSE
-                msg <- c(msg, "databel object geno needs an additional attribute: data.frame 'anno'")
+    msg   <- c(msg, "databel object geno needs an additional attribute: data.frame 'anno'")
 	}
-	if(!is.data.frame(attr(object@geno,'anno'))){
-		valid <- FALSE
-                msg <- c(msg, "geno attribute anno need to be a data frame")
+	if(!is.data.frame(attr(object@geno,"anno"))){ #is attribute dataframe?
+  	valid <- FALSE
+    msg   <- c(msg, "geno attribute anno needs to be a data frame")
 	}
-        anno.names <- c('pathway','gene','chr','snp','position')
-        # check anno data frame variable names
-        if(!all(anno.names %in% colnames(anno))){
+  # check anno data frame variable names
+  anno.names <- c('pathway','gene','chr','snp','position')    
+  if(!all(anno.names %in% colnames(attr(object@geno,'anno')))){
+	  valid <- FALSE
+    msg   <- c(msg, paste("anno variable names do not match:",anno.names))
+  }
+  # check whether GWASdata@geno has missings
+  if(sum(is.na(gdat@geno))>0){
 		valid <- FALSE
-                msg <- c(msg, paste("anno variable names to not match:",anno.names))
-                anno <- anno[,match(colnames(anno), anno.names)]  
-        }
-# 	 # check whether GWASdata@geno has missings or not !todo!
-#	ids <- rownames(object@pheno)
-#        if(!("vector" %in% is(ids))){
-#		valid <- FALSE
-#                msg <- c(msg, "pathway.ids need to be a vector of pathway ID's!")
-#        }
-#        test2 <- ids %in% anno[,1]
-#        if(sum(test2) != length(test2)){
-#                stop("There are pathway ID's not in the Annotation file!")
-#        }
-#        disconnect(test1)
+    msg   <- c(msg, "genotypes include missing values and need to be imputed!")
+  }
+  #phenotypes for more individuals than have genotypes
+  if(length(unique(object@pheno[,1]))>length(rownames(object@geno))){
+		valid <- FALSE
+    msg <- c(msg, "phenotypes exist for more individuals than have genotypes!")
+  }
+  #check order of individuals in genotypes and phenotypes
+  if(!all.equal(object@pheno[,1],rownames(object@geno))){
+		valid <- FALSE
+    msg <- c(msg, "order of individuals differs in genotype and phenotype file!")
+  }
+  #more snps in annotation, than genotyped
+  if(length(unique(attr(object@geno,'anno')$snp))>ncol(object@geno)){
+		valid <- FALSE
+    msg <- c(msg, "annotation includes more SNPs than genotyped!")
+  }
+  #snps in annotation file, that are not in genotype file (too big?)
+  if(!all(unique(attr(dat,'anno')$snp) %in% colnames(object@geno))){
+		valid <- FALSE
+    msg <- c(msg, "there are SNPs in the annotation file that have no genotypes!")
+  }
 
 	if(valid) TRUE else msg
 })
