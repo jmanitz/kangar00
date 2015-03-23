@@ -1,0 +1,16 @@
+exportPattern("^[[:alpha:]]+")
+
+exportMethods(
+    "GeneSNPsize",
+    "plot",
+    "show",
+    "summary" 
+)
+
+exportClasses(
+    "GWASdata",
+     "kernel",
+     "lkmt",
+     "pathway" 
+)
+
