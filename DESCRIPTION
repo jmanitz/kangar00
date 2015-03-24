@@ -1,9 +1,9 @@
-Package: kangor00
+Package: kangar00
 Type: Package
 Title: What the package does (short line)
-Version: 1.0
+Version: 0.5
 Date: 2015-02-04
-Author: Who wrote it
+Author: Juliane Manitz, Stefanie Friedrichs, Patricia Burger, Benjamin Hofner
 Maintainer: Who to complain to <yourfault@somewhere.net>
 Description: More about what it does (maybe more than one line)
 License: What license is it under?
