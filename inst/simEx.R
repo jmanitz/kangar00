@@ -50,12 +50,30 @@ data$sex <- as.factor(data$sex)
 data$z <- sim2@geno
 attr(data$z, "anno")
 
-mod <- gamboost(pheno ~ sex + age +
-                  bkernel(z, kernel = kernel.lin, pathway = hsa00100, args = list()) +
+
+## not positive definite despite make_posdev
+X <- kernel.lin(data$z, pathway = hsa00100)@kernel
+e <- eigen(X)
+any(e$values < 0)
+
+## this is positive definite
+X <- kernel.lin(data$z, pathway = hsa00603)@kernel
+e <- eigen(X)
+any(e$values < 0)
+
+mod <- gamboost(pheno ~ bols(sex) + bols(age) +
+                  # bkernel(z, kernel = kernel.lin, pathway = hsa00100, args = list()) +
                   bkernel(z, kernel = kernel.lin, pathway = hsa00603, args = list()) +
+                  bkernel(z, kernel = kernel.lin, pathway = hsa00780, args = list()) +
                   bkernel(z, kernel = kernel.lin, pathway = hsa04122, args = list()) +
                   bkernel(z, kernel = kernel.lin, pathway = hsa00750, args = list()) +
-                  bkernel(z, kernel = kernel.lin, pathway = hsa00730, args = list()) +
-                  bkernel(z, kernel = kernel.lin, pathway = hsa00780, args = list()),
+                  bkernel(z, kernel = kernel.lin, pathway = hsa00730, args = list()),
                 data = data, family = Binomial())
 
+## selektiert zuerst die beiden informativen pathways!
+selected(mod)
+
+extract(mod, "bnames")
+
+## not working
+# cvr <- cvrisk(mod, grid = 1:1000)
