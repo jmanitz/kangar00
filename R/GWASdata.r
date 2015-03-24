@@ -20,52 +20,54 @@ GWASdata <- setClass('GWASdata', slots=c(pheno='data.frame', geno='databel', des
 # desc ... character giving GWAS description and information
 
 # validy checks
-setValidity('GWASdata', function(object){ 
-	msg   <- NULL
-	valid <- TRUE
- 
-  # check annotation file   
-	if( is.null( attr(object@geno, "anno") ) ){ #does attribute for databel object exists?
-		valid <- FALSE
-    msg   <- c(msg, "databel object geno needs an additional attribute: data.frame 'anno'")
-	}
-	if(!is.data.frame(attr(object@geno,"anno"))){ #is attribute dataframe?
-  	valid <- FALSE
-    msg   <- c(msg, "geno attribute anno needs to be a data frame")
-	}
-  # check anno data frame variable names
-  anno.names <- c('pathway','gene','chr','snp','position')    
-  if(!all(anno.names %in% colnames(attr(object@geno,'anno')))){
-	  valid <- FALSE
-    msg   <- c(msg, paste("anno variable names do not match:",anno.names))
-  }
-  # check whether GWASdata@geno has missings
-  if(sum(is.na(gdat@geno))>0){
-		valid <- FALSE
-    msg   <- c(msg, "genotypes include missing values and need to be imputed!")
-  }
-  #phenotypes for more individuals than have genotypes
-  if(length(unique(object@pheno[,1]))>length(rownames(object@geno))){
-		valid <- FALSE
-    msg <- c(msg, "phenotypes exist for more individuals than have genotypes!")
-  }
-  #check order of individuals in genotypes and phenotypes
-  if(!all.equal(object@pheno[,1],rownames(object@geno))){
-		valid <- FALSE
-    msg <- c(msg, "order of individuals differs in genotype and phenotype file!")
-  }
-  #more snps in annotation, than genotyped
-  if(length(unique(attr(object@geno,'anno')$snp))>ncol(object@geno)){
-		valid <- FALSE
-    msg <- c(msg, "annotation includes more SNPs than genotyped!")
-  }
-  #snps in annotation file, that are not in genotype file (too big?)
-  if(!all(unique(attr(dat,'anno')$snp) %in% colnames(object@geno))){
-		valid <- FALSE
-    msg <- c(msg, "there are SNPs in the annotation file that have no genotypes!")
-  }
+setValidity('GWASdata', function(object){
+    msg   <- NULL
+    valid <- TRUE
 
-	if(valid) TRUE else msg
+    ## check annotation file
+    if( is.null( attr(object@geno, "anno") ) ){ #does attribute for databel object exists?
+        valid <- FALSE
+        msg   <- c(msg, "databel object geno needs an additional attribute: data.frame 'anno'")
+    }
+    if(!is.data.frame(attr(object@geno,"anno"))){ #is attribute dataframe?
+  	valid <- FALSE
+        msg   <- c(msg, "geno attribute anno needs to be a data frame")
+    }
+    ## check anno data frame variable names
+    anno.names <- c('pathway','gene','chr','snp','position')
+    if(!all(anno.names %in% colnames(attr(object@geno,'anno')))){
+        valid <- FALSE
+        msg   <- c(msg, paste("anno variable names do not match:",anno.names))
+    }
+
+    ## check whether GWASdata@geno has missings
+    # <FIXME> Currently not working
+    # if(sum(is.na(object@geno))>0){
+    #     valid <- FALSE
+    #     msg   <- c(msg, "genotypes include missing values and need to be imputed!")
+    # }
+
+    ## phenotypes for more individuals than have genotypes
+    if(length(unique(object@pheno[,1]))>length(rownames(object@geno))){
+        valid <- FALSE
+        msg <- c(msg, "phenotypes exist for more individuals than have genotypes!")
+    }
+    ## check order of individuals in genotypes and phenotypes
+    if(!all.equal(object@pheno[,1],rownames(object@geno))){
+        valid <- FALSE
+        msg <- c(msg, "order of individuals differs in genotype and phenotype file!")
+    }
+    ## more snps in annotation, than genotyped
+    if(length(unique(attr(object@geno,'anno')$snp))>ncol(object@geno)){
+        valid <- FALSE
+        msg <- c(msg, "annotation includes more SNPs than genotyped!")
+    }
+    ## SNPs in annotation file, that are not in genotype file (too big?)
+    if(!all(unique(attr(dat,'anno')$snp) %in% colnames(object@geno))){
+        valid <- FALSE
+        msg <- c(msg, "there are SNPs in the annotation file that have no genotypes!")
+    }
+    if(valid) TRUE else msg
 })
 
 # show method
@@ -98,7 +100,7 @@ setGeneric('GeneSNPsize', function(object, ...) standardGeneric('GeneSNPsize'))
 
 setMethod('GeneSNPsize', signature='GWASdata',
 # Create list of pathway names + snp size and genes size
-# counts number of Genes/SPNs in each pathway 
+# counts number of Genes/SPNs in each pathway
           definition <- function(object){
               anno <- attr(object@geno, 'anno')    #Annotation file
 #              anno <- anno[!duplicated(anno[,1:4]),]
@@ -109,6 +111,6 @@ setMethod('GeneSNPsize', signature='GWASdata',
               nrgenes <- table(unique(anno[,c('pathway','gene')])$pathway)
               tab <- cbind(nrgenes,nrsnps)
 	      colnames(tab) <- c('genes','SNPs')
-              return(tab) 
+              return(tab)
           })
 
