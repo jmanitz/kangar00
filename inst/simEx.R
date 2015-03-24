@@ -5,6 +5,17 @@ library(lattice) # levelplot
 library(kangar00)
 library(mboostDevel)
 
+##### make GWASobjekt for simulated data #####################
+path.sim <- "..."
+anno    <- read.table(paste(path.sim,"sim.6pw.anno.txt",sep=""), header=T, as.is=T)
+pheno   <- read.table(paste(path.sim,"sim2.pheno.txt",sep=""), header=T, as.is=T)
+dat     <- databel(paste(path.sim,"sim2",sep=""))
+attr(dat, "anno") <- anno
+
+sim2 <- GWASdata(pheno=pheno, geno=dat, desc="simulation2.6pathways")
+save(sim2,file="sim2.6pw.GWAS.RData")
+
+
 ### load prepared data #########################################################
 load("data/sim2.6pw.GWAS.RData", verbose = TRUE)
 load("data/pathways/hsa00100.RData", verbose = TRUE)
