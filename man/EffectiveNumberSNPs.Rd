@@ -38,7 +38,7 @@ EffectiveNumberSNPs(object, genes.ids)
 %% ~Make other sections like Warning with \section{Warning }{....} ~
 
 \seealso{
-\code{\link{GWASdata} for more information about \code{object}. 
+\code{\link{GWASdata}} for more information about \code{object}. 
 }
 \examples{
 ## ORIGINAL CODE!!!!

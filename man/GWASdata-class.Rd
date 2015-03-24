@@ -9,7 +9,7 @@
 
 \title{Class \code{GWASdata}}
 \description{
-This class creats an object with slots \code{pheno}, \code{geno}, \code{anno} and \desc{desc}. 
+This class creats an object with slots \code{pheno}, \code{geno}, \code{anno} and \code{desc}. 
 }
 \section{Objects from the Class}{
 Objects can be created by calls of the form \code{GWASdata(...)}.
