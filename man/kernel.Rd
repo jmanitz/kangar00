@@ -20,15 +20,7 @@ kernel(type, kernel, GWASdata, pathway)
 \code{\link{kernel-class}}
 }
 \examples{
-##---- Should be DIRECTLY executable !! ----
-##-- ==>  Define data, use random,
-##--	or do  help(data=index)  for the standard data sets.
 
-## The function is currently defined as
-structure(function (...) 
-new("kernel", ...), className = structure("kernel", package = "kangar00"), package = "kangar00", class = structure("classGeneratorFunction", package = "methods"))
 }
-% Add one or more standard keywords, see file 'KEYWORDS' in the
-% R documentation directory.
 \keyword{kernel}
 

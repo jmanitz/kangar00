@@ -18,13 +18,7 @@ pathway(...)
 \code{\link{class}}
 }
 \examples{
-##---- Should be DIRECTLY executable !! ----
-##-- ==>  Define data, use random,
-##--	or do  help(data=index)  for the standard data sets.
 
-## The function is currently defined as
-structure(function (...) 
-new("pathway", ...), className = structure("pathway", package = "kangar00"), package = "kangar00", class = structure("classGeneratorFunction", package = "methods"))
 }
 \keyword{pathway}
 

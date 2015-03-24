@@ -41,21 +41,7 @@ definition(object)
 %% ~~objects to See Also as \code{\link{help}}, ~~~
 }
 \examples{
-##---- Should be DIRECTLY executable !! ----
-##-- ==>  Define data, use random,
-##--	or do  help(data=index)  for the standard data sets.
 
-## The function is currently defined as
-function (object) 
-{
-    anno <- object@anno
-    anno <- anno[!duplicated(anno[, 1:4]), ]
-    nrsnps <- table(anno[, 1])
-    anno <- anno[!duplicated(anno[, 1:2]), ]
-    nrgenes <- table(anno[, 1])
-    tab <- cbind(nrgenes, nrsnps)
-    return(tab)
-  }
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the
 % R documentation directory.

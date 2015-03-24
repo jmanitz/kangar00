@@ -1,3 +1,6 @@
+import("DatABEL")
+import("methods")
+
 exportPattern("^[[:alpha:]]+")
 
 exportMethods(

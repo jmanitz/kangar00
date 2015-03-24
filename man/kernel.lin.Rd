@@ -8,11 +8,11 @@ Linear Kernel
 Creates linear kernel. 
 }
 \usage{
-kernel.lin(GWASdata, pathway, parallel = c("none", "cpu", "gpu"))
+kernel.lin(data, pathway, parallel = c("none", "cpu", "gpu"))
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{GWASdata}{
+  \item{data}{
   Object of the class \code{GWASdata}.
 }
   \item{pathway}{
@@ -44,29 +44,7 @@ Stefanie Friedrichs with contributions by Saskia Freytag and Ngoc-Thuy Ha
 \code{\link{GWASdata}}, \code{\link{pathway}}
 }
 \examples{
-##---- Should be DIRECTLY executable !! ----
-##-- ==>  Define data, use random,
-##--	or do  help(data=index)  for the standard data sets.
 
-## The function is currently defined as
-function (GWASdata, pathway, parallel = c("none", "cpu", "gpu")) 
-{
-    SNPset <- GWASdata@anno$rsNumber[which(GWASdata@anno$Pathway == 
-        pathway@id)]
-    z <- as(GWASdata@geno[, as.character(SNPset)], "matrix")
-    if (parallel == "none") {
-        k <- tcrossprod(z)
-    }
-    if (parallel == "cpu") {
-        print("sorry, not yet defined")
-    }
-    if (parallel == "gpu") {
-        z <- magma(z, gpu = TRUE)
-        k <- tcrossprod(z)
-    }
-    return(kernel(type = "linear", kernel = k, GWASdata = GWASdata, 
-        pathway = pathway))
-  }
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the
 % R documentation directory.

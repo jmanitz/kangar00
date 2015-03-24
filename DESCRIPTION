@@ -6,5 +6,5 @@ Date: 2015-02-04
 Author: Juliane Manitz, Stefanie Friedrichs, Patricia Burger, Benjamin Hofner
 Maintainer: Who to complain to <yourfault@somewhere.net>
 Description: More about what it does (maybe more than one line)
-License: What license is it under?
-Depends: methods
+License: GPL-2
+Depends: methods, DatABEL

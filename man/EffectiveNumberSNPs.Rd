@@ -41,30 +41,7 @@ EffectiveNumberSNPs(object, genes.ids)
 \code{\link{GWASdata}} for more information about \code{object}. 
 }
 \examples{
-## ORIGINAL CODE!!!!
-##---- Should be DIRECTLY executable !! ----
-##-- ==>  Define data, use random,
-##--	or do  help(data=index)  for the standard data sets.
 
-## The function is currently defined as
-function (object, genes.ids) 
-{
-    dat <- object@geno
-    anno <- object@anno
-    effective <- function(x) {
-        length(x) * (1 - (length(x) - 1) * var(x)/(length(x)^2))
-    }
-    effectivesnps <- matrix(NA, nrow = length(genes.ids), ncol = 2)
-    effectivesnps[, 1] <- as.character(genes.ids)
-    for (g in genes.ids) {
-        z <- as(dat[, as.character(unique(anno[(anno[, 2] == 
-            g), 4]))], "matrix")
-        z <- z[, apply(z, 2, sum)/(2 * dim(z)[1]) >= 0.001]
-        eigen.values <- eigen(cor(z), symmetric = TRUE, only.values = TRUE)$values
-        effectivesnps[effectivesnps[, 1] == g, 2] <- effective(eigen.values)
-    }
-    return(effectivesnps)
-  }
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the
 % R documentation directory.

@@ -51,20 +51,7 @@ lkmt(formula, kernel, GWASdata, ...)
 %% ~~objects to See Also as \code{\link{help}}, ~~~
 }
 \examples{
-##---- Should be DIRECTLY executable !! ----
-##-- ==>  Define data, use random,
-##--	or do  help(data=index)  for the standard data sets.
 
-## The function is currently defined as
-function (formula, kernel, GWASdata, ...) 
-{
-    nullmodel <- glm(formula, data = GWASdata@pheno, family = binomial, 
-        x = TRUE)
-    p.val <- score.test(kernel@kernel, nullmodel, pd.check = FALSE)[[1]]$p.value
-    ret <- new("lkmt", formula = formula, kernel = kernel, GWASdata = GWASdata, 
-        pval = p.val)
-    return(ret)
-  }
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the
 % R documentation directory.
