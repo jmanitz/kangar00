@@ -131,15 +131,15 @@ kernel.sia <- function(data, pathway, parallel='none', ...){
         z <- as(data[,as.character(SNPset)],'matrix')
         z <- z[, apply(z,2,sum)/(2*dim(z)[1]) >= 0.001 ] #only snps maf >= 0.1%
         e.val <- eigen(cor(z), symmetric=TRUE, only.values=TRUE)$values
-        return(length(e.val)*(1-(length(e.val)-1)*var(e.val)/(length(e.val)^2)))
+        nn <- length(e.val)
+        #return(length(e.val)*(1-(length(e.val)-1)*var(e.val)/(length(e.val)^2)))
+        return(nn*(1-(nn-1)*var(e.val)/(nn^2)))
     }
-
+ 
     genes <- anno[anno$pathway==p@id,c("gene","snp")] 
-    gene.counts <- table(as.character(genes[!duplicated(genes),1]))
-    #counts number of different SNPs per gene
-    g.10 <- names(gene.counts[gene.counts >= 10]) #genes with >= 10 snps
-    effSNPs <- cbind(g.10,rep(0,length(g.10)))
-    effSNPs[,2] <- unlist( lapply(g.10, EffectiveSNPs, data, genes) )
+    gene.counts <- table(genes[,1]) #counts number of different SNPs per gene    
+    g.10 <- names(gene.counts[gene.counts >= 2]) #genes with >= 2 snps
+    effSNPs <- cbind(g.10, unlist( lapply(g.10, EffectiveSNPs, data, genes) ))
     kerneltimes <- matrix( rep(0,(nrow(data))^2), nrow=nrow(data))
     
     g.sum <- function(g, data, genes, effSNPs){
