@@ -7,18 +7,21 @@
 
 \title{Class \code{"lkmt"}}
 \description{
-%%  ~~ A concise (1-5 lines) description of what the class is. ~~
+Not yet. 
 }
 \section{Objects from the Class}{
 Objects can be created by calls of the form \code{new("lkmt", ...)}.
-%%  ~~ describe objects here ~~ 
+ 
 }
 \section{Slots}{
   \describe{
+    \item{\code{GWASdata}:}{Object of class \code{"GWASdata"}.}
+    \item{\code{df}:}{Degrees of freedom}
     \item{\code{formula}:}{Object of class \code{"formula"}: Gives formula for general linear model.}
     \item{\code{kernel}:}{Object of class \code{"kernel"}.}
-    \item{\code{GWASdata}:}{Object of class \code{"GWASdata"}.}
-    \item{\code{pval}:}{Object of class \code{"vector"} which contains pvalues.}
+
+    \item{\code{p.value}:}{Object of class \code{"vector"} which contains pvalues.}
+    \item{\code{statistic}:}{Test statistic}
   }
 }
 \section{Methods}{
@@ -27,22 +30,12 @@ Objects can be created by calls of the form \code{new("lkmt", ...)}.
     \item{summary}{\code{signature(object = "lkmt")}: ... }
 	 }
 }
-\references{
-%%  ~~put references to the literature/web site here~~
-}
+
+
 \author{
-%%  ~~who you are~~
-}
-\note{
-%%  ~~further notes~~
+Juliane Manitz, Stefanie Friedrichs, Patricia Burger, Benjamin Hofner
 }
 
-%% ~Make other sections like Warning with \section{Warning }{....} ~
-
-\seealso{
-%%  ~~objects to See Also as \code{\link{~~fun~~}}, ~~~
-%%  ~~or \code{\linkS4class{CLASSNAME}} for links to other classes ~~~
-}
 \examples{
 showClass("lkmt")
 }

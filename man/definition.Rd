@@ -1,6 +1,5 @@
 \name{definition}
 \alias{definition}
-%- Also NEED an '\alias' for EACH other topic documented here.
 \title{
 Number of genes of SNPs. 
 }
@@ -16,34 +15,18 @@ definition(object)
   Object of class \code{GWASdata}. 
 }
 }
-\details{
-%%  ~~ If necessary, more details than the description above ~~
-}
 \value{
 \item{tab}{
   Returns vector which contains number of genes and SNPs.
   }
 }
-\references{
-%% ~put references to the literature/web site here ~
-}
 \author{
-%%  ~~who you are~~
+Juliane Manitz, Stefanie Friedrichs, Patricia Burger, Benjamin Hofner
 }
-\note{
-%%  ~~further notes~~
-}
-
-%% ~Make other sections like Warning with \section{Warning }{....} ~
 
 \seealso{
 \code{\link{GWASdata}} for more information about \code{object}. 
-%% ~~objects to See Also as \code{\link{help}}, ~~~
 }
-\examples{
 
-}
-% Add one or more standard keywords, see file 'KEYWORDS' in the
-% R documentation directory.
 \keyword{definition}
-\keyword{ ~kwd2 }% __ONLY ONE__ keyword per line
+

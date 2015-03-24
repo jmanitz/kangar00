@@ -1,16 +1,15 @@
 \name{lkmt}
 \alias{lkmt}
-%- Also NEED an '\alias' for EACH other topic documented here.
+
 \title{
 Logistic kernel maschine test functions
 }
 \description{
-%%  ~~ A concise (1-5 lines) description of what the function does. ~~
+Not yet. 
 }
 \usage{
 lkmt(formula, kernel, GWASdata, ...)
 }
-%- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{formula}{
 %%     ~~Describe \code{formula} here~~
@@ -19,41 +18,17 @@ lkmt(formula, kernel, GWASdata, ...)
 %%     ~~Describe \code{kernel} here~~
 }
   \item{GWASdata}{
-%%     ~~Describe \code{GWASdata} here~~
+  Object of the class \code{GWASdata}.
 }
   \item{\dots}{
 %%     ~~Describe \code{\dots} here~~
 }
 }
-\details{
-%%  ~~ If necessary, more details than the description above ~~
-}
-\value{
-%%  ~Describe the value returned
-%%  If it is a LIST, use
-%%  \item{comp1 }{Description of 'comp1'}
-%%  \item{comp2 }{Description of 'comp2'}
-%% ...
-}
-\references{
-%% ~put references to the literature/web site here ~
-}
+
+
 \author{
-%%  ~~who you are~~
-}
-\note{
-%%  ~~further notes~~
+Juliane Manitz, Stefanie Friedrichs, Patricia Burger, Benjamin Hofner
 }
 
-%% ~Make other sections like Warning with \section{Warning }{....} ~
+\keyword{lkmt}
 
-\seealso{
-%% ~~objects to See Also as \code{\link{help}}, ~~~
-}
-\examples{
-
-}
-% Add one or more standard keywords, see file 'KEYWORDS' in the
-% R documentation directory.
-\keyword{ ~kwd1 }
-\keyword{ ~kwd2 }% __ONLY ONE__ keyword per line

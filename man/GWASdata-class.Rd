@@ -9,7 +9,7 @@
 
 \title{Class \code{GWASdata}}
 \description{
-This class creats an object with slots \code{pheno}, \code{geno}, \code{anno} and \code{desc}. 
+This class creats an object with slots \code{pheno}, \code{geno} and \code{desc}. 
 }
 \section{Objects from the Class}{
 Objects can be created by calls of the form \code{GWASdata(...)}.
@@ -18,8 +18,7 @@ Objects can be created by calls of the form \code{GWASdata(...)}.
 \section{Slots}{
   \describe{
     \item{\code{pheno}:}{Object of class \code{data.frame} specifying IDs, phenotypes and covariates e.g. ID, pheno, sex, pack.years.}
-    \item{\code{geno}:}{Object of class \code{databel} containing Genotype information}
-    \item{\code{anno}:}{Object of class \code{data.frame} ontaining annotation file mapping SNP -> genes -> pathways }
+    \item{\code{geno}:}{Object of class \code{databel} containing Genotype information and annotation file.}
     \item{\code{desc}:}{Object of class \code{character} giving GWAS description and information }
   }
 }
@@ -30,17 +29,7 @@ Objects can be created by calls of the form \code{GWASdata(...)}.
     \item{summary}{\code{signature(object = "GWASdata")}: ... }
 	 }
 }
-\references{
-%%  ~~put references to the literature/web site here~~
-}
-\author{
-%%  ~~who you are~~
-}
-\note{
-%%  ~~further notes~~
-}
 
-%% ~Make other sections like Warning with \section{Warning }{....} ~
 
 \seealso{
 \code{\link{GWASdata}}
