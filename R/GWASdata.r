@@ -53,7 +53,7 @@ setValidity('GWASdata', function(object){
         msg <- c(msg, "phenotypes exist for more individuals than have genotypes!")
     }
     ## check order of individuals in genotypes and phenotypes
-    if(!all.equal(object@pheno[,1],rownames(object@geno))){
+    if(!all.equal(as.character(object@pheno[,1]),rownames(object@geno))){
         valid <- FALSE
         msg <- c(msg, "order of individuals differs in genotype and phenotype file!")
     }

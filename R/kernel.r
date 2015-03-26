@@ -93,6 +93,7 @@ kernel.lin <- function(data, pathway, parallel=c('none','cpu','gpu'), ...) {
     SNPset <- unique(anno$snp[which(anno$pathway == pathway@id)])
     ## subset genotype data for specified SNP set
     z <- as(data[,as.character(SNPset)],'matrix')
+    if(any(is.na(z))){stop("genotype information contains missing values")}
     
     # K=ZZ' kernel matrix = genetic similarity
     if(parallel=='none'){
@@ -136,7 +137,7 @@ kernel.sia <- function(data, pathway, parallel='none', ...){
         return(nn*(1-(nn-1)*var(e.val)/(nn^2)))
     }
  
-    genes <- anno[anno$pathway==p@id,c("gene","snp")] 
+    genes <- anno[anno$pathway==pathway@id,c("gene","snp")] 
     gene.counts <- table(genes[,1]) #counts number of different SNPs per gene    
     g.10 <- names(gene.counts[gene.counts >= 2]) #genes with >= 2 snps
     effSNPs <- cbind(g.10, unlist( lapply(g.10, EffectiveSNPs, data, genes) ))
@@ -182,6 +183,7 @@ kernel.net <- function(data, pathway) {
     SNPset <- unique(anno$snp[which(anno$pathway==pathway@id)])
     #subset genotype data for specified SNP set
     Z <- as(data[,as.character(SNPset)],'matrix')
+    if(any(is.na(Z))){stop("genotype information contains missing values")}
     
     ANA <- get.ana(anno, SNPset, pathway)
     K = Z %*% ANA %*% t(Z)
