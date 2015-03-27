@@ -209,8 +209,8 @@ get.ana <- function(anno, SNPset, pathway){
     for(g in remov){
         z <- which(colnames(N)==g)
         vec <- rbind( N[z,],seq(1:length(N[z,])) )   #column of gene to be removed
-        vec <- vec[,vec[1,]!=0] #where gene has edges
-        if(length(vec)>0){    #only if edges exist
+        vec <- data.frame( vec[,vec[1,]!=0] ) #where gene has edges
+        if(length(vec[,1])>1){    #only if edges exist
           for(i in 1:(length(vec[1,])-1) ){
               for( j in (i+1):length(vec[1,]) ){ #i ist aktuelle edge
                if(N[vec[2,i],vec[2,j]]!=0){print("Edge will be removed!")}
