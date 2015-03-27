@@ -206,19 +206,20 @@ get.ana <- function(anno, SNPset, pathway){
     
     #rewire: may be use matrix multiplication
     if(length(remov)!=0){
-    for(g in remov){
-        z <- which(colnames(N)==g)
-        vec <- rbind( N[z,],seq(1:length(N[z,])) )   #column of gene to be removed
-        vec <- data.frame( vec[,vec[1,]!=0] ) #where gene has edges
-        if(length(vec[,1])>1){    #only if edges exist
-          for(i in 1:(length(vec[1,])-1) ){
+    for(g in remov){   
+      z <- which(colnames(N)==g)
+      vec <- rbind( N[z,],seq(1:length(N[z,])) )    
+      vec <- data.frame( vec[,vec[1,]!=0]) 
+        #if something must be rewired       
+        if( length(vec[1,])>1 ){      
+          for(i in 1:(length(vec[1,])-1) ){  
+              if((i+1)<=length(vec[1,])){
               for( j in (i+1):length(vec[1,]) ){ #i ist aktuelle edge
                if(N[vec[2,i],vec[2,j]]!=0){print("Edge will be removed!")}
                N[vec[2,i],vec[2,j]] <- N[vec[2,i],vec[2,j]] + vec[1,i]*vec[1,j]
-               N[vec[2,j],vec[2,i]] <- N[vec[2,j],vec[2,i]] + vec[1,i]*vec[1,j]}   
-          }    #additive
-        } 
-     N <- N[-z,-z] } }
+               N[vec[2,j],vec[2,i]] <- N[vec[2,j],vec[2,i]] + vec[1,i]*vec[1,j]}}       
+         } }                                   
+     N <- N[-z,-z]} }
     
     #check, if both directions exist and have same relation (value 2/-2):
     N[N>1]    <-  1
