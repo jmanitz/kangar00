@@ -28,7 +28,7 @@ setValidity('kernel', function(object){
     #          msg <- c(msg, "kernel matrix has to be dimension equal to individuals in GWAS")
     #        }
     # isSymmetric(kernel)
-    if(!isSymmetric( round(object@kernel,5) )){
+    if( !isSymmetric(round(object@kernel),10) ){
         valid <- FALSE
         msg <- c(msg, "kernel matrix has to be symmetric")
     }
@@ -130,6 +130,7 @@ kernel.sia <- function(data, pathway, parallel='none', ...){
     EffectiveSNPs <- function(g, data, genes){
         SNPset <- unique(anno$snp[which(anno$gene==g)])
         z <- as(data[,as.character(SNPset)],'matrix')
+        if(any(is.na(z))){stop("genotype information contains missing values")}
         z <- z[, apply(z,2,sum)/(2*dim(z)[1]) >= 0.001 ] #only snps maf >= 0.1%
         e.val <- eigen(cor(z), symmetric=TRUE, only.values=TRUE)$values
         nn <- length(e.val)
@@ -146,6 +147,7 @@ kernel.sia <- function(data, pathway, parallel='none', ...){
     g.sum <- function(g, data, genes, effSNPs){
         SNPset <- unique(anno$snp[which(anno$gene==g)])
         z <- as(data[,as.character(SNPset)],'matrix')
+        if(any(is.na(z))){stop("genotype information contains missing values")}
         z <- z[, apply(z,2,sum)/(2*dim(z)[1]) >= 0.001 ] #only snps maf >= 0.1%
        
         a <- matrix( rep(rowSums(z*z),dim(z)[1]),nrow=dim(z)[1])
