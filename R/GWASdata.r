@@ -63,7 +63,7 @@ setValidity('GWASdata', function(object){
         msg <- c(msg, "annotation includes more SNPs than genotyped!")
     }
     ## SNPs in annotation file, that are not in genotype file (too big?)
-    if(!all(unique(attr(dat,'anno')$snp) %in% colnames(object@geno))){
+    if(!all(unique(attr(object@geno,'anno')$snp) %in% colnames(object@geno))){
         valid <- FALSE
         msg <- c(msg, "there are SNPs in the annotation file that have no genotypes!")
     }
