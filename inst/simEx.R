@@ -76,4 +76,8 @@ selected(mod)
 extract(mod, "bnames")
 
 ## not working
-# cvr <- cvrisk(mod, grid = 1:1000)
+cvr <- cvrisk(mod, grid = 1:1000, papply = lapply)
+cvr
+save("cvr", file = "cvrisk.Rda")
+mstop(mod) <- mstop(cvr)
+
