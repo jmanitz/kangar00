@@ -4,6 +4,9 @@
 #
 #################################################
 
+## make sure that class "ffdf" is formally defined
+setOldClass('ffdf')
+
 # object constructor
 GWASdata <- setClass('GWASdata', slots=c(pheno='data.frame', geno='ffdf', desc='character'))
 
@@ -48,12 +51,12 @@ setValidity('GWASdata', function(object){
     # }
 
     ## phenotypes for more individuals than have genotypes
-    if(length(unique(object@pheno[,1]))>length(rownames(object@geno))){
+    if(length(unique(object@pheno[,1]))>length(row.names(object@geno))){
         valid <- FALSE
         msg <- c(msg, "phenotypes exist for more individuals than have genotypes!")
     }
     ## check order of individuals in genotypes and phenotypes
-    if(!all.equal(as.character(object@pheno[,1]),rownames(object@geno))){
+    if(!all.equal(as.character(object@pheno[,1]),row.names(object@geno))){
         valid <- FALSE
         msg <- c(msg, "order of individuals differs in genotype and phenotype file!")
     }
