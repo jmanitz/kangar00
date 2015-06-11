@@ -64,7 +64,8 @@ setMethod('summary', signature='kernel',
           })
 
 # plot method
-setGeneric('plot', function(object, ...) standardGeneric('plot'))
+ if (!isGeneric("plot")) 
+	setGeneric('plot', function(object, ...) standardGeneric('plot'))
 
 setMethod('plot', signature='kernel',
           definition = function(object, hclust=FALSE, ...){
