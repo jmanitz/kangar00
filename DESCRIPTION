@@ -11,4 +11,5 @@ Collate:  'pathway.r'
           'GWASdata.r' 
           'kernel.r' 
           'lkmt.r'
-Depends: methods, DatABEL
+Depends: methods, ff
+LazyData: true

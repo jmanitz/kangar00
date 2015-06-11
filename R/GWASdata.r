@@ -5,7 +5,7 @@
 #################################################
 
 # object constructor
-GWASdata <- setClass('GWASdata', slots=c(pheno='data.frame', geno='databel', desc='character'))
+GWASdata <- setClass('GWASdata', slots=c(pheno='data.frame', geno='ffdf', desc='character'))
 
 # pheno .. data.frame specifying ids, phenotypes and covariates e.g. ID, pheno, sex, pack.years
 #          Ids have to be in first column!

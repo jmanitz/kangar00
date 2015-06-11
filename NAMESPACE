@@ -1,4 +1,4 @@
-import("DatABEL")
+import("ff")
 import("methods")
 
 exportPattern("^[[:alpha:]]+")
