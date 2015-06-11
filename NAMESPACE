@@ -1,5 +1,6 @@
 import("DatABEL")
 import("methods")
+importFrom(graphics, "plot") 
 
 exportPattern("^[[:alpha:]]+")
 
