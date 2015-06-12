@@ -1,19 +1,44 @@
 library(kangar00)
 library(mboostDevel)
 
-##### make GWASobjekt for simulated data #####################
 path.sim <- "data/"
-anno    <- read.table(paste(path.sim,"sim.6pw.anno.txt",sep=""), header=T, as.is=T)
-pheno   <- read.table(paste(path.sim,"sim2.pheno.txt",sep=""), header=T, as.is=T)
-dat     <- databel(paste(path.sim,"sim2",sep=""))
-attr(dat, "anno") <- anno
+anno    <- read.table(paste(path.sim,"sim.6pw.anno.txt",sep=""),
+                      header=T, as.is=T)
+pheno   <- read.table(paste(path.sim,"sim2.pheno.txt",sep=""),
+                      header=T, as.is=T)
 
-sim2 <- GWASdata(pheno = pheno, geno = dat,
-                 desc = "simulation2.6pathways")
-save(sim2,file="data/sim2.6pw.GWAS.RData")
+## check for overlapping snps
+tmp <- tapply(anno$snp, anno$pathway, function(x) x)
+p <- list()
+for (i in 2:6)
+    p[[i-1]] <- sapply(tmp[[1]], function(SNP) SNP %in% tmp[[i]])
+names(p) <- names(tmp)[-1]
+lapply(p, sum)
 
+
+##### make GWASobjekt for simulated data #####################
+if (!file.exists("ff.Rda") || !file.exists("data/sim2.6pw.GWAS.RData")) {
+    dat <- databel(paste(path.sim,"sim2",sep=""))
+    data <- dat[, unique(anno$snp)]
+    data_matrix <- as(data, "matrix")
+    ff_dat <- as.ffdf(as.ff(data_matrix, filename = "./small_data.ff"))
+    save("ff_dat", file = "ff.Rda")
+
+    load("ff.Rda", verbose = TRUE)
+    ## TEST THIS
+    # databel2text(dat,file="data_orig.txt")
+    ## --> Leerzeichenseparierte Datei
+    # data_ffdf <- read.table.ffdf(file = "data_orig.txt", header = TRUE, sep = " ")
+
+    attr(ff_dat, "anno") <- anno
+
+    sim2 <- GWASdata(pheno = pheno, geno = ff_dat,
+                     desc = "simulation2.6pathways")
+    save(sim2,file="data/sim2.6pw.GWAS.RData")
+}
 
 ### load prepared data #########################################################
+load("ff.Rda", verbose = TRUE)
 load("data/sim2.6pw.GWAS.RData", verbose = TRUE)
 load("data/pathways/hsa00100.RData", verbose = TRUE)
 hsa00100 <- p
@@ -39,22 +64,17 @@ summary(hsa00780)
 plot(hsa00780)
 
 #### now use linear kernel with mboost
-
-## SNPset <-sim@anno$rsNumber[which(sim@anno$Pathway==pnet@id)]
-## z <- as(as(sim@geno[,as.character(SNPset)],'matrix'), "Matrix")
-
 data <- sim2@pheno
-
 data$pheno <- as.factor(data$pheno)
 data$sex <- as.factor(data$sex)
 data$z <- sim2@geno
 attr(data$z, "anno")
 
-
 ## not positive definite despite make_posdev
 X <- kernel.lin(data$z, pathway = hsa00100)@kernel
 e <- eigen(X)
 any(e$values < 0)
+any(round(e$values, 10) < 0)
 
 ## this is positive definite
 X <- kernel.lin(data$z, pathway = hsa00603)@kernel
@@ -62,7 +82,7 @@ e <- eigen(X)
 any(e$values < 0)
 
 mod <- gamboost(pheno ~ bols(sex) + bols(age) +
-                  # bkernel(z, kernel = kernel.lin, pathway = hsa00100, args = list()) +
+                  bkernel(z, kernel = kernel.lin, pathway = hsa00100, args = list()) +
                   bkernel(z, kernel = kernel.lin, pathway = hsa00603, args = list()) +
                   bkernel(z, kernel = kernel.lin, pathway = hsa00780, args = list()) +
                   bkernel(z, kernel = kernel.lin, pathway = hsa04122, args = list()) +
@@ -76,8 +96,19 @@ selected(mod)
 extract(mod, "bnames")
 
 ## not working
-cvr <- cvrisk(mod, grid = 1:1000, papply = lapply)
+set.seed(1234)
+cvr <- cvrisk(mod, grid = 1:200, papply = mclapply)
 cvr
+plot(cvr)
 save("cvr", file = "cvrisk.Rda")
 mstop(mod) <- mstop(cvr)
 
+names(coef(mod))
+
+
+lkmt(pheno ~ sex + age, kernel = kernel.lin(sim2, pathway = hsa00100), GWASdata = sim2)
+lkmt(pheno ~ sex + age, kernel = kernel.lin(sim2, pathway = hsa00603), GWASdata = sim2)
+lkmt(pheno ~ sex + age, kernel = kernel.lin(sim2, pathway = hsa00780), GWASdata = sim2)
+lkmt(pheno ~ sex + age, kernel = kernel.lin(sim2, pathway = hsa04122), GWASdata = sim2)
+lkmt(pheno ~ sex + age, kernel = kernel.lin(sim2, pathway = hsa00750), GWASdata = sim2)
+lkmt(pheno ~ sex + age, kernel = kernel.lin(sim2, pathway = hsa00730), GWASdata = sim2)
