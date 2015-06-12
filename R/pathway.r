@@ -78,12 +78,12 @@ setMethod('analyze', signature='pathway',
           })
 
 # plot method
-setGeneric('plot', function(object, ...) standardGeneric('plot'))
+#setGeneric('plot', function(object, ...) standardGeneric('plot'))
 
-setMethod('plot', signature='pathway',
-          definition = function(object, ...){
-             print('define igraph plot method!!')
-              invisible(NULL)
-          })
+#setMethod('plot', signature='pathway',
+#          definition = function(object, ...){
+#             print('define igraph plot method!!')
+#              invisible(NULL)
+#          })
 
 

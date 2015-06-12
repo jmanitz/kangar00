@@ -55,7 +55,6 @@ setGeneric('summary', function(object, ...) standardGeneric('summary'))
 setMethod('summary', signature='kernel',
           definition = function(object){
               cat('An object of class ', class(object), ' of type ', object@type,' for pathway ', object@pathway@id, ' with values: \n\n',sep='')
-              print(summary(as.vector(kern@kernel)))
               cat(paste('\nNumber of Individuals:',dim(object@kernel)[1]),'\n')
               #              SNPtab <- GeneSNPsize(kernel@GWASdata)
               #	      SNPno <- SNPtab[which(rownames(SNPtab)==pnet@id),]
@@ -64,18 +63,28 @@ setMethod('summary', signature='kernel',
           })
 
 # plot method
- if (!isGeneric("plot")) 
-	setGeneric('plot', function(object, ...) standardGeneric('plot'))
-
-setMethod('plot', signature='kernel',
-          definition = function(object, hclust=FALSE, ...){
+if (!isGeneric("plot")) setGeneric('plot')
+#setGeneric('plot', function(object, ...) standardGeneric('plot'))
+#
+setMethod('plot', signature(x='kernel',y='missing'),
+          function(x, y=NA, hclust=FALSE, ...){
               if(hclust) {
-                  heatmap(object@kernel, symm=TRUE, col=rev(heat.colors(n=20)), Colv=NA,labRow=NA,labCol=NA, main=list(paste('Genetic Similarity Kernel Matrix for Pathway',object@pathway@id), cex=1.4), ...)
+                  heatmap(x@kernel, symm=TRUE, col=rev(heat.colors(n=20)), Colv=NA,labRow=NA,labCol=NA, main=list(paste('Genetic Similarity Kernel Matrix for Pathway',x@pathway@id), cex=1.4), ...)
               }else{
-                  print(levelplot(object@kernel, col.regions=rev(heat.colors(n=20)),  drop.unused.levels=FALSE, scales=list(alternating=0), main=paste('Genetic Similarity Kernel Matrix for Pathway',object@pathway@id)), ...)
+                  print(levelplot(x@kernel, col.regions=rev(heat.colors(n=20)),  drop.unused.levels=FALSE, scales=list(alternating=0), main=paste('Genetic Similarity Kernel Matrix for Pathway',x@pathway@id)), ...)
               }
               invisible(NULL)
           })
+
+# S3 plot
+#plot.kernel <- function(object, hclust=FALSE, ...){
+#              if(hclust) {
+#                  heatmap(object@kernel, symm=TRUE, col=rev(heat.colors(n=20)), Colv=NA,labRow=NA,labCol=NA, main=list(paste('Genetic Similarity Kernel Matrix for Pathway',object@pathway@id), cex=1.4), ...)
+#              }else{
+#                  print(levelplot(x@kernel, col.regions=rev(heat.colors(n=20)),  drop.unused.levels=FALSE, scales=list(alternating=0), main=paste('Genetic Similarity Kernel Matrix for Pathway',object@pathway@id)), ...)
+#              }
+#              invisible(NULL)
+#          }
 
 
 # create linear kernel # subclass of kernel?

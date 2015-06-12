@@ -1,6 +1,7 @@
+importFrom(graphics, "plot") 
+
 import("ff")
 import("methods")
-importFrom(graphics, "plot") 
 
 exportPattern("^[[:alpha:]]+")
 
