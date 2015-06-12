@@ -92,19 +92,19 @@ kernel.lin <- function(data, pathway, parallel=c('none','cpu','gpu'), ...) {
     parallel <- match.arg(parallel)
     if (inherits(data, "GWASdata")) {
         data <- data@geno }
-    if (!inherits(data, "databel"))
-        stop("not a databel object")
+    if (!inherits(data, "ffdf"))
+        stop("not a ffdf object")
     if (is.null(attr(data, "anno")))
         stop("SNP data needs annotation as ",
              sQuote('attr(, "anno")'))
-    
+
     anno <- attr(data, "anno")
     ## which SNPs are in specified pathway
     SNPset <- unique(anno$snp[which(anno$pathway == pathway@id)])
     ## subset genotype data for specified SNP set
     z <- as(data[,as.character(SNPset)],'matrix')
     if(any(is.na(z))){stop("genotype information contains missing values")}
-    
+
     # K=ZZ' kernel matrix = genetic similarity
     if(parallel=='none'){
         k <- tcrossprod(z)
@@ -116,7 +116,7 @@ kernel.lin <- function(data, pathway, parallel=c('none','cpu','gpu'), ...) {
         z <- magma(z, gpu=TRUE)
         k <- tcrossprod(z)
     }
-    
+
     k <- make_posdev(k)
     #return kernel object
     return(kernel(type='linear', kernel=k, pathway=pathway))
@@ -129,40 +129,40 @@ kernel.sia <- function(data, pathway, parallel='none', ...){
     parallel <- match.arg(parallel,c('none','cpu','gpu'))
     if (inherits(data, "GWASdata")) {
         data <- data@geno }
-    if (!inherits(data, "databel"))
-        stop("not a databel object")
+    if (!inherits(data, "ffdf"))
+        stop("not a ffdf object")
     if (is.null(attr(data, "anno")))
         stop("SNP data needs annotation as ",
              sQuote('attr(, "anno")'))
-           
-    genemat <- function(g, data, anno){    
+
+    genemat <- function(g, data, anno){
         SNPset <- unique(anno[which(anno[,"gene"]==g),"snp"])
         z <- as(data[,as.character(SNPset)],'matrix')
         if(any(is.na(z))){stop("genotype information contains missing values")}
-        z <- z[, apply(z,2,sum)/(2*nrow(z)) >= 0.001 ] #only snps maf >= 0.1%    
-        e.val <- eigen(cor(z), symmetric=TRUE, only.values=TRUE)$values   
+        z <- z[, apply(z,2,sum)/(2*nrow(z)) >= 0.001 ] #only snps maf >= 0.1%
+        e.val <- eigen(cor(z), symmetric=TRUE, only.values=TRUE)$values
         nn    <- length(e.val)
         a <- matrix( rep(rowSums(z*z),nrow(z)),nrow=nrow(z))
         distances <- a -2*tcrossprod(z) + t(a)
-        distances <- round(distances, digits=3)     
-     return( list(distances, (nn*(1-(nn-1)*var(e.val)/(nn^2))), ncol(z)) ) } 
-                  #matrix,         eff.length.gene,           length.gene 
-                  
+        distances <- round(distances, digits=3)
+     return( list(distances, (nn*(1-(nn-1)*var(e.val)/(nn^2))), ncol(z)) ) }
+                  #matrix,         eff.length.gene,           length.gene
+
     genemat2 <- function(l, max.eff){
-        delta <- sqrt(l[[2]]/max.eff) #delta <- sqrt(eff.length.gene/max.eff)    
+        delta <- sqrt(l[[2]]/max.eff) #delta <- sqrt(eff.length.gene/max.eff)
         roh   <- (mean(c(l[[1]])))^(-delta)*(l[[2]]/l[[3]])^(-delta)
     return(-roh*(l[[1]]/l[[3]])^(delta)) }
 
     anno <- attr(data, "anno")
-    anno <- anno[anno[,"pathway"]==pathway@id,c("gene","snp")]#anno subset for pathway 
+    anno <- anno[anno[,"pathway"]==pathway@id,c("gene","snp")]#anno subset for pathway
     gene.counts <- table(anno[,"gene"]) #counts number of different SNPs per gene
-    g.10 <- names(gene.counts[gene.counts >= 2]) #genes with >= 2 snps       
-    
-    #[[1]]:genematrix, [[2]]:eff.length.gene, [[3]]:length.gene       
-    liste <- lapply(g.10, genemat, data, anno)     
+    g.10 <- names(gene.counts[gene.counts >= 2]) #genes with >= 2 snps
+
+    #[[1]]:genematrix, [[2]]:eff.length.gene, [[3]]:length.gene
+    liste <- lapply(g.10, genemat, data, anno)
     get2    <- function(l){ return(l[[2]]) }
-    max.eff <- max( unlist( lapply(liste, get2) ) ) 
-   
+    max.eff <- max( unlist( lapply(liste, get2) ) )
+
     kerneltimes <- matrix( rep(0,(nrow(data))^2), nrow=nrow(data))
     kerneltimes <- Reduce('+', lapply(liste,genemat2,max.eff))
     k <- exp( sqrt(1/(length(unique(anno[,"gene"])))) * kerneltimes )
@@ -173,23 +173,23 @@ kernel.sia <- function(data, pathway, parallel='none', ...){
 
 
 # network-based kernel
-kernel.net <- function(data, pathway) {   
+kernel.net <- function(data, pathway) {
     if (inherits(data, "GWASdata")) {
         data <- data@geno }
-    if (!inherits(data, "databel"))
-        stop("not a databel object")
+    if (!inherits(data, "ffdf"))
+        stop("not a ffdf object")
     if (is.null(attr(data, "anno")))
         stop("SNP data needs annotation as ",
              sQuote('attr(, "anno")'))
-    
+
     anno <- attr(data, "anno")
-    
+
     #genotype matrix Z, which SNPs are in specified pathway
     SNPset <- unique(anno$snp[which(anno$pathway==pathway@id)])
     #subset genotype data for specified SNP set
     Z <- as(data[,as.character(SNPset)],'matrix')
     if(any(is.na(Z))){stop("genotype information contains missing values")}
-    
+
     ANA <- get.ana(anno, SNPset, pathway)
     K = Z %*% ANA %*% t(Z)
     #return kernel object
@@ -198,7 +198,7 @@ kernel.net <- function(data, pathway) {
 
 #function to produce middle part of net kernel:
 get.ana <- function(anno, SNPset, pathway){
-    
+
     N <- as.matrix(pathway@adj)
     N[N!=0] <- pathway@sign
     if(any(is.na(N))){stop("network information contains missing values")}
@@ -206,45 +206,45 @@ get.ana <- function(anno, SNPset, pathway){
     all.genes  <- colnames(N)
     anno.genes <- unique(anno$gene[which(anno$pathway==pathway@id)])
     remov <- all.genes[which(all.genes %in% anno.genes==FALSE)]
-    
+
     #rewire: may be use matrix multiplication
     if(length(remov)!=0){
-    for(g in remov){   
+    for(g in remov){
       z <- which(colnames(N)==g)
-      vec <- rbind( N[z,],seq(1:length(N[z,])) )    
-      vec <- data.frame( vec[,vec[1,]!=0]) 
-        #if something must be rewired       
-        if( length(vec[1,])>1 ){      
-          for(i in 1:(length(vec[1,])-1) ){  
+      vec <- rbind( N[z,],seq(1:length(N[z,])) )
+      vec <- data.frame( vec[,vec[1,]!=0])
+        #if something must be rewired
+        if( length(vec[1,])>1 ){
+          for(i in 1:(length(vec[1,])-1) ){
               if((i+1)<=length(vec[1,])){
               for( j in (i+1):length(vec[1,]) ){ #i ist aktuelle edge
                if(N[vec[2,i],vec[2,j]]!=0){print("Edge will be removed!")}
                N[vec[2,i],vec[2,j]] <- N[vec[2,i],vec[2,j]] + vec[1,i]*vec[1,j]
-               N[vec[2,j],vec[2,i]] <- N[vec[2,j],vec[2,i]] + vec[1,i]*vec[1,j]}}       
-         } }                                   
+               N[vec[2,j],vec[2,i]] <- N[vec[2,j],vec[2,i]] + vec[1,i]*vec[1,j]}}
+         } }
      N <- N[-z,-z]
      N[N>1]    <-  1
-     N[N<(-1)] <- -1  
+     N[N<(-1)] <- -1
      } }
-     
+
     #check, if both directions exist and have same relation (value 2/-2):
     N[N>1]    <-  1
-    N[N<(-1)] <- -1 
+    N[N<(-1)] <- -1
     #include main effects
-    diag(N) <- 1   
+    diag(N) <- 1
     #ensure positive definiteness by network weighting
     N <- make_posdev(N)
-    
+
     #A: SNP to gene mapping
     A.table <- t(table(anno[which(anno$pathway==pathway@id),c("gene","snp")]))
-    A.table <- as(A.table, 'matrix') 
+    A.table <- as(A.table, 'matrix')
     A <- A.table[SNPset,rownames(N)]    #A is colnames(Z) x rownames(N)
-     
+
     #A*: size-adjustement for no of SNPs in each gene
     #A.star <- A
     #for(i in 1:length(A[1,])){A.star[,i] <- A[,i]/sum(A[,i])}
     A.star <- A/colSums(A)
-   
+
     return(A.star %*% N %*% t(A.star))
 }
 
@@ -254,6 +254,8 @@ make_posdev <- function(N) {
     if (lambda < 0) {
         rho <- 1/(1-lambda)
         N <- rho * N + (1-rho) * diag(dim(N)[1])
+        ## now check if it is really positive definite by recursively calling
+        N <- make_posdev(N)
     }
     return(N)
 }
