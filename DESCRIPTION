@@ -11,5 +11,5 @@ Collate:  'pathway.r'
           'GWASdata.r' 
           'kernel.r' 
           'lkmt.r'
-Depends: methods, ff
+Depends: methods, ff, igraph
 LazyData: true

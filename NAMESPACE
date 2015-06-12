@@ -2,6 +2,7 @@ importFrom(graphics, "plot")
 
 import("ff")
 import("methods")
+import("igraph")
 
 exportPattern("^[[:alpha:]]+")
 
