@@ -1,9 +1,9 @@
 Package: kangar00
 Type: Package
-Title: What the package does (short line)
+Title: Kernel Approaches for Nonlinear Genetic Association Regression
 Version: 0.5
 Date: 2015-02-04
-Author: Juliane Manitz, Stefanie Friedrichs, Patricia Burger, Benjamin Hofner
+Author: Juliane Manitz [aut], Stefanie Friedrichs [aut], Patricia Burger [aut], Benjamin Hofner [aut], Ngoc Thuy Ha [aut], Saskia Freytag [ctb], Martin Schlather [ctb], Heike Bickeböller [aut]
 Maintainer: Who to complain to <yourfault@somewhere.net>
 Description: More about what it does (maybe more than one line)
 License: GPL-2
@@ -11,5 +11,6 @@ Collate:  'pathway.r'
           'GWASdata.r' 
           'kernel.r' 
           'lkmt.r'
-Depends: methods, ff, igraph
+Depends: R (>= 3.1.0)
+Imports: methods, ff, igraph
 LazyData: true
