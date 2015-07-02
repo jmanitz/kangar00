@@ -3,6 +3,9 @@ importFrom(graphics, "plot")
 import("ff")
 import("methods")
 import("igraph")
+import("biomaRt")
+import("KEGGgraph")
+import("sqldf")
 
 exportPattern("^[[:alpha:]]+")
 

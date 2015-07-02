@@ -12,10 +12,10 @@ score.test(kernels, nullmodel, pd.check = TRUE, kernel.out = FALSE)
 
 \arguments{
   \item{kernels}{
-  List of kernels-matrices, or a kernel-matrix
+  kernel-matrix for the pathway to be tested. 
 }
   \item{nullmodel}{
-  A GLM-object.
+  A GLM-object stating the nullmodel without genetic influence.
 }
   \item{pd.check}{
   Boolean, whether to check for positive definite or not.

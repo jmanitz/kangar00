@@ -4,33 +4,30 @@
 Linear Kernel
 }
 \description{
-Creates linear kernel. 
+Creates the linear kernel to be evaluated in the logistic kernel machine test. 
 }
 \usage{
-kernel.lin(data, pathway, parallel = c("none", "cpu", "gpu"), ...)
+kernel.lin(data, pathway, parallel = c("none", "cpu", "gpu"))
 }
-%- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{data}{
-  Object of the class \code{GWASdata}.
+  Object of the class \code{GWASdata} containing the genotypes of the individuals for which a kernel will be calculated.  
 }
   \item{pathway}{
-  Object of the class \code{pathway}.
+  Object of the class \code{pathway}containing the genotypes of the individuals for which a kernel will be calculated.
 }
   \item{parallel}{
-  Use \code{"none"}, \code{"cpu"} or \code{"gpu"}. 
+  Argument specifying whether to calculate kernels on several CPUs in parallel (\code{"cpu"}) or on ond CPU (\code{"none"}) or on a GPU (\code{"gpu"}). 
 }
-  \item{...}{
-  ???
-  }
 }
-
 \value{
-Returns object of class kernel. 
+Returns object of class kernel, including the similaritymatrix of the corresponding pathway for the considered individuals.  
 }
-
+\references{
+Wu MC, Kraft P, Epstein MP, Taylor DM, Chanock SJ, Hunter DJ, Lin X: Powerful SNP-Set Analysis for Case-Control Genome-Wide Association Studies. Am J Hum Genet 2010, 86:929-42
+}
 \author{
-Stefanie Friedrichs with contributions by Saskia Freytag and Ngoc-Thuy Ha
+Juliane Manitz, Stefanie Friedrichs, Patricia Burger, Benjamin Hofner with contributions by Saskia Freytag and Ngoc-Thuy Ha.
 }
 
 \seealso{

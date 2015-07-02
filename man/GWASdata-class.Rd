@@ -12,8 +12,7 @@
 This class creats an object with slots \code{pheno}, \code{geno} and \code{desc}. 
 }
 \section{Objects from the Class}{
-Objects can be created by calls of the form \code{GWASdata(...)}.
-%%  ~~ describe objects here ~~ 
+Objects can be created by calls of the form \code{GWASdata(pheno, geno, desc)}.
 }
 \section{Slots}{
   \describe{
@@ -30,21 +29,25 @@ Objects can be created by calls of the form \code{GWASdata(...)}.
 	 }
 }
 
-
 \seealso{
 \code{\link{GWASdata}}
-%%  ~~objects to See Also as \code{\link{~~fun~~}}, ~~~
-%%  ~~or \code{\linkS4class{CLASSNAME}} for links to other classes ~~~
 }
 \examples{
 showClass("GWASdata")
 }
 \keyword{classes}
 \usage{
-GWASdata(...)
+GWASdata(pheno, geno, desc) {
 }
 \arguments{
-  \item{\dots}{
-%%     ~~Describe \code{\dots} here~~
+  \item{snps}{
+  data.frame specifying ids, phenotypes and covariates e.g. ID, pheno, sex, pack.years.
+}
+ \item{geno}{
+  genotype information in ffdf format. Needs an attribute data frame 'anno' including the columns 'pathway' (pathway id in hsa number as used in the KEGG database), 'gene' (gene name), 'chr' (number of chromosome), 'snp' (rs identifier of genetic marker), 'position' (the markers position (basepairs)).     
+}
+  \item{desc}{
+  character giving GWAS description and information.
+}
 }
 }

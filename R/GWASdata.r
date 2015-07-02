@@ -106,11 +106,7 @@ setMethod('GeneSNPsize', signature='GWASdata',
 # counts number of Genes/SPNs in each pathway
           definition <- function(object){
               anno <- attr(object@geno, 'anno')    #Annotation file
-#              anno <- anno[!duplicated(anno[,1:4]),]
-#              nrsnps <- table(anno[,1])
               nrsnps <- table(unique(anno[,c('pathway','gene','snp')])$pathway)
-#              anno <- anno[!duplicated(anno[,1:2]),]
-#              nrgenes <- table(anno[,1])
               nrgenes <- table(unique(anno[,c('pathway','gene')])$pathway)
               tab <- cbind(nrgenes,nrsnps)
 	      colnames(tab) <- c('genes','SNPs')

@@ -5,7 +5,6 @@
 #################################################
 
 # object constructor
-# !! integrate update function from make.BioPax.r !!
 kernel <- setClass('kernel',
                    slots=c(type='character', kernel='matrix', pathway='pathway'))
 

@@ -7,7 +7,7 @@ getPathway
 Extracts the genes belonging to the pathway specified with "hsa" from the KEGG database and lits them with their start and end positions. Gene positions are extracted from the Ensemble database, which is accessed using the package BiomaRt.
 }
 \usage{
-getPathway(hsa, ...) {
+getPathway(hsa, ...)
 }
 
 \arguments{

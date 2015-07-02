@@ -5,11 +5,10 @@
 #################################################
 
 # object constructor 
-#!! define lkmt object !!
 lkmt <- setClass('lkmt',
                   slots=c(formula='formula', kernel='kernel', GWASdata='GWASdata',statistic='vector',df='vector',p.value='vector'))
 
-# type ... lin, adj, or net kernel
+# formula ... regression nullmodel for score test
 # kernel .. kernel matrix of dimension equal to individuals
 # GWASdata .. GWASdata object
 # pathway .. pathway information
@@ -60,7 +59,6 @@ setMethod('summary', signature='lkmt',
 ###                ( Dan Schaid )                        ###             
 ############################################################
 
-#require(Matrix)
 
 score.test <- function(
                        kernels,        # list of kernels-matrices, or a kernel-matrix
@@ -88,7 +86,7 @@ score.test <- function(
                 
         nas <- nullmodel$na.action
         
-                        
+                       
         pathwaynames <- names(kernels)
         Y <- nullmodel$y
         X <- nullmodel$x
@@ -107,18 +105,7 @@ score.test <- function(
                 if(!is.null(nas)){
                         K <- K[-nas,-nas]
                 }
-                
-                ### check, whether K is positive definit:
-                #try1 <- try(chol(K))
-                #if(is(try1) == "try-error"){
-                #        if(pd.check==T){
-                #        eigval <- eigen(K)$values
-                #        if(min(eigval,na.rm=T) < 0){
-                #                warning(paste("The Kernel of pathway", k, "may be not semi-positive definit! Minimal eigenvalue: ", min(eigval,na.rm=T)))
-                #        }
-                #    }
-                #} 
-                           
+                     
                       
                 TT <- 1/2*t(Y-mui)%*%K%*%(Y-mui)
                 PK <- P%*%K

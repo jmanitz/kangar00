@@ -2,29 +2,25 @@
 \alias{lkmt}
 
 \title{
-Logistic kernel maschine test functions
+Logistic kernel maschine test functions to evaluate kernel similarity matrices in a variance component test. 
 }
 \description{
-Not yet. 
+
 }
 \usage{
 lkmt(formula, kernel, GWASdata, ...)
 }
 \arguments{
   \item{formula}{
-%%     ~~Describe \code{formula} here~~
+a formular giving the regression nullmodel for the test. Notation is similiar to lm() or glm() functions. 
 }
   \item{kernel}{
-%%     ~~Describe \code{kernel} here~~
+kernel square matrix of dimension equal to the number individuals
 }
   \item{GWASdata}{
-  Object of the class \code{GWASdata}.
-}
-  \item{\dots}{
-%%     ~~Describe \code{\dots} here~~
+  Object of the class \code{GWASdata} containing the genotype and annotation files.
 }
 }
-
 
 \author{
 Juliane Manitz, Stefanie Friedrichs, Patricia Burger, Benjamin Hofner

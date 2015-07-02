@@ -7,7 +7,7 @@
 
 \title{Class \code{"lkmt"}}
 \description{
-Not yet. 
+Class for the logistic kernel maschine test to evaluate kernel similarity matrices in a variance component test. 
 }
 \section{Objects from the Class}{
 Objects can be created by calls of the form \code{new("lkmt", ...)}.

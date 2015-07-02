@@ -8,9 +8,15 @@ Methods for function \code{GeneSNPsize}
 }
 \section{Methods}{
 \describe{
-Calculates the GeneSNPsize. 
-\item{\code{signature(object = "GWASdata")}}{
-%%  ~~describe this method here~~
+Function that counts the number of genes and SNPs in each pathway. 
 }
-}}
+\usage{
+GeneSNPsize(object) {
+}
+\arguments{
+  \item{object}{
+  object of class GWASdata, including the annotation file on which gene and SNP numbers will be counted.
+}
+}
+}
 \keyword{methods}
