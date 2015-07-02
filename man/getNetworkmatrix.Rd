@@ -8,8 +8,7 @@ Calculates the networkmatrix for a pathway specified with the "hsa" argument, us
 
 }
 \usage{
-getNetworkmatrix(hsa, directed,  ...){
-{
+getNetworkmatrix(hsa, directed,  ...)
 }
 
 \arguments{

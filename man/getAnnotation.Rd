@@ -8,7 +8,7 @@ Annotates a snp file specifieng marker positions to a list of genes contained in
 
 }
 \usage{
-getAnnotation(snps, pathwayanno, ...) {
+getAnnotation(snps, pathwayanno, ...)
 }
 
 \arguments{
