@@ -37,7 +37,7 @@ showClass("GWASdata")
 }
 \keyword{classes}
 \usage{
-GWASdata(pheno, geno, desc) {
+GWASdata(pheno, geno, desc) 
 }
 \arguments{
   \item{snps}{

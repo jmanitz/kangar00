@@ -11,7 +11,7 @@ Methods for function \code{GeneSNPsize}
 Function that counts the number of genes and SNPs in each pathway. 
 }
 \usage{
-GeneSNPsize(object) {
+GeneSNPsize(object) 
 }
 \arguments{
   \item{object}{
