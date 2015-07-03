@@ -113,3 +113,57 @@ setMethod('GeneSNPsize', signature='GWASdata',
               return(tab)
           })
 
+## Update/get snp position
+snp_info <- function(snps, ...) {
+## snp_info: vector of SNP rsnumbers for which positions will be extracted 
+  #if (!inherits(snps, "vector"))
+  #    stop("SNPs object is not a vector")  ?
+
+  #set database; Homo sapiens Short Variation (SNPs and indels):
+  snp <- useMart("snp", dataset="hsapiens_snp")
+  #SNPs not found are not listed
+  snp_info <- getBM(attributes=c("chr_name","chrom_start","refsnp_id"),
+              filters=c("snp_filter"),values=snps, mart=snp)
+  colnames(snp_info) <- c("chr","position","rsnumber")          
+  return(snp_info) #data frame with chromosome, position and rsnumber
+}
+
+# create annotation for GWASdata object
+get_anno <- function(snp_info, pathway_info, ...){
+## snp_info : data frame with SNP information columns called "chr", 
+## "position" and "rsnumber" are assumed
+## pathway_info: dataframe, pathway-gene information file from getPathway
+  if (!inherits(snp_info, "data.frame"))
+      stop("SNP object is not a data frame")
+  if (!inherits(pathway_info, "data.frame"))
+      stop("pathway gene information object is not a data frame")
+  if ( !(columns(snp_info)%in% c("chr", "position", "rsnumber")) )
+      stop("SNP data frame needs columns for chromosome, positon and rsnumber")
+  if ( !(columns(pathway_info)%in% c("pathway","gene_start",
+                                    "gene_end","chr","gene")) )
+      stop("pathway information data frame needs columns for pathway, 
+            gene_start, gene_end, chr and gene")      
+  pathwayanno$Chr <- as.factor(pathway_info$chr)
+  snp_info$chr <- as.factor(snp_info$chr)
+  pathway_info <- split(pathway_info, pathway_info$chr)
+  snp_info <- split(snp_info, snp_info$chr)
+
+  list_out <- list()
+  for(i in 1:length(names(pathway_info))){
+    x <- pathway_info[[i]]
+    y <- try(snp_info[[which(names(snp_info)==names(pathway_info)[i])]], silent=T)
+    if(is.null(dim(y))) next
+    list_out[[i]] <- sqldf("select x.pathway, x.gene,
+                                   y.chr ,y.rsnumber, y.position
+                                   from x x, y y
+                                   where x.gene_start>=y.position AND
+                                   x.gene_end<=y.position")
+    remove(x,y)
+  }
+  anno <- lapply(list_out,"names<-",
+          value=c("pathway", "gene", "chr","snp", "position"))
+  anno <- do.call("rbind", lapply(anno, data.frame, stringsAsFactors = FALSE))
+  return(anno)
+}
+
+

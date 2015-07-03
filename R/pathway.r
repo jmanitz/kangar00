@@ -4,7 +4,6 @@
 #
 #################################################
 
-
 # object constructor 
 pathway <- setClass('pathway',
                     slots=c(id='character', adj='matrix', sign='vector'))
@@ -41,11 +40,11 @@ setValidity('pathway', function(object){
 })
 
 # convert pathway to igraph object
-pathway2igraph <- function(object){
+pathway2igraph <- function(pathway){
 
     # define adjacency matrix
-    net <- object@adj
-    net[net!=0] <- object@sign
+    net <- pathway@adj
+    net[net!=0] <- pathway@sign
 
     # define igraph object
     g <- graph.adjacency(net, mode='undirected', weighted=TRUE, diag=FALSE)
@@ -183,9 +182,9 @@ invisible(NULL)
 })
 
 # function randomly selecting effect genes in pathway
-setGeneric('sampleGenes', function(object, ...) standardGeneric('sampleGenes'))
+setGeneric('sample_genes', function(object, ...) standardGeneric('sample_genes'))
 
-setMethod('sampleGenes', signature='pathway',
+setMethod('sample_genes', signature='pathway',
           definition = function(object, no=3){
             g <- pathway2igraph(object)
 
@@ -200,15 +199,16 @@ samp <- c(as.numeric(sel1),sel2)
           })
 
 
-#------- update functions for pathways ------------
+#------- functions for updating pathways ------------
 
-## function to get List of genes in pathways with start and end points
-getPathway <- function(hsa,  ...){
-## hsa: pathway identifier as in KEGG database, character
+# function to get information file for a pathway (= a list of all genes in the 
+# pathway with start and end points
+pathway_info <- function(id,  ...){
+## id: character, pathway identifier, i.e. hsa00123 as in KEGG database
 
     #get genes from kegg
     input <- scan(url(paste("http://togows.dbcls.jp/entry/pathway/"
-    ,hsa,"/genes",sep="")), what="character")
+                  ,id,"/genes",sep="")), what="character")
     #get gene names only
     g <- lapply(input, function(x) if(substr(x,nchar(x),nchar(x))==";")
                 {substr(x,1,nchar(x)-1)})
@@ -217,109 +217,53 @@ getPathway <- function(hsa,  ...){
     #extract gene infos about pathway's genes from Ensembl
     ensembl <- useMart("ensembl", dataset="hsapiens_gene_ensembl")
     info <- getBM(attributes=c("start_position","end_position",
-    "chromosome_name","hgnc_symbol"), filters=c("hgnc_symbol"),
-    values=g, mart=ensembl)
+            "chromosome_name","hgnc_symbol"), filters=c("hgnc_symbol"),
+            values=g, mart=ensembl)
     info$chromosome_name <- as.numeric(as.character(info$chromosome_name))
     info <- na.omit(info)
-    info <- cbind(rep(paste(hsa,sep=""),length(info[,1])), info)
-    colnames(info) <- c("pathway","GeneLowPoint","GeneHighPoint","Chr",
-                        "Gene")
-    return(info)
+    pathway_info <- cbind(rep(paste(id,sep=""),length(info[,1])), info)
+    colnames(pathway_info) <- c("pathway","gene_start","gene_end","chr",
+                              "gene")
+    return(pathway_info)
 }
 
 
-## function to update snp build if necessary
-SNPupdate <- function(map, column , ...) {
-## map : data frame with SNPs (map file)
-## column: column in data frame in which rsnumbers are specified
-  if (!inherits(map, "data.frame"))
-      stop("SNP file is not a data frame")
-  if (!inherits(column, "numeric"))
-      stop("column specification needs to be numeric")
-  if (column > dim(map)[2])
-      stop("column specification exceeds column number of data frame")
 
-  #set database; Homo sapiens Short Variation (SNPs and indels):
-  snp <- useMart("snp", dataset="hsapiens_snp")
-  #SNPs not found are not listed
-  output <- getBM(attributes=c("chr_name","chrom_start","refsnp_id"),
-            filters=c("snp_filter"),values=map[,column], mart=snp)
-  colnames(output) <- c("chr","position","rsnumber")          
-  return(output) #data frame with chromosome, position and rsnumber
-}
-
-
-## function to annotate snps to pathways
-getAnnotation <- function(snps, pathwayanno, ...){
-## snps: data frame with SNPs (map file), 
-##       columns called "chr", "position" and "rsnumber" are assumed
-## pathwayanno: dataframe, pathway-gene information file from getPathway
-  if (!inherits(snps, "data.frame"))
-      stop("SNP file is not a data frame")
-  if (!inherits(pathwayanno, "data.frame"))
-      stop("pathway gene information file is not a data frame")
-  if ( !(columns(snps)%in% c("chr", "position", "rsnumber")) )
-      stop("SNP file needs columns for chromosome, positon and rsnumber")
-  if ( !(columns(pathwayanno)%in% c("pathway","GeneLowPoint",
-                                    "GeneHighPoint","Chr","Gene")) )
-      stop("SNP file needs columns for pathway,GeneLowPoint,
-                                    GeneHighPoint, Chr and Gene")      
-  pathwayanno$Chr <- as.factor(pathwayanno$Chr)
-  snps$chr <- as.factor(snps$chr)
-  pathwayanno <- split(pathwayanno, pathwayanno$Chr)
-  snps <- split(snps, snps$chr)
-
-  list_out <- list()
-  for(i in 1:length(names(pathwayanno))){
-    x <- pathwayanno[[i]]
-    y <- try(snps[[which(names(snps)==names(pathwayanno)[i])]], silent=T)
-    if(is.null(dim(y))) next
-    list_out[[i]] <- sqldf("select x.pathway, x.Gene,
-                                   y.chr ,y.rsnumber, y.position
-                                   from x x, y y
-                                   where x.GeneHighPoint>=y.position AND
-                                   x.GeneLowPoint<=y.position")
-    remove(x,y)
-  }
-  out <- lapply(list_out,"names<-",
-         value=c("pathway", "gene", "chr","snp", "position"))
-  out <- do.call("rbind", lapply(out, data.frame, stringsAsFactors = FALSE))
-  return(out)
-}
-
-
-## function to calculate the networkmatrix
-
-#2 functions used in 'getNetworkmatrix'
-set.one <- function(M){
+#2 helper functions used in 'get_network_matrix'
+set_one <- function(M){
   if(length(M[M>1])>0){ 
      print(paste("Edges value > 1 set to 1!",sep=""))
      M[M>1] <- 1 }
   if(length(M[M < (-1)])>0){
      print(paste(M, ": Edges value < -1 set to -1!",sep=""))
      M[M < (-1)] <- -1 }
-return(M)}
+  return(M)
+}
+
 #translate numbers to gene names:
-set.names <- function(N,nodes,liste){
- namen <- substr(nodes,5,nchar(nodes)) 
- for(i in 1:length(namen)){ namen[i] <- liste[liste[,1]==namen[i],2] }
- colnames(N) <- namen
- rownames(N) <- namen
-return(N)}
-          
-getNetworkmatrix <- function(hsa, directed,  ...){
+set_names <- function(N,nodes,liste){
+  name <- substr(nodes,5,nchar(nodes)) 
+  for(i in 1:length(name)){ 
+    name[i] <- liste[liste[,1]==name[i],2] 
+  }
+  colnames(N) <- rownames(N) <- name
+  return(N)
+}
+   
+# function to calculate the network matrix          
+get_network_matrix <- function(id, directed,  ...){
 ## hsa: pathway identifier as in KEGG database, character
 ## directed: Should networkmatrix be directed? TRUE/FALSE
 
     #download KGML from KEGG:
-    retrieveKGML(substr(hsa,4,nchar(hsa)), organism="hsa",
-                 destfile=paste(hsa,".xml",sep=""), method="internal")
-    filename <- paste(hsa,".xml",sep="")
+    retrieveKGML(substr(id,4,nchar(id)), organism="hsa",
+                 destfile=paste(id,".xml",sep=""), method="internal")
+    filename <- paste(id,".xml",sep="")
   
     #get genes names and their numbers in kegg
-    info <- scan(url(paste("http://togows.dbcls.jp/entry/pathway/"
-            ,hsa,"/genes",sep="")), what="character")   
-     pos <- which(substr(info,nchar(info),nchar(info))==";")
+    info <- scan(url(paste("http://togows.dbcls.jp/entry/pathway/",
+                           id,"/genes",sep="")), what="character")   
+    pos <- which(substr(info,nchar(info),nchar(info))==";")
     #if ";" entry is pos and pos-2 has "]" as last character -> ok. 
     #else: search until pos-j ends with "]".
     liste     <- matrix(rep(0,length(pos)*2),ncol=2, byrow=TRUE)
@@ -344,12 +288,12 @@ getNetworkmatrix <- function(hsa, directed,  ...){
     edgelist <- parseKGML2DataFrame(filename)
     edgelist <- edgelist[!is.na(edgelist[,3]),] #delete NA-types            
 
- # --- Skip pathway, if no edges or wrong number of genes ---
+  # --- Skip pathway, if no edges or wrong number of genes ---
     if(length(edgelist)==0){
-       print(paste("KGML-file for ",hsa," has no edges!",sep=""))
+       print(paste("KGML-file for ",id," has no edges!",sep=""))
        next}   
     if(length(nodes)!=length(liste[,2])){
-       paste(paste("Wrong number of genes in ",hsa,"!",sep=""))
+       paste(paste("Wrong number of genes in ",id,"!",sep=""))
        next}               
     #set up empty matrix:
     N <- matrix(rep(0, (length(nodes)^2)),nrow=length(nodes))
@@ -359,15 +303,15 @@ getNetworkmatrix <- function(hsa, directed,  ...){
     verb.i <- edgelist[edgelist[,3]=="inhibition",]
     verb.s <- edgelist[edgelist[,3]!="inhibition"&edgelist[,3]!="activation",] 
   
- # --- if activations/inhibitions specified: Signed matrix ---
+  # --- if activations/inhibitions specified: Signed matrix ---
     if( (length(verb.a[,1])+length(verb.i[,1]))>0 ){
-      if(length(verb.s[,1])==0){ print(paste(hsa,": Activation/Inhibition only: 
+      if(length(verb.s[,1])==0){ print(paste(id,": Activation/Inhibition only: 
                                  Signed graph!",sep="")) }
-      if(length(verb.s[,1])>0){ print(paste(hsa," has both: A/I edges and edges 
+      if(length(verb.s[,1])>0){ print(paste(id," has both: A/I edges and edges 
                                 without type!",sep=""))}
-    # -- Directed --- 
-    #           to 
-    # from  (        )
+     # -- Directed --- 
+     #           to 
+     # from  (        )
      if(length(verb.a[,1])>0){ 
         from <- as.character(unique(verb.a[,1]))
         for(i in from){ 
@@ -379,35 +323,39 @@ getNetworkmatrix <- function(hsa, directed,  ...){
               print("Edge will be removed!")} #if i. at same edge as a. was
            N[i,as.character(verb.i[verb.i[,1]==i,2])] <- 
            N[i,as.character(verb.i[verb.i[,1]==i,2])] -1 }   } 
-     N <- set.names(N,nodes,liste)                    
-    # -- Undirected --- 
+     N <- set_names(N,nodes,liste)                    
+     # -- Undirected --- 
      M <- N + t(N) #contradictory edges will be removed
-     M <- set.one(M)    #double edges (2,-2) could be produced
-     M <- set.names(M,nodes,liste)       
+     M <- set_one(M)    #double edges (2,-2) could be produced
+     M <- set_names(M,nodes,liste)       
      }
 
- # --- else, if no edge types specified: Unsigned matrix ---  
+  # --- else, if no edge types specified: Unsigned matrix ---  
     #only use edges without type, if ALL edges are without type
     if(length(verb.s[,1])>0 & (length(verb.a[,1])+length(verb.i[,1]))==0){
        print(paste(hsa,": No edge-types, unsigned graph only!",sep=""))
        
     # -- Directed ---
-     if(length(verb.s[,1])>0){ 
-        from <- as.character(unique(verb.s[,1]))
-        for(i in from){ 
-           N[i,as.character(verb.s[verb.s[,1]==i,2])] <- 1}  }
-     N <- set.names(N,nodes,liste)                           
-    # -- Undirected --- 
+    if(length(verb.s[,1])>0){ 
+       from <- as.character(unique(verb.s[,1]))
+       for(i in from){ 
+         N[i,as.character(verb.s[verb.s[,1]==i,2])] <- 1
+       }  
+     }
+     N <- set_names(N,nodes,liste)                           
+     # -- Undirected --- 
      M <- N + t(N)
      #contradictory edges will be removed
      #double edges (2,-2) can be produced:
-     M <- set.one(M)
-     M <- set.names(M,nodes,liste)      
+     M <- set_one(M)
+     M <- set_names(M,nodes,liste)      
      }
 
-    if(directed==TRUE){return(N)
+    if(directed==TRUE){
+      return(N)
     }else{
-    return(M)}    
+      return(M)
+    }    
 }
           
           
