@@ -13,7 +13,11 @@ exportMethods(
     "GeneSNPsize",
     "plot",
     "show",
-    "summary" 
+    "summary", 
+    "analyze",
+    "get_genes",
+    "sample_genes"
+
 )
 
 exportClasses(
