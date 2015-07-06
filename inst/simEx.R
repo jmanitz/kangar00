@@ -53,15 +53,39 @@ hsa00730 <- p
 load("data/pathways/hsa00780.RData", verbose = TRUE)
 hsa00780 <- p
 
+save(hsa00780, file='data/hsa00780.rda')
+save()
+
 # GWAS data
 sim2
 summary(sim2)
 GeneSNPsize(sim2)
 
 # pathway information
+data(hsa00780)
 hsa00780
 summary(hsa00780)
 plot(hsa00780)
+
+# find a nice/good example
+load("data/list.of.pathway.objects.RData", verbose = TRUE)
+lapply(p.list[1:100], FUN=analyze)
+
+pdf('ptest.pdf')
+lapply(p.list[c(33,64,91,93)],plot) 
+dev.off()
+
+hsa04710 <- p.list[[64]]
+save(hsa04710, file='../data/hsa04710.rda')
+
+# example
+data(hsa04710)
+hsa04710
+summary(hsa04710)
+analyze(hsa04710)
+plot(hsa04710)
+samp <- sample_genes(hsa04710, no = 3)
+plot(hsa04710, highlight.genes = samp)
 
 #### now use linear kernel with mboost
 data <- sim2@pheno
