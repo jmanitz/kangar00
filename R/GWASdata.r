@@ -16,49 +16,46 @@
 #' @seealso ff::ffdf ff::read.table.ff
 setOldClass('ffdf')
 
-# object constructor
+#' An S4 class defining an object to represent a Genome-wide Assocaition Study. 
+#' 
+#' @slot pheno A \code{data.frame} specifying individual IDs, phenotypes and   covariates to be included in the regression model e.g. ID, pheno, sex, pack.years. Note: IDs have to be in the first column!
+# @slot geno An \code{ffdf} data frame including genotype information.
+# @slot anno A \code{data.frame} with mapping SNPs to genes and genes to pathways. Needs to include the columns 'pathway' (pathway ID, e.g. hsa number from KEGG database), 'gene' (gene name (hgnc_symbol)), 'chr' (chromosome), 'snp' (rsnumber) and 'position' (base pair position of SNP).
+# @slot desc A \code{character} giving the GWAS description, e.g. name of study 
+#' @examples
+#' data(pheno)
+#' data(geno)
+#' gwas <- GWASdata(pheno=pheno, geno=geno, desc="some study")
+#' @author Juliane Manitz, Stefanie Friedrichs
+#' @seealso \code{\link{}}
+#' @exportClass GWASdata
 GWASdata <- setClass('GWASdata', slots=c(pheno='data.frame', geno='ffdf', desc='character'))
-
-# pheno .. data.frame specifying ids, phenotypes and covariates e.g. ID, pheno, sex, pack.years
-#          Ids have to be in first column!
-# geno .. genotype information in databel format
-# anno .. annotation file mapping SNP -> genes -> pathways
-#         data.frame with variables:
-#             pathway ... pathway id
-#             gene    ... gene name (which version?)
-#             chr     ... chromosome
-#             snp     ... rsNumber
-#             position... SNP position
-# desc ... character giving GWAS description and information
-
-# validy checks
-setValidity('GWASdata', function(object){
+    ## validy checks
+    setValidity('GWASdata', function(object){
     msg   <- NULL
     valid <- TRUE
-
     ## check annotation file
-    if( is.null( attr(object@geno, "anno") ) ){ #does attribute for databel object exists?
+    if(is.null(attr(object@geno,"anno"))){ 
         valid <- FALSE
-        msg   <- c(msg, "databel object geno needs an additional attribute: data.frame 'anno'")
+        msg   <- c(msg, "ffdf object geno needs an additional attribute: 
+                 data.frame 'anno'")
     }
-    if(!is.data.frame(attr(object@geno,"anno"))){ #is attribute dataframe?
-  	valid <- FALSE
+    if(!is.data.frame(attr(object@geno,"anno"))){ 
+  	    valid <- FALSE
         msg   <- c(msg, "geno attribute anno needs to be a data frame")
     }
     ## check anno data frame variable names
-    anno.names <- c('pathway','gene','chr','snp','position')
-    if(!all(anno.names %in% colnames(attr(object@geno,'anno')))){
+    anno_names <- c('pathway','gene','chr','snp','position')
+    if(!all(anno_names %in% colnames(attr(object@geno,'anno')))){
         valid <- FALSE
-        msg   <- c(msg, paste("anno variable names do not match:",anno.names))
+        msg   <- c(msg, paste("anno variable names do not match:",anno_names))
     }
-
     ## check whether GWASdata@geno has missings
     # <FIXME> Currently not working
     # if(sum(is.na(object@geno))>0){
     #     valid <- FALSE
     #     msg   <- c(msg, "genotypes include missing values and need to be imputed!")
     # }
-
     ## phenotypes for more individuals than have genotypes
     if(length(unique(object@pheno[,1]))>length(row.names(object@geno))){
         valid <- FALSE
@@ -82,7 +79,18 @@ setValidity('GWASdata', function(object){
     if(valid) TRUE else msg
 })
 
-# show method
+
+#' Shows basic information on \code{GWASdata} object
+#' 
+#' @param gwas \code{GWASdata} object.
+#' @return This function shows the phenotype information and the object description included in a \code{\link{GWASdata}} object.
+#' 
+#' @examples
+#' data(gwas)
+#' show(gwas)
+#'
+#' @author Juliane Manitz
+##' @export
 setMethod('show', signature='GWASdata',
           definition = function(object){
               cat('An object of class ', class(object), ' from ',object@desc,'\n\n',sep='')
@@ -91,9 +99,21 @@ setMethod('show', signature='GWASdata',
               invisible(NULL)
           })
 
-# summary method
+
+#' @exportMethod summary
 setGeneric('summary', function(object, ...) standardGeneric('summary'))
 
+#' Summarizes the content of a \code{GWASdata} object
+#' 
+#' @param gwas \code{GWASdata} object.
+#' @return This function gives an overview about the information included in a \code{\link{GWASdata}} object. Summary statistics for phenotype and genotype data are calculated. 
+#' 
+#' @examples
+#' data(gwas)
+#' summary(gwas)
+#'
+#' @author Juliane Manitz
+##' @export
 setMethod('summary', signature='GWASdata',
           definition = function(object){
               cat('An object of class ', class(object), ' from ',object@desc,'\n\n',sep='')
@@ -107,41 +127,73 @@ setMethod('summary', signature='GWASdata',
               invisible(NULL)
           })
 
-## GeneSNPsize() to be called in summary(GWASdata)
+#' @exportMethod GeneSNPsize
 setGeneric('GeneSNPsize', function(object, ...) standardGeneric('GeneSNPsize'))
 
+#' Counts the number of Genes and SPNs in each pathway
+#' 
+#' @param gwas \code{GWASdata} object.
+#' @return Creates a list of pathway names with numbers of snps and genes in the pathway. 
+#' 
+#' @examples
+#' data(gwas)
+#' GeneSNPsize(gwas)
+#'
+#' @author Juliane Manitz
+##' @export
 setMethod('GeneSNPsize', signature='GWASdata',
-# Create list of pathway names + snp size and genes size
-# counts number of Genes/SPNs in each pathway
           definition <- function(object){
-              anno <- attr(object@geno, 'anno')    #Annotation file
+              anno <- attr(object@geno, 'anno')   
               nrsnps <- table(unique(anno[,c('pathway','gene','snp')])$pathway)
               nrgenes <- table(unique(anno[,c('pathway','gene')])$pathway)
               tab <- cbind(nrgenes,nrsnps)
-	      colnames(tab) <- c('genes','SNPs')
-              return(tab)
+	        colnames(tab) <- c('genes','SNPs')
+          return(tab)
           })
 
-## Update/get snp position
-snp_info <- function(snps, ...) {
-## snp_info: vector of SNP rsnumbers for which positions will be extracted 
-  #if (!inherits(snps, "vector"))
-  #    stop("SNPs object is not a vector")  ?
 
+#'  Get SNP positions
+#'
+#' This function gives for a vector of SNPs the position of each SNP as 
+#' extracted from the Ensemble database. The database is accessed via the 
+#' R-package \code{biomaRt}.
+#'
+#' @param snps A vector of SNP rsnumbers for which positions will be extracted. 
+#' @return A \code{data.frame} including the SNP positions with columns 
+#' chromosome, position and rsnumber. SNPs not found in the Ensemble database 
+#' not be listed in the returned \code{data.frame}, SNPs with multiple positions
+#' will appear several times.  
+#' @examples
+#' snp_info("rs234")
+#'
+#' @author Stefanie Friedrichs
+#' @import biomaRt
+snp_info <- function(snps, ...) {
   #set database; Homo sapiens Short Variation (SNPs and indels):
   snp <- useMart("snp", dataset="hsapiens_snp")
-  #SNPs not found are not listed
   snp_info <- getBM(attributes=c("chr_name","chrom_start","refsnp_id"),
               filters=c("snp_filter"),values=snps, mart=snp)
   colnames(snp_info) <- c("chr","position","rsnumber")          
-  return(snp_info) #data frame with chromosome, position and rsnumber
+  return(snp_info) 
 }
 
-# create annotation for GWASdata object
-get_anno <- function(snp_info, pathway_info, ...){
-## snp_info : data frame with SNP information columns called "chr", 
-## "position" and "rsnumber" are assumed
-## pathway_info: dataframe, pathway-gene information file from getPathway
+#' Create annotation for GWASdata object 
+#'
+#' This function gives for a vector of SNPs the position of each SNP as 
+#' extracted from the Ensemble database. The database is accessed via the 
+#' R-package \code{biomaRt}.
+#'
+#' @param snp_info A \code{data frame} with SNP information as returned by 
+#' \code{\link{snp_info}}. The \code{data frame} has to contain culumns "chr", 
+#' "position" and "rsnumber".
+#' @param pathway_info A \code{data frame} with information on the genes forming 
+#' a pathway. Output from \code{\link{pathway_info}}.
+#' @return A \code{data.frame} mapping SNPs to genes and genes to pathways. Includes
+#' the columns "pathway", "gene", "chr", "snp" and "position".   
+#' @examples
+#'
+#' @author Stefanie Friedrichs, Saskia Freytag, Ngoc-Thuy Ha
+get_anno <- function(snp_info, pathway_info, ...){ 
   if (!inherits(snp_info, "data.frame"))
       stop("SNP object is not a data frame")
   if (!inherits(pathway_info, "data.frame"))

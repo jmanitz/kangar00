@@ -1,4 +1,4 @@
-#################################################
+﻿#################################################
 #
 # pathway object functions
 #
@@ -346,68 +346,20 @@ setMethod('sample_genes', signature='pathway',
           })
 
 
-#------- functions for updating pathways ------------
-
-# function to get information file for a pathway (= a list of all genes in the 
-# pathway with start and end points
-pathway_info <- function(id,  ...){
-## id: character, pathway identifier, i.e. hsa00123 as in KEGG database
-
-    #get genes from kegg
-    input <- scan(url(paste("http://togows.dbcls.jp/entry/pathway/"
-                  ,id,"/genes",sep="")), what="character")
-    #get gene names only
-    g <- lapply(input, function(x) if(substr(x,nchar(x),nchar(x))==";")
-                {substr(x,1,nchar(x)-1)})
-    g[sapply(g, is.null)] <- NULL
-    
-    #extract gene infos about pathway's genes from Ensembl
-    ensembl <- useMart("ensembl", dataset="hsapiens_gene_ensembl")
-    info <- getBM(attributes=c("start_position","end_position",
-            "chromosome_name","hgnc_symbol"), filters=c("hgnc_symbol"),
-            values=g, mart=ensembl)
-    info$chromosome_name <- as.numeric(as.character(info$chromosome_name))
-    info <- na.omit(info)
-    pathway_info <- cbind(rep(paste(id,sep=""),length(info[,1])), info)
-    colnames(pathway_info) <- c("pathway","gene_start","gene_end","chr",
-                              "gene")
-    return(pathway_info)
-}
-
-
-
-#2 helper functions used in 'get_network_matrix'
-set_one <- function(M){
-  if(length(M[M>1])>0){ 
-     print(paste("Edges value > 1 set to 1!",sep=""))
-     M[M>1] <- 1 }
-  if(length(M[M < (-1)])>0){
-     print(paste(M, ": Edges value < -1 set to -1!",sep=""))
-     M[M < (-1)] <- -1 }
-  return(M)
-}
-
-#translate numbers to gene names:
-set_names <- function(N,nodes,liste){
-  name <- substr(nodes,5,nchar(nodes)) 
-  for(i in 1:length(name)){ 
-    name[i] <- liste[liste[,1]==name[i],2] 
-  }
-  colnames(N) <- rownames(N) <- name
-  return(N)
-}
-   
-# function to calculate the network matrix          
-get_network_matrix <- function(id, directed,  ...){
-## hsa: pathway identifier as in KEGG database, character
-## directed: Should networkmatrix be directed? TRUE/FALSE
-
-    #download KGML from KEGG:
-    retrieveKGML(substr(id,4,nchar(id)), organism="hsa",
-                 destfile=paste(id,".xml",sep=""), method="internal")
-    filename <- paste(id,".xml",sep="")
-  
-    #get genes names and their numbers in kegg
+#' Function to get genes names and numbers from kegg
+#'
+#' This function extracts for a particular pathway all included genes and the
+#' numbers they are given within the corresponding KGML pathway file. 
+#'
+#' @param id A \code{character} hsa identifier of the pathway for which gene 
+#' infomation should be extracted as used in KEGG database ('hsa00100').    
+#' @return A \code{data.frame} listing the genes included in the pathway with 
+#' their names as well as numbers used in KEGG database.
+#' @examples
+#' pathway_info("hsa04710")
+#' 
+#' @author Stefanie Friedrichs 
+gene_name_number <- function(id){  
     info <- scan(url(paste("http://togows.dbcls.jp/entry/pathway/",
                            id,"/genes",sep="")), what="character")   
     pos <- which(substr(info,nchar(info),nchar(info))==";")
@@ -427,13 +379,115 @@ get_network_matrix <- function(id, directed,  ...){
        }
     }
     liste[,2] <- substr(liste[,2],1,nchar(liste[,2])-1) #cut ";"
+    return(liste)
+}
 
+
+#'  Get information on genes in a pathway
+#'
+#' This function lists all genes formig a particular pathway. Start and end  
+#' positions of these genes are extracted from the Ensemble database. The 
+#' database is accessed via the R-package \code{biomaRt}.
+#'
+#' @param id A \code{character} identifying the pathway for which gene infomation 
+#' should be extracted. Here KEGG IDs ('hsa00100') are used.  
+#' @return A \code{data.frame} including as many rows as genes appear in the 
+#' pathway. for each gene its name, the start and end point and the chromosome 
+#' it lies on are given.
+#' @examples
+#' pathway_info("hsa04710")
+#'
+#' @author Stefanie Friedrichs
+#' @import biomaRt  
+pathway_info <- function(id,  ...){
+    ##get genes from kegg
+    #input <- scan(url(paste("http://togows.dbcls.jp/entry/pathway/"
+    #              ,id,"/genes",sep="")), what="character")
+    ##get gene names only
+    #g <- lapply(input, function(x) if(substr(x,nchar(x),nchar(x))==";")
+    #            {substr(x,1,nchar(x)-1)})
+    #g[sapply(g, is.null)] <- NULL  
+    g       <- gene_name_number(id)[,1] 
+    ensembl <- useMart("ensembl", dataset="hsapiens_gene_ensembl")
+    info    <- getBM(attributes=c("start_position","end_position",
+               "chromosome_name","hgnc_symbol"), filters=c("hgnc_symbol"),
+               values=g, mart=ensembl)
+    info$chromosome_name   <- as.numeric(as.character(info$chromosome_name))
+    info                   <- na.omit(info)
+    pathway_info           <- cbind(rep(paste(id,sep=""),length(info[,1])),info)
+    colnames(pathway_info) <- c("pathway","gene_start","gene_end","chr","gene")             
+    return(pathway_info)
+}
+
+ 
+#' Helper function to set matrix entries to 0/1/-1 only 
+#'
+#' This function sets all entries in a matrix bigger than 1 to 1 and all entries 
+#' smaller than -1 to -1. It is called by \code{\link{get_network_matrix}}.
+#'
+#' @param M A \code{matrix} representing the networkmatrix. 
+#' @return A \code{matrix} representing the interaction network in the pathway
+#' with entries equal to 1, -1 or 0.
+#'
+#' @author Stefanie Friedrichs
+set_one <- function(M){
+  if(length(M[M>1])>0){ 
+     print(paste("Edges value > 1 set to 1!",sep=""))
+     M[M>1] <- 1 }
+  if(length(M[M < (-1)])>0){
+     print(paste(M, ": Edges value < -1 set to -1!",sep=""))
+     M[M < (-1)] <- -1 }
+  return(M)
+}
+
+#' Helper function to translate gene numbers to names  
+#'
+#' This function exchanges the numbers used for genes in KEGG download KGML files
+#' with gene names in the columnnames and rownames of a networkmatrix. It is 
+#' called by \code{\link{get_network_matrix}}.
+#'
+#' @param N A \code{matrix} representing the networkmatrix. 
+#' @param nodes A \code{vector} of gene numbers to be replaced by names.   
+#' @param my_list A \code{data.frame} listing gene names and numbers. Output from 
+#' \code{gene_name_number}.  
+#' @return A \code{matrix} representing the interaction network in the pathway
+#' with gene names as rownames and columnnames. 
+#'
+#' @author Stefanie Friedrichs
+set_names <- function(N, nodes, my_list){
+    name <- substr(nodes,5,nchar(nodes)) 
+    for(i in 1:length(name)){ 
+      name[i] <- my_list[my_list[,1]==name[i],2] 
+    }
+    colnames(N) <- rownames(N) <- name
+    return(N)
+}
+ 
+#' Function to calculate the network matrix
+#'
+#' This function creates the networkmatrix representing the genge-gene interaction 
+#' structure within a particular pathway.
+#'
+#' @param id A \code{character} identifying the pathway for which gene infomation 
+#' should be extracted. Here KEGG IDs ('hsa00100') are used. 
+#' @param directed A \code{logic} argument, stating whether the networkmatrix 
+#' should be returned directed (\code{TRUE}) or undirected (\code{FALSE}).
+#' @return A \code{matrix} representing the interaction network in the pathway.
+#' @examples
+#' get_network_matrix("hsa04710", TRUE) 
+#'
+#' @author Stefanie Friedrichs
+#' @import KEGGgraph, biomaRt        
+get_network_matrix <- function(id, directed,  ...){
+
+    retrieveKGML(substr(id,4,nchar(id)), organism="hsa",
+                 destfile=paste(id,".xml",sep=""), method="internal")
+    filename  <- paste(id,".xml",sep="")
+    liste     <- gene_name_number(id)
     pathgraph <- parseKGML2Graph(filename, expandGenes=TRUE)
-    nodes <- nodes(pathgraph)  #Vektor mit Nummern der Gene (format: "hsa:226")
-    
-    #get edges via parsing to edgelist:
-    edgelist <- parseKGML2DataFrame(filename)
-    edgelist <- edgelist[!is.na(edgelist[,3]),] #delete NA-types            
+    nodes     <- nodes(pathgraph)  #Vektor mit Nummern der Gene (format: "hsa:226")
+    edgelist  <- parseKGML2DataFrame(filename)
+    edgelist  <- edgelist[!is.na(edgelist[,3]),] #delete NA-types            
 
   # --- Skip pathway, if no edges or wrong number of genes ---
     if(length(edgelist)==0){

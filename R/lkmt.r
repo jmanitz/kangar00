@@ -1,6 +1,6 @@
 #################################################
 #
-# loistic kernel maschine test functions
+# logistic kernel maschine test functions
 #
 #################################################
 
