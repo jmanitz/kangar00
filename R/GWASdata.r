@@ -5,6 +5,15 @@
 #################################################
 
 ## make sure that class "ffdf" is formally defined
+#' "ffdf" class for memory-efficient storage of genotype data frame on disk and fast access
+#'
+#' @name ffdf-class
+#' @aliases ffdf
+#' @family ffdf
+#'
+#' @import ff
+#' @exportClass ffdf
+#' @seealso ff::ffdf ff::read.table.ff
 setOldClass('ffdf')
 
 # object constructor
