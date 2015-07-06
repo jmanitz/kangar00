@@ -6,13 +6,15 @@
 
 #' An S4 class to represent a gene-gene interaction network
 #'
+#' @aliases pathway
+#'
 #' @slot id a character repesenting the pathway id, e.g. hsa00100
 #' @slot adj a matrix respresenting the network adjacency matrix (1 interaction, 0 otherwise)
-#' @slot sign a vector indicating the interaction type for each link (1 activation, -1 inhibition)
+#' @slot sign a numeric vector indicating the interaction type for each link (1 activation, -1 inhibition)
 #' 
 #' @author Juliane Manitz, Stefanie Friedrichs
 #' @seealso \code{\link{}}
-#' @exportClass pathway
+#' @export
 pathway <- setClass('pathway',
                     slots=c(id='character', adj='matrix', sign='vector'))
 
@@ -43,23 +45,86 @@ setValidity('pathway', function(object){
 	if(valid) TRUE else msg
 })
 
-#' @exportMethod pathway2igraph
-setGeneric('pathway2igraph', function(object, ...) standardGeneric('pathway2igraph'))
+#' Methods for objects from S4 class 'pathway'
+#'
+#' @param object pathway object
+#'
+#' @name pathway-method
+#' @docType methods
+#' @rdname pathway-methods 
+#'
+#' @author Juliane Manitz
+#' @seealso \code{\link{pathway-class}}, \code{\link{analyze}}, \code{\link{plot-pathway}}
+NULL
 
-#' converts a \code{\link{pathway}} object into an \code{\link{igraph}} object
-#' 
-#' @param pathway pathway object
-#' @return This function returns an \code{\link{igraph}} object with edge attribute \code{sign}
-#' 
+# show method
+#' \code{show} displays the pathway object briefly
+#'
+#' @name show
+#' @aliases pathway-method
+#' @docType methods
+#' @rdname pathway-methods
+setMethod('show', signature='pathway',
+          definition = function(object){
+	      # summarize pathway information
+              cat('An object of class ', class(object), ' with id ',object@id,'\n\n',sep='')
+              cat('Pathway with adjacency matrix of dimension ', dim(object@adj)[1], ': \n',sep='')
+	      # print pathway adjacency matrix
+	      net <- object@adj
+	      net[net!=0] <- object@sign
+              print(net)
+              invisible(NULL)
+          })
+
+# summary method
+setGeneric('summary', function(object, ...) standardGeneric('summary'))
+
+#' \code{summary} generates a pathway object summary including basic network properties.
+#'
+#' @name summary
+#' @aliases summary,pathway-method
+#' @docType methods
+#' @rdname pathway-methods 
+#'
 #' @examples
 #' data(hsa04710)
+#' hsa04710
+#' summary(hsa04710)
+setMethod('summary', signature='pathway',
+          definition = function(object){
+              # define graph and analyze graph
+              res <- analyze(object)
+
+              # output
+              cat('An object of class ', class(object), '\n\n',sep='')
+              cat(res$vcount,' nodes and ',res$ecount,' links; ',res$inh_ecount,' activations and ', res$ecount - res$inh.ecount,' inhibitions. \n\n',sep='')
+              cat('Density:\t\t',res$density,' \n')
+              cat('Average degree:\t\t',res$av_deg,' \n')
+              cat('Inhibition degree:\t',res$inh_deg,' \n')
+              cat('Diameter:\t\t',res$diam,' \n')
+              cat('Transitivity:\t\t',res$trans,' \n')
+              cat('Signed transitivity:\t',res$s_trans,' \n')
+              invisible(NULL)
+          })
+
+setGeneric('pathway2igraph', function(object, ...) standardGeneric('pathway2igraph'))
+
+#' \code{pathway2igraph} converts a \code{\link{pathway}} object into an \code{\link{igraph}} object with edge attribute \code{sign}
+#'
+#' @name pathway2igraph
+#' @aliases pathway2igraph,pathway-method
+#' @docType methods
+#' @rdname pathway-methods 
+#' 
+#' @examples
+#'
+#' # convert to igraph object
 #' str(hsa04710)
 #' g <- pathway2igraph(hsa04710)
 #' str(g)
 #'
-#' @author Juliane Manitz
 #' @import igraph
-##' @export
+#' @export
 setMethod('pathway2igraph', signature='pathway',
           definition = function(object){
     # define adjacency matrix
@@ -78,67 +143,43 @@ setMethod('pathway2igraph', signature='pathway',
     return(g)
 })
 
-# show method
-setMethod('show', signature='pathway',
-          definition = function(object){
-	      # summarize pathway information
-              cat('An object of class ', class(object), ' with id ',object@id,'\n\n',sep='')
-              cat('Pathway with adjacency matrix of dimension ', dim(object@adj)[1], ': \n',sep='')
-	      # print pathway adjacency matrix
-	      net <- object@adj
-	      net[net!=0] <- object@sign
-              print(net)
-              invisible(NULL)
-          })
-
-# summary method
-setGeneric('summary', function(object, ...) standardGeneric('summary'))
-
-setMethod('summary', signature='pathway',
-          definition = function(object){
-              # define graph and analyze graph
-              res <- analyze(object)
-
-              # output
-              cat('An object of class ', class(object), '\n\n',sep='')
-              cat(res$vcount,' nodes and ',res$ecount,' links; ',res$inh_ecount,' activations and ', res$ecount - res$inh.ecount,' inhibitions. \n\n',sep='')
-              cat('Density:\t\t',res$density,' \n')
-              cat('Average degree:\t\t',res$av_deg,' \n')
-              cat('Inhibition degree:\t',res$inh_deg,' \n')
-              cat('Diameter:\t\t',res$diam,' \n')
-              cat('Transitivity:\t\t',res$trans,' \n')
-              cat('Signed transitivity:\t',res$s_trans,' \n')
-              invisible(NULL)
-          })
-
 ##### analyze method - analyze pathway network properties
 #' @exportMethod analyze
 setGeneric('analyze', function(object, ...) standardGeneric('analyze'))
 
 #' analyze pathway network properties
 #'
-#' @param \code{pathway} object
-#' @return \code{data.frame} consisting of 
-#'    \item{id} pathway id, 
-#'    \item{vcount} number of genes, 
-#'    \item{ecount} number of links, 
-#'    \item{inh_ecount} number of inhibition links, 
-#'    \item{density} network density, 
-#'    \item{av_deg} average degree, 
-#'    \item{inh_deg} average degree of inhibition links, 
-#'    \item{diam} network diamter, 
-#'    \item{trans} transitivity, and 
-#'    \item{s_trans} signed transitivity (Kunegis et al., 2009).
+#' @name analyze
+#' @aliases analyze,pathway-method
 #'
-#' @references Details to the computation and interpretation can be found in:
+#' @param object \code{pathway} object
+#' @return \code{data.frame} consisting of 
+#'   \describe{
+#'    \item{id}{pathway id,} 
+#'    \item{vcount}{number of genes,}
+#'    \item{ecount}{number of links,}
+#'    \item{inh_ecount}{number of inhibition links,}
+#'    \item{density}{network density,}
+#'    \item{av_deg}{average degree,}
+#'    \item{inh_deg}{average degree of inhibition links,}
+#'    \item{diam}{network diamter,}
+#'    \item{trans}{transitivity, and }
+#'    \item{s_trans}{signed transitivity (Kunegis et al., 2009).}
+#' }
+#' @references 
+#' \itemize{
+#'   \item Details to the computation and interpretation can be found in:
 #'   Kolaczyk, E. D. (2009). Statistical analysis of network data: methods and models. Springer series in statistics. Springer.
-#'   Kunegis, J., A. Lommatzsch, and C. Bauckhage (2009). The slashdot zoo: Mining a social network with negative egdes. In Proceedings of the 18th international conference on World wide web, pp. 741–750. ACM Press.
+#'   \item Kunegis, J., A. Lommatzsch, and C. Bauckhage (2009). The slashdot zoo: Mining a social network with negative egdes. In Proceedings of the 18th international conference on World wide web, pp. 741–750. ACM Press.
+#' }
 #' @examples
 #' data(hsa04710)
 #' summary(hsa04710)
 #' analyze(hsa04710)
+#'
 #' @author Juliane Manitz
 #' @import igraph
+#' @seealso pathway-methods, plot-pathway
 setMethod('analyze', signature='pathway',
           definition = function(object){
               # define graph
@@ -174,16 +215,16 @@ setMethod('analyze', signature='pathway',
 #' @exportMethod get_genes
 setGeneric('get_genes', function(object, ...) standardGeneric('get_genes'))
 
-#' helper function extracting the gene names in a pathway
+#' \code{get_genes} is a helper function that extracts the gene names in a pathway and returns a vector of character containing gene names
 #'
-#' @param pathway pathway object
-#' @return a vector of character containing gene names
+#' @name get_genes
+#' @aliases get_genes,pathway-method
+#' @docType methods
+#' @rdname pathway-methods
 #'
 #' @examples
-#' data(hsa04710)
+#' # extract gene names from pathway
 #' get_genes(hsa04710)
-#'
-#' @author Juliane Manitz, benjamin Hofner
 setMethod('get_genes', signature='pathway',
           definition = function(object){
               return(rownames(object@adj))
@@ -193,6 +234,9 @@ setMethod('get_genes', signature='pathway',
 if (!isGeneric("plot")) setGeneric('plot')
 
 #' plot pathway object
+#'
+#' @author Juliane Manitz, Saskia Freytag
+#' @name plot-pathway
 #' 
 #' @param x pathway object
 #' @param y missing (placeholder)
@@ -214,7 +258,6 @@ if (!isGeneric("plot")) setGeneric('plot')
 #' sample3 <- sample_genes(hsa04710, no = 3)
 #' plot(hsa04710, highlight.genes = sample3)
 #'
-#' @author Juliane Manitz, Saskia Freytag
 #' @import igraph
 #' @importFrom graphics plot
 setMethod('plot', signature(x='pathway',y='missing'),
@@ -269,21 +312,22 @@ invisible(NULL)
 #' @exportMethod sample_genes
 setGeneric('sample_genes', function(object, ...) standardGeneric('sample_genes'))
 
-#' function randomly selecting effect genes in pathway
+#' \code{sample_genes} function randomly selects effect genes in pathway and returns a vector of length \code{no} with vertex id's of sampled genes 
 #'
-#' @param pathway pathway object
+#' @name sample_genes
+#' @aliases sample_genes,pathway-method
+#' @docType methods
+#' @rdname pathway-methods 
+#'
 #' @param no a numeric constant specifying the number of genes to be sampled, default is 3
-#' @return a vector of length \code{no} with vertex id's of sampled genes 
 #' 
 #' @examples
-#' data(hsa04710)
-#' summary(hsa04710)
+#' # sample effect genes
 #' sample3 <- sample_genes(hsa04710, no = 3)
 #' plot(hsa04710, highlight.genes = sample3)
 #' sample10 <- sample_genes(hsa04710, no = 10)
 #' plot(hsa04710, highlight.genes = sample10)
 #'
-#' @author Juliane Manitz
 #' @import igraph
 setMethod('sample_genes', signature='pathway',
           definition = function(object, no=3){
