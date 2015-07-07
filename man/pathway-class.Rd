@@ -126,8 +126,8 @@ plot(hsa04710, highlight.genes = sample3)
 # sample effect genes
 sample3 <- sample_genes(hsa04710, no = 3)
 plot(hsa04710, highlight.genes = sample3)
-sample10 <- sample_genes(hsa04710, no = 10)
-plot(hsa04710, highlight.genes = sample10)
+sample5 <- sample_genes(hsa04710, no = 5)
+plot(hsa04710, highlight.genes = sample5)
 }
 \author{
 Juliane Manitz

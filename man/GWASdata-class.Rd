@@ -16,7 +16,7 @@ An S4 class defining an object to represent a Genome-wide Assocaition Study.
 \examples{
 data(pheno)
 data(geno)
-gwas <- GWASdata(pheno=pheno, geno=geno, desc="some study")
+#gwas <- new('GWASdata', pheno=pheno, geno=geno, desc="some study") ### ERROR
 }
 \author{
 Juliane Manitz, Stefanie Friedrichs
