@@ -167,3 +167,145 @@ Z <- matrix(zi, 4000,500000)
 system.time(gpuMatMult(Z,t(Z)))
 system.time(cpuMatMult(Z,t(Z)))
 
+### rewire procedure in get_ana
+data(hsa04710)
+plot(hsa04710)
+
+anno    <- read.table(paste("data/sim.6pw.anno.txt",sep=""),
+                      header=T, as.is=T)
+
+table(anno$pathway)
+
+load("data/pathways/hsa00603.RData", verbose = TRUE)
+pathway <- p
+plot(pathway)
+
+# genes in pathway
+net_genes <- get_genes(pathway)
+# genes in annotation -> genes with SNPs in GWASdata
+anno_genes <- anno$gene[anno$pathway==pathway@id]
+# pathway genes that are not in annotation
+remov <- which(! net_genes %in% anno_genes)
+
+
+N <- as.matrix(pathway@adj)
+N[N!=0] <- pathway@sign
+# include self-interaction
+diag(N) <- 1
+
+image(N)
+
+# standard procedure rewire
+remov=7
+if(length(remov)!=0){
+    for(g in remov){
+      z <- remov#which(colnames(N)==g)
+      vec <- rbind( N[z,],seq(1:length(N[z,])) )
+      vec <- data.frame( vec[,vec[1,]!=0])
+        #if something must be rewired
+        if( length(vec[1,])>1 ){
+          for(i in 1:(length(vec[1,])-1) ){
+              if((i+1)<=length(vec[1,])){
+              for( j in (i+1):length(vec[1,]) ){ #i ist aktuelle edge
+               if(N[vec[2,i],vec[2,j]]!=0){print("Edge will be removed!")}
+               N[vec[2,i],vec[2,j]] <- N[vec[2,i],vec[2,j]] + vec[1,i]*vec[1,j]
+               N[vec[2,j],vec[2,i]] <- N[vec[2,j],vec[2,i]] + vec[1,i]*vec[1,j]}}
+         } }
+     N <- N[-z,-z]
+     N[N>1]    <-  1
+     N[N<(-1)] <- -1
+     } 
+Nold <- N
+
+#' Apply two-step network to rewire network genes if it contains no SNPs in GWASdata (for internal use)
+#'
+#' @export
+#' @author Juliane Manitz
+#'
+#' @param N adjacency matrix
+#' @param remov indication which genes should be removed
+#' @return An adjacency matrix containing rewired network
+#'
+#' @references TODO Newman?
+rewire_network <- function(N, remov)
+    # early exist if no genes have to be removed
+    if(length(remov)=0){ return(N) }
+
+    # identify genes that need to be carried forward to the subnetwork
+    ind_sub <- which(N[remov,] != 0)
+    # extract the subnetwork
+    Nsub <- N[ind_sub, ind_sub]
+    # exclude self-interaction
+    diag(Nsub) <- 0
+
+    # calculate the two-step network
+    Nsub2step <- Nsub %*% Nsub
+    Nsub2step[Nsub2step>0] <-  1
+    Nsub2step[Nsub2step<0] <- -1
+
+    # check whether interaction types contradict
+    check_contradicts <- (Nsub != 0) & (Nsub + Nsub2step == 0)
+    if(any(check_contradicts)){
+       Nsub2step[(Nsub != 0) & (Nsub + Nsub2step == 0)] <- 0
+       message('Interaction types contradict after rewiring: Edges removed.')
+    }
+    # replace the subnetwork in the adjacency matrix
+    N[ind_sub,ind_sub] <- Nsub2step
+    # remove the genes and return network
+    return(N[-remov,-remov])
+}
+
+#' Produce middle part of Network Kernel (for internal use)
+#'
+#' @export
+#' @author Juliane Manitz, Saskia Freytag, Stefanie Freidrichs
+#'
+#' @param anno \code{data.frame} with annotation information
+#' @param SNPset vector with SNPs to be analyzed
+#' @param pathway pathway object
+#' @return matrix ANA' for inner part of network kernel
+get_ana <- function(anno, SNPset, pathway){
+
+    N <- as.matrix(pathway@adj)
+    N[N!=0] <- pathway@sign
+    if(any(is.na(N))){stop("network information contains missing values")}
+
+    ### remove genes that have no SNPs (not in anno):
+    # genes in pathway
+    net_genes <- get_genes(pathway)
+    # genes in annotation -> genes with SNPs in GWASdata
+    anno_sub <- anno[anno$pathway==pathway@id,]
+    anno_genes <- unique(anno_sub$gene)
+    # pathway genes that are not in annotation
+    remov <- which(! net_genes %in% anno_genes)
+    # rewire network -> separate function
+    N <- rewire_network(N, remov)
+
+    # include selfinteractions for main effects
+    diag(N) <- 1
+    #ensure positive definiteness by network weighting
+    N <- make_posdev(N)
+
+    #A: SNP to gene mapping
+    Atab <- table(anno_sub[c('snp','gene')])
+    Amat <- as(Atab, 'matrix')
+    A <- Amat[SNPset,rownames(N)]    #A is colnames(Z) x rownames(N)
+
+    #A*: size-adjustement for no of SNPs in each gene
+    A.star <- A/colSums(A)
+
+    return(A.star %*% N %*% t(A.star))
+}
+
+
+
+
+
+
+  image(Nold)
+  image(Ntmp)
+
+
+length(get_genes(pathway))
+plot(pathway)
+Nsub2step
