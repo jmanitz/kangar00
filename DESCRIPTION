@@ -13,5 +13,5 @@ Collate:  'pathway.r'
           'lkmt.r'
 Depends: R (>= 3.1.0)
 Imports: methods, ff, igraph, biomaRt, KEGGgraph, sqldf
-Suggests: gputools
+#Suggests: gputools
 LazyData: true
