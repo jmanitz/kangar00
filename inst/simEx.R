@@ -1,11 +1,47 @@
+
 library(kangar00)
 library(mboostDevel)
 
+##############################################
+##  make GWAS-data object for  simulation   ##
+##############################################
+
+library("data.table")  
+library("ff")
+    
 path.sim <- "data/"
+
+      #tex   <- fread(paste(path.sim,"sim2.txt",sep=""), sep='auto', header=FALSE, 
+      #         data.table=FALSE)
+      #rsnumbers <- read.table("Q:/1_PROJEKTE/sim2.txt",header=FALSE,nrow=1,as.is=TRUE)     
+      #rownames in first column, fread doesn't seem to have a "rownames=TRUE" argument
+      #rownames(tex) <- tex[,1]   
+      #tex           <- tex[,-1]
+      #colnames(tex) <- as.character(rsnumbers) #doesn't seem to understand 'header=TRUE'  
+      #save(tex, file="tex.rda")
+      #select only the part included in simulated pathways:
+      #insim <- unique(as.character(anno[,4]))  #129
+      #geno <- tex[,colnames(tex)%in%unique(as.character(anno[,4]))] 
+      #200 obs. of  129 variables
+      #save(geno, file="geno.rda")
+
 anno    <- read.table(paste(path.sim,"sim.6pw.anno.txt",sep=""),
-                      header=T, as.is=T)
+           header=T, as.is=T)
+#save(anno, file="anno.rda") 
+                     
 pheno   <- read.table(paste(path.sim,"sim2.pheno.txt",sep=""),
-                      header=T, as.is=T)
+           header=T, as.is=T)
+#save(pheno, file="pheno.rda")
+          
+load(paste(path.sim,"geno.rda",sep=""))
+geno <- as.ffdf(geno)                    
+attr(geno,"anno") <- anno
+
+#GWAS object:
+sim <- GWASdata(pheno=pheno, geno=geno, desc="sim")
+
+
+
 
 
 ## check for overlapping snps
