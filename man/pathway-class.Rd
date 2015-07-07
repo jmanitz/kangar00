@@ -2,25 +2,141 @@
 % Please edit documentation in R/pathway.r
 \docType{class}
 \name{pathway-class}
+\alias{analyze,pathway,ANY-method}
+\alias{analyze,pathway-method}
+\alias{get_genes,pathway,ANY-method}
+\alias{get_genes,pathway-method}
 \alias{pathway}
 \alias{pathway-class}
+\alias{pathway2igraph,pathway,ANY-method}
+\alias{pathway2igraph,pathway-method}
+\alias{plot,pathway,ANY-method}
+\alias{plot,pathway,missing-method}
+\alias{sample_genes,pathway-method}
+\alias{show,pathway,ANY-method}
+\alias{show,pathway-method}
+\alias{summary,pathway,ANY-method}
+\alias{summary,pathway-method}
 \title{An S4 class to represent a gene-gene interaction network}
+\usage{
+\S4method{show}{pathway}(object)
+
+\S4method{summary}{pathway}(object)
+
+\S4method{pathway2igraph}{pathway}(object)
+
+\S4method{analyze}{pathway}(object, ...)
+
+\S4method{get_genes}{pathway}(object)
+
+\S4method{plot}{pathway,missing}(x, y = NA, highlight.genes = NULL,
+  gene.names = c("legend", "nodes", NA), main = NULL, asp = 0.95,
+  vertex.size = 11, vertex.color = "khaki1", vertex.label.cex = 0.8,
+  edge.width = 2, edge.color = "olivedrab4", ...)
+
+\S4method{sample_genes}{pathway}(object, no = 3)
+}
+\arguments{
+\item{object}{pathway object}
+
+\item{...}{further arguments specifying plotting options in \code{\link{plot.igraph}}}
+
+\item{x}{pathway object}
+
+\item{y}{missing (placeholder)}
+
+\item{highlight.genes}{vector of gene names or node id's, which should be highlighted in a different color, default is \code{NULL} so that no genes are highlighted}
+
+\item{gene.names}{character indicating whether the genes names should appear in a legend (\code{'legend'}), as vertex label (\code{'nodes'}), or should be omitted (\code{NA})}
+
+\item{main}{optional overall main title, default is \code{NULL}, which uses the pathway id}
+
+\item{asp}{a numeric constant, which gives the aspect ratio parameter for plot, default is 0.95}
+
+\item{vertex.size}{a numeric constant specifying the vertex size, default is 11}
+
+\item{vertex.color}{a character or numeric constant specifying the vertex color, default is 'khaki1'}
+
+\item{vertex.label.cex}{a numeric constant specifying the the vertex label size, default is 0.8,}
+
+\item{edge.width}{a numeric constant specifying the edge width, default is 2}
+
+\item{edge.color}{a character or numeric constant specifying the edge color, default is 'olivedrab4'}
+
+\item{no}{a numeric constant specifying the number of genes to be sampled, default is 3}
+}
+\value{
+\code{analyze} returns a \code{data.frame} consisting of
+  \describe{
+   \item{id}{pathway id,}
+   \item{vcount}{number of genes,}
+   \item{ecount}{number of links,}
+   \item{inh_ecount}{number of inhibition links,}
+   \item{density}{network density,}
+   \item{av_deg}{average degree,}
+   \item{inh_deg}{average degree of inhibition links,}
+   \item{diam}{network diamter,}
+   \item{trans}{transitivity, and }
+   \item{s_trans}{signed transitivity (Kunegis et al., 2009).}
+}
+}
 \description{
 An S4 class to represent a gene-gene interaction network
+
+\code{show} displays the pathway object briefly
+
+\code{summary} generates a pathway object summary including basic network properties.
+
+\code{pathway2igraph} converts a \code{\link{pathway}} object into an \code{\link{igraph}} object with edge attribute \code{sign}
+
+analyze pathway network properties
+
+\code{get_genes} is a helper function that extracts the gene names in a pathway and returns a vector of character containing gene names
+
+\code{plot} plots pathway as igraph object
+
+\code{sample_genes} function randomly selects effect genes in pathway and returns a vector of length \code{no} with vertex id's of sampled genes
 }
 \section{Slots}{
 
 \describe{
-\item{\code{id}}{a character repesenting the pathway id, e.g. hsa00100}
+\item{\code{id}}{a character repesenting the pathway id, e.g. hsa00100 as used in the KEGG database.}
 
-\item{\code{adj}}{a matrix respresenting the network adjacency matrix (1 interaction, 0 otherwise)}
+\item{\code{adj}}{a matrix respresenting the network adjacency matrix  of dimension equaling the number of genes (1 interaction, 0 otherwise)}
 
-\item{\code{sign}}{a numeric vector indicating the interaction type for each link (1 activation, -1 inhibition)}
+\item{\code{sign}}{a numeric vector indicating the interaction type for each link (1 activation, -1 inhibition). Represents the interaction network within the pathway.}
 }}
-\author{
-Juliane Manitz, Stefanie Friedrichs
+\examples{
+data(hsa04710)
+hsa04710
+summary(hsa04710)
+# convert to igraph object
+str(hsa04710)
+g <- pathway2igraph(hsa04710)
+str(g)
+data(hsa04710)
+summary(hsa04710)
+analyze(hsa04710)
+# extract gene names from pathway
+get_genes(hsa04710)
+# plot pathway as igraph object
+plot(hsa04710)
+sample3 <- sample_genes(hsa04710, no = 3)
+plot(hsa04710, highlight.genes = sample3)
+# sample effect genes
+sample3 <- sample_genes(hsa04710, no = 3)
+plot(hsa04710, highlight.genes = sample3)
+sample10 <- sample_genes(hsa04710, no = 10)
+plot(hsa04710, highlight.genes = sample10)
 }
-\seealso{
-\code{\link{}}
+\author{
+Juliane Manitz
+}
+\references{
+Details to the computation and interpretation can be found in:
+\itemize{
+  \item Kolaczyk, E. D. (2009). Statistical analysis of network data: methods and models. Springer series in statistics. Springer.
+  \item Kunegis, J., A. Lommatzsch, and C. Bauckhage (2009). The slashdot zoo: Mining a social network with negative egdes. In Proceedings of the 18th international conference on World wide web, pp. 741–750. ACM Press.
+}
 }
 
