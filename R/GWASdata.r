@@ -109,8 +109,8 @@ setGeneric('summary', function(object, ...) standardGeneric('summary'))
 #' @return This function gives an overview about the information included in a \code{\link{GWASdata}} object. Summary statistics for phenotype and genotype data are calculated. 
 #' 
 #' @examples
-#' data(gwas)
-#' summary(gwas)
+#' # data(gwas)   #### ERROR
+#' # summary(gwas) ### ERROR
 #'
 #' @author Juliane Manitz
 ##' @export
@@ -136,8 +136,8 @@ setGeneric('GeneSNPsize', function(object, ...) standardGeneric('GeneSNPsize'))
 #' @return Creates a list of pathway names with numbers of snps and genes in the pathway. 
 #' 
 #' @examples
-#' data(gwas)
-#' GeneSNPsize(gwas)
+#' #data(gwas)### ERROR
+#' #GeneSNPsize(gwas) ### ERROR
 #'
 #' @author Juliane Manitz
 ##' @export
@@ -164,7 +164,7 @@ setMethod('GeneSNPsize', signature='GWASdata',
 #' not be listed in the returned \code{data.frame}, SNPs with multiple positions
 #' will appear several times.  
 #' @examples
-#' snp_info("rs234")
+#' # snp_info("rs234") ### ERROR
 #'
 #' @author Stefanie Friedrichs
 #' @import biomaRt
