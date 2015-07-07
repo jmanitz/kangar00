@@ -111,11 +111,15 @@ kernel.lin <- function(data, pathway, parallel=c('none','cpu','gpu'), ...) {
     if(parallel=='cpu'){
         stop('sorry, not yet defined')
     }
-    if(parallel=='gpu'){
-        z <- magma(z, gpu=TRUE)
-        k <- tcrossprod(z)
+    if(parallel=='gpu'){   ##### Suggests gputools #######
+      if('gputools' %in% (.packages(all.available=TRUE))){
+        require(gputools)
+        z <- as.numeric(z)
+        k <- gpuMatMult(z,t(z))
+      }else{
+        stop("Please install package 'gputools' to run matrix multiplication on GPU")
+      }
     }
-
     k <- make_posdev(k)
     #return kernel object
     return(kernel(type='linear', kernel=k, pathway=pathway))
