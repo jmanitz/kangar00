@@ -190,7 +190,8 @@ snp_info <- function(snps, ...) {
 #' a pathway. Output from \code{\link{pathway_info}}.
 #' @return A \code{data.frame} mapping SNPs to genes and genes to pathways. Includes
 #' the columns "pathway", "gene", "chr", "snp" and "position".   
-#' @examples
+#' @examples 
+#' #### missing example ####
 #'
 #' @author Stefanie Friedrichs, Saskia Freytag, Ngoc-Thuy Ha
 get_anno <- function(snp_info, pathway_info, ...){ 
