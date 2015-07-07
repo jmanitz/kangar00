@@ -7,6 +7,7 @@ anno    <- read.table(paste(path.sim,"sim.6pw.anno.txt",sep=""),
 pheno   <- read.table(paste(path.sim,"sim2.pheno.txt",sep=""),
                       header=T, as.is=T)
 
+
 ## check for overlapping snps
 tmp <- tapply(anno$snp, anno$pathway, function(x) x)
 p <- list()
@@ -87,6 +88,16 @@ plot(hsa04710)
 samp <- sample_genes(hsa04710, no = 3)
 plot(hsa04710, highlight.genes = samp)
 
+# sparse matrices for pathways?
+require(Matrix)
+
+load('kangar00/data/hsa04710.rda')
+object.size(hsa04710)
+
+g <- pathway2igraph(hsa04710)
+m <- as_adj(g, type='upper', sparse=TRUE)
+object.size(m)
+
 #### now use linear kernel with mboost
 data <- sim2@pheno
 data$pheno <- as.factor(data$pheno)
@@ -136,3 +147,23 @@ lkmt(pheno ~ sex + age, kernel = kernel.lin(sim2, pathway = hsa00780), GWASdata 
 lkmt(pheno ~ sex + age, kernel = kernel.lin(sim2, pathway = hsa04122), GWASdata = sim2)
 lkmt(pheno ~ sex + age, kernel = kernel.lin(sim2, pathway = hsa00750), GWASdata = sim2)
 lkmt(pheno ~ sex + age, kernel = kernel.lin(sim2, pathway = hsa00730), GWASdata = sim2)
+
+
+### test gputools
+
+
+require(gputools)
+
+# test matrix multiplication
+matA <- matrix(runif(5000*3000),5000,3000)
+matB <- matrix(runif(5000*3000),3000,5000)
+
+system.time(cpuMatMult(matA,matB))
+system.time(gpuMatMult(matA,matB))
+
+# linear kernel
+zi <- sample(c(0,1,2),size=4000*500000))
+Z <- matrix(zi, 4000,500000)
+system.time(gpuMatMult(Z,t(Z)))
+system.time(cpuMatMult(Z,t(Z)))
+
