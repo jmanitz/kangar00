@@ -1,4 +1,3 @@
-﻿#################################################
 #
 # pathway object functions
 #
@@ -8,12 +7,11 @@
 #'
 #' @aliases pathway
 #'
-#' @slot id a character repesenting the pathway id, e.g. hsa00100
-#' @slot adj a matrix respresenting the network adjacency matrix (1 interaction, 0 otherwise)
-#' @slot sign a numeric vector indicating the interaction type for each link (1 activation, -1 inhibition)
+#' @slot id a character repesenting the pathway id, e.g. hsa00100 as used in the KEGG database.
+#' @slot adj a matrix respresenting the network adjacency matrix  of dimension equaling the number of genes (1 interaction, 0 otherwise)
+#' @slot sign a numeric vector indicating the interaction type for each link (1 activation, -1 inhibition). Represents the interaction network within the pathway.
 #' 
-#' @author Juliane Manitz, Stefanie Friedrichs
-#' @seealso \code{\link{}}
+#' @author Juliane Manitz
 #' @export
 pathway <- setClass('pathway',
                     slots=c(id='character', adj='matrix', sign='vector'))
@@ -45,25 +43,12 @@ setValidity('pathway', function(object){
 	if(valid) TRUE else msg
 })
 
-#' Methods for objects from S4 class 'pathway'
-#'
-#' @param object pathway object
-#'
-#' @name pathway-method
-#' @docType methods
-#' @rdname pathway-methods 
-#'
-#' @author Juliane Manitz
-#' @seealso \code{\link{pathway-class}}, \code{\link{analyze}}, \code{\link{plot-pathway}}
-NULL
-
 # show method
 #' \code{show} displays the pathway object briefly
-#'
-#' @name show
-#' @aliases pathway-method
-#' @docType methods
-#' @rdname pathway-methods
+#' @param object pathway object
+#' @export
+#' @rdname pathway-class
+#' @aliases show,pathway,ANY-method
 setMethod('show', signature='pathway',
           definition = function(object){
 	      # summarize pathway information
@@ -81,10 +66,9 @@ setGeneric('summary', function(object, ...) standardGeneric('summary'))
 
 #' \code{summary} generates a pathway object summary including basic network properties.
 #'
-#' @name summary
-#' @aliases summary,pathway-method
-#' @docType methods
-#' @rdname pathway-methods 
+#' @export
+#' @rdname pathway-class 
+#' @aliases summary,pathway,ANY-method
 #'
 #' @examples
 #' data(hsa04710)
@@ -111,10 +95,9 @@ setGeneric('pathway2igraph', function(object, ...) standardGeneric('pathway2igra
 
 #' \code{pathway2igraph} converts a \code{\link{pathway}} object into an \code{\link{igraph}} object with edge attribute \code{sign}
 #'
-#' @name pathway2igraph
-#' @aliases pathway2igraph,pathway-method
-#' @docType methods
-#' @rdname pathway-methods 
+#' @export
+#' @rdname pathway-class 
+#' @aliases pathway2igraph,pathway,ANY-method
 #' 
 #' @examples
 #'
@@ -124,7 +107,6 @@ setGeneric('pathway2igraph', function(object, ...) standardGeneric('pathway2igra
 #' str(g)
 #'
 #' @import igraph
-#' @export
 setMethod('pathway2igraph', signature='pathway',
           definition = function(object){
     # define adjacency matrix
@@ -144,16 +126,15 @@ setMethod('pathway2igraph', signature='pathway',
 })
 
 ##### analyze method - analyze pathway network properties
-#' @exportMethod analyze
 setGeneric('analyze', function(object, ...) standardGeneric('analyze'))
 
 #' analyze pathway network properties
 #'
-#' @name analyze
-#' @aliases analyze,pathway-method
+#' @export
+#' @rdname pathway-class
+#' @aliases analyze,pathway,ANY-method
 #'
-#' @param object \code{pathway} object
-#' @return \code{data.frame} consisting of 
+#' @return \code{analyze} returns a \code{data.frame} consisting of 
 #'   \describe{
 #'    \item{id}{pathway id,} 
 #'    \item{vcount}{number of genes,}
@@ -177,11 +158,9 @@ setGeneric('analyze', function(object, ...) standardGeneric('analyze'))
 #' summary(hsa04710)
 #' analyze(hsa04710)
 #'
-#' @author Juliane Manitz
 #' @import igraph
-#' @seealso pathway-methods, plot-pathway
 setMethod('analyze', signature='pathway',
-          definition = function(object){
+          definition = function(object, ...){
               # define graph
               net <- object@adj
               net[net!=0] <- object@sign
@@ -217,10 +196,9 @@ setGeneric('get_genes', function(object, ...) standardGeneric('get_genes'))
 
 #' \code{get_genes} is a helper function that extracts the gene names in a pathway and returns a vector of character containing gene names
 #'
-#' @name get_genes
-#' @aliases get_genes,pathway-method
-#' @docType methods
-#' @rdname pathway-methods
+#' @export
+#' @rdname pathway-class 
+#' @aliases get_genes,pathway,ANY-method
 #'
 #' @examples
 #' # extract gene names from pathway
@@ -233,10 +211,11 @@ setMethod('get_genes', signature='pathway',
 #' @exportMethod plot
 if (!isGeneric("plot")) setGeneric('plot')
 
-#' plot pathway object
+#' \code{plot} plots pathway as igraph object
 #'
-#' @author Juliane Manitz, Saskia Freytag
-#' @name plot-pathway
+#' @export 
+#' @rdname pathway-class
+#' @aliases plot,pathway,ANY-method
 #' 
 #' @param x pathway object
 #' @param y missing (placeholder)
@@ -252,8 +231,7 @@ if (!isGeneric("plot")) setGeneric('plot')
 #' @param ... further arguments specifying plotting options in \code{\link{plot.igraph}}
 #'
 #' @examples
-#' data(hsa04710)
-#' summary(hsa04710)
+#' # plot pathway as igraph object
 #' plot(hsa04710)
 #' sample3 <- sample_genes(hsa04710, no = 3)
 #' plot(hsa04710, highlight.genes = sample3)
@@ -314,10 +292,9 @@ setGeneric('sample_genes', function(object, ...) standardGeneric('sample_genes')
 
 #' \code{sample_genes} function randomly selects effect genes in pathway and returns a vector of length \code{no} with vertex id's of sampled genes 
 #'
-#' @name sample_genes
-#' @aliases sample_genes,pathway-method
-#' @docType methods
-#' @rdname pathway-methods 
+#' @export
+#' @rdname pathway-class 
+#' @aliases get_genes,pathway,ANY-method
 #'
 #' @param no a numeric constant specifying the number of genes to be sampled, default is 3
 #' 
@@ -356,7 +333,7 @@ setMethod('sample_genes', signature='pathway',
 #' @return A \code{data.frame} listing the genes included in the pathway with 
 #' their names as well as numbers used in KEGG database.
 #' @examples
-#' pathway_info("hsa04710")
+#' #pathway_info("hsa04710") #### DOES NOT WORK ###
 #' 
 #' @author Stefanie Friedrichs 
 gene_name_number <- function(id){  
@@ -383,7 +360,7 @@ gene_name_number <- function(id){
 }
 
 
-#'  Get information on genes in a pathway
+#' Get information on genes in a pathway
 #'
 #' This function lists all genes formig a particular pathway. Start and end  
 #' positions of these genes are extracted from the Ensemble database. The 
@@ -395,7 +372,7 @@ gene_name_number <- function(id){
 #' pathway. for each gene its name, the start and end point and the chromosome 
 #' it lies on are given.
 #' @examples
-#' pathway_info("hsa04710")
+#' # pathway_info('hsa04710') ### ERROR
 #'
 #' @author Stefanie Friedrichs
 #' @import biomaRt  
@@ -474,10 +451,10 @@ set_names <- function(N, nodes, my_list){
 #' should be returned directed (\code{TRUE}) or undirected (\code{FALSE}).
 #' @return A \code{matrix} representing the interaction network in the pathway.
 #' @examples
-#' get_network_matrix("hsa04710", TRUE) 
+#' # get_network_matrix("hsa04710", TRUE) ### DOES NOT WORK
 #'
 #' @author Stefanie Friedrichs
-#' @import KEGGgraph, biomaRt        
+#' @import KEGGgraph biomaRt        
 get_network_matrix <- function(id, directed,  ...){
 
     retrieveKGML(substr(id,4,nchar(id)), organism="hsa",
@@ -559,9 +536,3 @@ get_network_matrix <- function(id, directed,  ...){
     }    
 }
           
-          
-          
-          
-          
-          
-
