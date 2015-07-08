@@ -1,4 +1,4 @@
-#################################################
+﻿#################################################
 #
 # kernel object functions
 #
@@ -8,7 +8,8 @@
 #'
 #' @rdname kernel-class
 #'
-#' @slot type character, kernel type: Use \code{"lin"} for linear kernels, \code{"sia"} for size-adjusted or \code{"net"} for network-based kernels.
+#' @slot type character, kernel type: Use \code{"lin"} for linear kernels, 
+#' \code{"sia"} for size-adjusted or \code{"net"} for network-based kernels.
 #' @slot kernel kernel matrix of dimension equal to individuals
 #' @slot GWASdata GWASdata object
 #' @slot pathway pathway object
@@ -29,7 +30,7 @@ setValidity('kernel', function(object){
     #	# nrow/ncol = # individuals
     #	if(nrow(object@kernel)!=nrow(object@GWASdata@pheno)){
     #	  valid <- FALSE
-    #          msg <- c(msg, "kernel matrix has to be dimension equal to individuals in GWAS")
+    #     msg <- c(msg, "kernel matrix has to be dimension equal to individuals in GWAS")
     #        }
     # isSymmetric(kernel)
     if( !isSymmetric(round(object@kernel),10) ){
@@ -107,6 +108,7 @@ setMethod('plot', signature(x='kernel',y='missing'),
 
 # kernel object constructor
 setGeneric('kernel', function(object, ...) standardGeneric('kernel'))
+
 #' \code{kernel} is a kernel object constructor and creates a kernel to be evaluated in the logistic kernel machine test. 
 #'
 #' @param type character, kernel type: Use \code{"lin"} for linear kernels, \code{"sia"} for size-adjusted or \code{"net"} for network-based kernels.
@@ -356,7 +358,20 @@ get_ana <- function(anno, SNPset, pathway){
     return(A.star %*% N %*% t(A.star))
 }
 
-    
+#' Adjust matrix to be positive definite 
+#'
+#' @export
+#' @author Juliane Manitz, Saskia Freytag, Stefanie Freidrichs
+#'
+#' @param N A kernelmatrix. 
+#' @return matrix N, if it was positive definite. The closes positive definite 
+#' matrix to N if N was not positive definite. 
+#' For more details check 
+#' @references
+#' \itemize{
+#'  \item Freytag S, Manitz J, Schlather M, Kneib T, Amos CI, Risch A, Chang-Claude J, Heinrich J, Bickeböller H: A network-based kernel machine test for the identification of risk pathways in genome-wide association studies. Hum Hered. 2013, 76(2):64-75.
+#' }
+#'  
 make_posdev <- function(N) {
     lambda <- min(eigen(N, only.values = TRUE, symmetric = TRUE)$values)
     # smallest eigenvalue negative = not semipositive definite

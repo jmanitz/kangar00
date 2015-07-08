@@ -1,4 +1,4 @@
-#
+﻿#
 # pathway object functions
 #
 #################################################
@@ -335,7 +335,7 @@ setMethod('sample_genes', signature='pathway',
 #' @examples
 #' #pathway_info("hsa04710") #### DOES NOT WORK ###
 #' 
-#' @author Stefanie Friedrichs 
+#' @author Stefanie Friedrichs
 gene_name_number <- function(id){  
     info <- scan(url(paste("http://togows.dbcls.jp/entry/pathway/",
                            id,"/genes",sep="")), what="character")   
@@ -367,7 +367,8 @@ gene_name_number <- function(id){
 #' database is accessed via the R-package \code{biomaRt}.
 #'
 #' @param id A \code{character} identifying the pathway for which gene infomation 
-#' should be extracted. Here KEGG IDs ('hsa00100') are used.  
+#' should be extracted. Here KEGG IDs ('hsa00100') are used.
+#' @param ... additional aguments can be specified.   
 #' @return A \code{data.frame} including as many rows as genes appear in the 
 #' pathway. for each gene its name, the start and end point and the chromosome 
 #' it lies on are given.
@@ -449,12 +450,14 @@ set_names <- function(N, nodes, my_list){
 #' should be extracted. Here KEGG IDs ('hsa00100') are used. 
 #' @param directed A \code{logic} argument, stating whether the networkmatrix 
 #' should be returned directed (\code{TRUE}) or undirected (\code{FALSE}).
+#' @param ... additional aguments can be specified.
 #' @return A \code{matrix} representing the interaction network in the pathway.
 #' @examples
 #' # get_network_matrix("hsa04710", TRUE) ### DOES NOT WORK
 #'
 #' @author Stefanie Friedrichs
-#' @import KEGGgraph biomaRt        
+#' @import KEGGgraph 
+#' @import biomaRt        
 get_network_matrix <- function(id, directed,  ...){
 
     retrieveKGML(substr(id,4,nchar(id)), organism="hsa",
