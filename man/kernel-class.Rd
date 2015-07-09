@@ -76,7 +76,8 @@ For more details, check the references.
 \section{Slots}{
 
 \describe{
-\item{\code{type}}{character, kernel type: Use \code{"lin"} for linear kernels, \code{"sia"} for size-adjusted or \code{"net"} for network-based kernels.}
+\item{\code{type}}{character, kernel type: Use \code{"lin"} for linear kernels,
+\code{"sia"} for size-adjusted or \code{"net"} for network-based kernels.}
 
 \item{\code{kernel}}{kernel matrix of dimension equal to individuals}
 
@@ -92,11 +93,11 @@ Juliane Manitz, Saskia Freytag, Ngoc Thuy Ha
 \references{
 \itemize{
  \item Wu MC, Kraft P, Epstein MP, Taylor DM, Chanock SJ, Hunter DJ, Lin X: Powerful SNP-Set Analysis for Case-Control Genome-Wide Association Studies. Am J Hum Genet 2010, 86:929-42
- \item Freytag S, Bickeböller H, Amos CI, Kneib T, Schlather M: A Novel Kernel for Correcting Size Bias in the Logistic Kernel Machine Test with an Application to Rheumatoid Arthritis. Hum Hered. 2012, 74(2): 97108.
- \item Freytag S, Manitz J, Schlather M, Kneib T, Amos CI, Risch A, Chang-Claude J, Heinrich J, Bickeböller H: A network-based kernel machine test for the identification of risk pathways in genome-wide association studies. Hum Hered. 2013, 76(2):64-75.
+ \item Freytag S, Bickeboeller H, Amos CI, Kneib T, Schlather M: A Novel Kernel for Correcting Size Bias in the Logistic Kernel Machine Test with an Application to Rheumatoid Arthritis. Hum Hered. 2012, 74(2): 97-108.
+ \item Freytag S, Manitz J, Schlather M, Kneib T, Amos CI, Risch A, Chang-Claude J, Heinrich J, Bickeboeller H: A network-based kernel machine test for the identification of risk pathways in genome-wide association studies. Hum Hered. 2013, 76(2):64-75.
 }
 }
 \seealso{
-\code{\link{kernel-class}}, \code{\link{GWASdata-class}}, \code{\link{pathway-class}}
+\code{\link{GWASdata-class}}, \code{\link{pathway-class}}
 }
 

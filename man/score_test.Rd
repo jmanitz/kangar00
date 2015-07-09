@@ -26,4 +26,10 @@ determined using a Sattherthwaite Approximation as described by Dan Schaid.
 \author{
 Stefanie Friedrichs, Saskia Freytag, Ngoc-Thuy Ha
 }
+\references{
+Details to the p-value approxiamtion can be found in:
+\itemize{
+  \item Schaid DJ: Genomic Similarity and Kernel Methods I: Advancements by Building on Mathematical and Statistical Foundations. Hum Hered 2010, 70:109-31
+}
+}
 

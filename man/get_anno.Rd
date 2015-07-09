@@ -13,6 +13,8 @@ get_anno(snp_info, pathway_info, ...)
 
 \item{pathway_info}{A \code{data frame} with information on the genes forming
 a pathway. Output from \code{\link{pathway_info}}.}
+
+\item{...}{additional aguments can be specified.}
 }
 \value{
 A \code{data.frame} mapping SNPs to genes and genes to pathways. Includes

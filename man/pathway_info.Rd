@@ -9,6 +9,8 @@ pathway_info(id, ...)
 \arguments{
 \item{id}{A \code{character} identifying the pathway for which gene infomation
 should be extracted. Here KEGG IDs ('hsa00100') are used.}
+
+\item{...}{additional aguments can be specified.}
 }
 \value{
 A \code{data.frame} including as many rows as genes appear in the

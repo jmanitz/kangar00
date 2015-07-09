@@ -12,6 +12,8 @@ should be extracted. Here KEGG IDs ('hsa00100') are used.}
 
 \item{directed}{A \code{logic} argument, stating whether the networkmatrix
 should be returned directed (\code{TRUE}) or undirected (\code{FALSE}).}
+
+\item{...}{additional aguments can be specified.}
 }
 \value{
 A \code{matrix} representing the interaction network in the pathway.
