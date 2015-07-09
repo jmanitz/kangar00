@@ -3,7 +3,7 @@ Type: Package
 Title: Kernel Approaches for Nonlinear Genetic Association Regression
 Version: 0.5
 Date: 2015-02-04
-Author: Stefanie Friedrichs [aut], Juliane Manitz [aut], Patricia Burger [aut], Benjamin Hofner [aut], Ngoc Thuy Ha [aut], Saskia Freytag [ctb], Martin Schlather [ctb], Heike Bickeböller [aut]
+Author: Stefanie Friedrichs [aut], Juliane Manitz [aut], Patricia Burger [aut], Benjamin Hofner [aut], Ngoc Thuy Ha [aut], Saskia Freytag [ctb], Martin Schlather [ctb], Heike Bickeboeller [aut]
 Maintainer: Stefanie Friedrichs <stefanie.friedrichs@med.uni-goettingen.de>
 Description: This package includes methods to extract information on pathways, genes and SNPs from online databases and to evaluate these data using the logistic kernel machine test (LKMT) with three different kernel functions. In the LKMT, we employed the linear kernel as well as two more advanced kernels, adjusting for size bias in the number of SNPs and genes in a pathway or incorporating the network structure of genes within the pathway, respectively.
 License: GPL-2
