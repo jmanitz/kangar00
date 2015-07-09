@@ -1,0 +1,207 @@
+\documentclass[a4paper,10pt]{article}
+\usepackage[utf8]{inputenc}
+
+\usepackage{authblk}
+
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsfonts}
+\usepackage{dsfont}
+\usepackage{graphicx}
+\usepackage{tikz}
+\usetikzlibrary{arrows}
+\usepackage{enumerate}
+
+\usepackage{color}
+
+% bibliography
+
+\usepackage[authoryear]{natbib}
+% \usepackage{natbib}                 % Literaturverzeichnis
+\usepackage{url}
+\bibliographystyle{unsrt}
+% \bibliographystyle{vancouver}
+% \bibliographystyle{plain}
+
+%costum commands
+% \newcommand{\old}[1]{{\color{magenta} #1}}
+\newcommand{\todo}[1]{{\bf\color{red} #1}}
+\newcommand{\jm}[1]{{\color{blue} #1}}
+% \newcommand{\marie}[1]{{\color{cyan} #1}}
+\usepackage{ulem} %zum durchstreichen mit \sout
+
+%
+\newcommand{\argmin}{\textrm{argmin}}
+
+
+%opening
+\title{Pathway-based Kernel Boosting for the Analysis of Data from Genome-Wide Association Studies}
+\author[1]{Juliane Manitz}
+\author[2]{Stefanie Friedrichs} 
+\author[3]{Christopher I. Amos}
+\author[6,7]{Angela Risch}
+\author[8]{Jenny Chang-Claude}
+\author[9]{Joachim Heinrich}
+\author[1]{Thomas Kneib} 
+\author[2]{Heike Bickeböller} 
+\author[3]{Benjamin Hofner}
+
+\affil[1] {\footnotesize Department of Statistics and Econometrics, Georg-August University G\"ottingen, G\"ottingen, Germany}
+\affil[2] {\footnotesize Institute of Genetic Epidemiology, Medical School, Georg-August University G\"ottingen, G\"ottingen, Germany.}
+\affil[3] {\footnotesize Department of Medical Informatics, Biometry and Epidemiology, Friedrich-Alexander-Universität Erlangen-Nürnberg, Erlangen, Germany}
+% \affil[4] {\footnotesize Center for Statistics, Georg-August University G\"ottingen, G\"ottingen, Germany}
+\affil[4] {\footnotesize Department of Community and Family Medicine, Geisel School of Medicine, Dartmouth College, Lebanon, NH, United States of America}
+\affil[6] {\footnotesize Division of Epigenomics and Cancer Risk Factors, Translational Lung Research Centre Heidelberg, German Cancer Research Center, Heidelberg, Germany}
+\affil[7] {\footnotesize Translational Lung Research Center Heidelberg (TLRC-H), Member of the German Center for Lung Research (DZL), Heidelberg, Germany}
+\affil[8] {\footnotesize Division of Cancer Epidemiology, German Cancer Research Center (DKFZ), Heidelberg, Germany}
+\affil[9] {\footnotesize Institute of Epidemiology, Helmholtz Center Munich, German Research Center for Environmental Health, Neuherberg, Germany}
+
+% \date{}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+
+\todo{Describe Simulation Study, Applications and summarize results}
+
+Pathway-based kernel boosting has more power compared to other methods for GWAS, while maintaining the type-I-error.
+The analysis of GWAS with kernel boosting in rheumatoid arthritis and lung cancer help in elucidating potentially important associations and causal pathways that affect their disease risk. 
+This can help to guide future strategies for early detection and screening by elucidating potential molecular mechanisms.
+
+\end{abstract}
+
+\emph{Key Words:} Boosting, Pathways, Networks, Gene-Gene Interactions, Lung Cancer, Rheumatoid Arthritis, Disease Association, Genetic Association Studies
+
+\section{Introduction}
+
+\jm{((In the following I re-organized the NARAC/LUCY data proposal to build a very first draft of the introduction. New parts are highlighted.))}
+
+%%%Scientific Background
+% Kernel Methods for GWAS
+Gene set analysis methods can be used to detect associations of specific
+pathways with disease risks. Kernel methods are particularly well suited to cope with the challenges connected to the analysis of data from genome-wide
+association studies \citep[GWAS;][]{pan2008,wu2010}. Different kernels have been proposed that convert the genomic information of two individuals into a
+quantitative value reflecting their genetic similarity
+\citep{wu2010,freytag2012,freytag2013}. \jm{The network-based kernel has been shown to have superior performance \citep{freytag2013}, so that we focus on its utilization for the integration of boosting and kernels.}
+
+% boosting
+Boosting is a promising statistical technique that could give a new perspective on the analysis of GWAS since it is able to combine the power from a set of kernels with weak signals \citep{friedman2001, friedman2000}. 
+Boosting is a flexible tool, which emerged in the field of machine learning, that aims at optimizing the prediction accuracy \citep{mayr2014}. Component-wise boosting enforces variable selection and includes additional effect regularization, and thus is especially useful for high-dimensional data \citep{buehlmann03}. Model-based boosting can be seen as an extension of
+classical boosting approaches \citep[see e.g.,][]{Kneib:2009,Hothorn:2010}.
+Diverse base-learners, which represent special effect types, can be chosen and
+arbitrarily combined \citep{hofner2014}. The derived models can be directly
+assessed and interpreted. Here, we want to investigate the efficiency of kernels as base-learners for the identification of gene disease association.
+
+% Kernel+Boosting for GWAS
+We will develop a statistical method that utilizes boosting with kernels as base learners to analyze data from genome-wide association studies in order to identify genetic variation which modulate individual's susceptibility to a disease. 
+In this context, boosting allows the inclusion of genetic information and demographic or clinical data at the same time. Furthermore, kernel boosting overcomes the problem of multiple testing of a number of pathways due to its inherent variable selection property \citep{hofner2011} and aims to optimize prediction accuracy measures.
+
+We perform a simulation study to determine whether risk associated pathways identified in initial analyses can be replicated in other GWAS.
+% \jm{Machen wir das noch? Ich glaube, wir haben entschieden dass wir hier auf das Netzwerk-Kernel Paper verweisen \citep{freytag2013}.}
+% We compare the results obtained from kernel boosting utilizing different kernel types. For that, we will consider kernels that have been shown to be powerful in genetic epidemiology such as the linear, size-adjusted and network-based kernel \citep{wu2010,freytag2012,freytag2013}.
+The results obtained by kernel boosting are compared with results from other methods for genome-wide association studies that utilize the tested kernels.
+For instance, the logistic kernel machine test has been proven to give reliable results \citep{freytag2012,freytag2013}.
+
+% Applications
+We apply this developed approach to two examples: rheumatoid arthritis (RA) and lung cancer (LC). 
+% We will also study appropriate measures to quantify the importance of gene sets on disease prediction performance.
+RA is the most common chronic joint disease and affects nearly 1\% of the adult population in the United States. Many genetic factors have been firmly established as contributing to RA risk, in particular the human leukocyte antigen (HLA) region on chromosome 6 \citep{raychaudhuri2010}. 
+LC is a very common disease in industrialized nations with enormous social and economic impact. Even though exposure to tobacco smoke determines most of the risk of developing LC, many studies also suggest genetic influences. Other than a few rare LC syndromes, only a moderate number of genetic effects, each contributing to only a weak increase in risk, are known.
+Thanks to their different genetic profiles, the study of both these diseases offers an excellent opportunity to evaluate the performance of novel statistical methods whose aim is to detect genetic associations of different strength.
+\\
+
+\todo{Add Outline}
+
+\section{Materials and Methods}
+
+\subsection{Boosting}
+
+\todo{Add presentation contents}
+
+\subsection{Construction of Network-Based Kernels}
+
+\todo{Add presentation contents}
+
+\subsection{Data}
+
+\subsubsection{RA and LC GWAS}
+
+\todo{Describe GWAS Data}
+
+\subsubsection{Pathway Data}
+
+\todo{KEGG Pathways download January 2015 (when exactly?)}
+
+\subsection{Simulation Study}
+
+\begin{itemize}
+ \item use reference gene data
+ \item use KEGG pathways,select position of one effect gene proportional to betweennes centrality of genes in the pathway and randomly select two of its neighbors (connected scenario) - apart scenario has been shown to be not relevant in \citep{freytag2013}
+ \item compare performance for additive, multiplicative and saturated effect strength cumulation
+ \item compare power for simulations based on relative risk of 1.0 (null model for type-I-error), 1.3 (moderate risk), 2.0 (string risk)
+ \item compare kernel boosting approach to LKMT with NET kernel and Bonferroni correction as established procedure
+\end{itemize}
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Results}
+
+\subsection{Simulation Study}
+
+\subsection{Applications}
+
+For all comparisons, we will compare the number of pathways each approach identifies as associated with the risk for rheumatoid arthritis and lung cancer, the respective overlap (between the methods), and the plausibility of association based on previous published analyses. 
+Top-risk associated pathways will be further explored through appropriate methods such as descriptive network measures.
+
+\subsubsection{GWAS Findungs}
+
+\begin{itemize}
+ \item Analyze RA data w/o HLA pathways and compare
+\end{itemize}
+
+\subsubsection{Comparison of Results by Different Pathway-Based Methods}
+
+\subsubsection{Impact of Network Characteristics}
+
+\section{Discussion}
+
+\begin{itemize}
+\item space-filling algorithm
+ \item potential integration of off-gene SNPs as additional linear effects
+\end{itemize}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section*{Acknowledgments}
+This work was supported by the German Research Foundation, Research Training Group 1644 'Scaling Problems in Statistics'.
+
+% \section*{Data Accessibility}
+% Network data bases on Public Transportation Network, which is obtained from LinTim \citep{lintimhp}. This optimization software was utilized to generate the simulation data based on line plan, time table and delay propagation.
+% % The simulation data was generated using the optimization software LinTim \citep{lintimhp}
+% The performance evaluation and statistical network analysis was conducted with the statistical software package R~\citep{r2014}. 
+
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% REFERENCES #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\bibliography{ref}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% FIGURES %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\clearpage
+\begin{figure}[ht]
+%  \centering
+%  \includegraphics[width=1\textwidth]{../img/fig1.pdf}
+ \caption{{\bf xxx.} xxx.}
+ \label{fig:dbnetC}
+\end{figure}
+
+
+\end{document}
+
+
+
+
+\bibliography{dbnet}
+
