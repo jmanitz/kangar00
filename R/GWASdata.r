@@ -18,21 +18,20 @@ setOldClass('ffdf')
 
 #' An S4 class defining an object to represent a Genome-wide Assocaition Study. 
 #' 
-#' @slot pheno A \code{data.frame} specifying individual IDs, phenotypes and 
+#' @slot pheno A \code{data.frame} specifying individual IDs, phenotypes and   
 #' covariates to be included in the regression model e.g. ID, pheno, sex, 
-#'pack.years. Note: IDs have to be in the first column!
+#' pack.years. Note: IDs have to be in the first column!
 #' @slot geno An \code{ffdf} data frame including genotype information.
-#' @slot anno A \code{data.frame} with mapping SNPs to genes and genes to pathways.
-#' Needs to include the columns 'pathway' (pathway ID, e.g. hsa number from KEGG
-#' database), 'gene' (gene name (hgnc_symbol)), 'chr' (chromosome), 'snp' 
-#' (rsnumber) and 'position' (base pair position of SNP).
+#' @slot anno A \code{data.frame} with mapping SNPs to genes and genes to 
+#' pathways. Needs to include the columns 'pathway' (pathway ID, e.g. hsa 
+#' number from KEGG database), 'gene' (gene name (hgnc_symbol)), 'chr' 
+#' (chromosome), 'snp' (rsnumber) and 'position' (base pair position of SNP).
 #' @slot desc A \code{character} giving the GWAS description, e.g. name of study 
 #' @examples
 #' data(pheno)
 #' data(geno)
 #' #gwas <- new('GWASdata', pheno=pheno, geno=geno, desc="some study") ### ERROR
 #' @author Juliane Manitz, Stefanie Friedrichs
-#' @seealso \code{\link{}}
 #' @exportClass GWASdata
 GWASdata <- setClass('GWASdata', slots=c(pheno='data.frame', geno='ffdf', desc='character'))
     ## validy checks
@@ -85,17 +84,16 @@ GWASdata <- setClass('GWASdata', slots=c(pheno='data.frame', geno='ffdf', desc='
 })
 
 
-#' Shows basic information on \code{GWASdata} object
+#' \code{show} Shows basic information on \code{GWASdata} object
 #' 
-#' @param object \code{GWASdata} object.
-#' @return This function shows the phenotype information and the object 
-#' description included in a \code{\link{GWASdata}} object.
+#' @param object A \code{GWASdata} object.
+#' @return \code{show} This function shows the phenotype information and the object description included in a \code{\link{GWASdata}} object.
 #' 
 #' @examples
 #' data(gwas)
 #' show(gwas)
 #'
-#' @author Juliane Manitz
+#' #@author Juliane Manitz
 #' @export
 #' @rdname GWASdata-class
 #' @aliases show,GWASdata,ANY-method
@@ -108,21 +106,19 @@ setMethod('show', signature='GWASdata',
           })
 
 
-#' @exportMethod summary
+## summary
 setGeneric('summary', function(object, ...) standardGeneric('summary'))
 
-#' Summarizes the content of a \code{GWASdata} object
+#' \code{summary} Summarizes the content of a \code{GWASdata} object
 #' 
-#' @param object \code{GWASdata} object.
-#' @return This function gives an overview about the information included in a 
-#' \code{\link{GWASdata}} object. Summary statistics for phenotype and genotype 
-#' data are calculated. 
+#' @param object A \code{GWASdata} object.
+#' @return \code{summary} This function gives an overview about the information included in a \code{\link{GWASdata}} object. Summary statistics for phenotype and genotype data are calculated. 
 #' 
 #' @examples
 #' # data(gwas)   #### ERROR
 #' # summary(gwas) ### ERROR
 #'
-#' @author Juliane Manitz
+#' #@author Juliane Manitz
 #' @export
 #' @rdname GWASdata-class
 #' @aliases summary,GWASdata,ANY-method
@@ -139,19 +135,19 @@ setMethod('summary', signature='GWASdata',
               invisible(NULL)
           })
 
-#' @exportMethod GeneSNPsize
+## GeneSNPsize
 setGeneric('GeneSNPsize', function(object, ...) standardGeneric('GeneSNPsize'))
 
-#' Counts the number of Genes and SPNs in each pathway
+#' \code{GeneSNPsize} Counts the number of Genes and SPNs in each pathway
 #' 
-#' @param gwas \code{GWASdata} object.
-#' @return Creates a list of pathway names with numbers of snps and genes in the pathway. 
+#' @param object A \code{GWASdata} object.
+#' @return \code{GeneSNPsize} Creates a list of pathway names with numbers of snps and genes in the pathway. 
 #' 
 #' @examples
 #' #data(gwas)### ERROR
 #' #GeneSNPsize(gwas) ### ERROR
 #'
-#' @author Juliane Manitz
+#' #@author Juliane Manitz
 #' @export
 #' @rdname GWASdata-class
 #' @aliases GeneSNPsize,GWASdata,ANY-method
@@ -166,14 +162,14 @@ setMethod('GeneSNPsize', signature='GWASdata',
           })
 
 
-#'  Get SNP positions
+#' Get SNP positions
 #'
 #' This function gives for a vector of SNPs the position of each SNP as 
 #' extracted from the Ensemble database. The database is accessed via the 
 #' R-package \code{biomaRt}.
 #'
 #' @param snps A vector of SNP rsnumbers for which positions will be extracted.
-#' @param ... additional aguments can be specified. 
+#' @param ... further arguments can be added. 
 #' @return A \code{data.frame} including the SNP positions with columns 
 #' chromosome, position and rsnumber. SNPs not found in the Ensemble database 
 #' not be listed in the returned \code{data.frame}, SNPs with multiple positions
@@ -199,18 +195,18 @@ snp_info <- function(snps, ...) {
 #' R-package \code{biomaRt}.
 #'
 #' @param snp_info A \code{data frame} with SNP information as returned by 
-#' \code{\link{snp_info}}. The \code{data frame} has to contain culumns "chr", 
+#' \code{\link{snp_info}}. The \code{data frame} has to contain columns "chr", 
 #' "position" and "rsnumber".
 #' @param pathway_info A \code{data frame} with information on the genes forming 
-#' a pathway. Output from \code{\link{pathway_info}}.
-#' @param ... additional aguments can be specified.
+#' the pathway. Output from \code{\link{pathway_info}}.
+#' @param ... further arguments can be added.
 #' @return A \code{data.frame} mapping SNPs to genes and genes to pathways. Includes
 #' the columns "pathway", "gene", "chr", "snp" and "position".   
 #' @examples 
 #' #### missing example ####
 #'
 #' @author Stefanie Friedrichs, Saskia Freytag, Ngoc-Thuy Ha
-#' @import sqldf 
+#' @import sqldf
 get_anno <- function(snp_info, pathway_info, ...){ 
   if (!inherits(snp_info, "data.frame"))
       stop("SNP object is not a data frame")

@@ -2,18 +2,29 @@
 % Please edit documentation in R/lkmt.r
 \docType{methods}
 \name{show,lkmt-method}
+\alias{show,GWASdata,ANY-method}
 \alias{show,lkmt-method}
+\alias{summary,GWASdata,ANY-method}
+\alias{summary,lkmt-method}
 \title{Shows basic information on \code{lkmt} object}
 \usage{
 \S4method{show}{lkmt}(object)
+
+\S4method{summary}{lkmt}(object)
 }
 \arguments{
-\item{lkmt}{An object of class \code{\link{lkmt}}.}
+\item{object}{An object of class \code{\link{lkmt}}.}
+
+\item{object}{An object of class \code{\link{lkmt}}.}
 }
 \description{
 Shows basic information on \code{lkmt} object
+
+Summarizes information on \code{lkmt} object
 }
 \author{
+Juliane Manitz
+
 Juliane Manitz
 }
 

@@ -1,3 +1,5 @@
+#################################################
+#
 # pathway object functions
 #
 #################################################
@@ -196,7 +198,7 @@ setGeneric('get_genes', function(object, ...) standardGeneric('get_genes'))
 #' \code{get_genes} is a helper function that extracts the gene names in a pathway and returns a vector of character containing gene names
 #'
 #' @export
-#' @rdname pathway-class 
+#' @rdname pathway_class 
 #' @aliases get_genes,pathway,ANY-method
 #'
 #' @examples
@@ -401,6 +403,7 @@ pathway_info <- function(id,  ...){
 #'
 #' This function sets all entries in a matrix bigger than 1 to 1 and all entries 
 #' smaller than -1 to -1. It is called by \code{\link{get_network_matrix}}.
+#' (For internal use)
 #'
 #' @param M A \code{matrix} representing the networkmatrix. 
 #' @return A \code{matrix} representing the interaction network in the pathway
@@ -420,8 +423,9 @@ set_one <- function(M){
 #' Helper function to translate gene numbers to names  
 #'
 #' This function exchanges the numbers used for genes in KEGG download KGML files
-#' with gene names in the columnnames and rownames of a networkmatrix. It is 
-#' called by \code{\link{get_network_matrix}}.
+#' with the corresponding gene names. Names are set to be the columnnames and 
+#' rownames of the pathway's networkmatrix. The function 
+#' is called by \code{\link{get_network_matrix}}. (For internal use)
 #'
 #' @param N A \code{matrix} representing the networkmatrix. 
 #' @param nodes A \code{vector} of gene numbers to be replaced by names.   
@@ -442,7 +446,7 @@ set_names <- function(N, nodes, my_list){
  
 #' Function to calculate the network matrix
 #'
-#' This function creates the networkmatrix representing the genge-gene interaction 
+#' This function creates the networkmatrix representing the gene-gene interaction 
 #' structure within a particular pathway.
 #'
 #' @param id A \code{character} identifying the pathway for which gene infomation 

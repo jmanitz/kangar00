@@ -5,7 +5,6 @@
 \alias{analyze,pathway,ANY-method}
 \alias{analyze,pathway-method}
 \alias{get_genes,pathway,ANY-method}
-\alias{get_genes,pathway-method}
 \alias{pathway}
 \alias{pathway-class}
 \alias{pathway2igraph,pathway,ANY-method}
@@ -26,8 +25,6 @@
 \S4method{pathway2igraph}{pathway}(object)
 
 \S4method{analyze}{pathway}(object, ...)
-
-\S4method{get_genes}{pathway}(object)
 
 \S4method{plot}{pathway,missing}(x, y = NA, highlight.genes = NULL,
   gene.names = c("legend", "nodes", NA), main = NULL, asp = 0.95,
@@ -91,8 +88,6 @@ An S4 class to represent a gene-gene interaction network
 
 analyze pathway network properties
 
-\code{get_genes} is a helper function that extracts the gene names in a pathway and returns a vector of character containing gene names
-
 \code{plot} plots pathway as igraph object
 
 \code{sample_genes} function randomly selects effect genes in pathway and returns a vector of length \code{no} with vertex id's of sampled genes
@@ -117,8 +112,6 @@ str(g)
 data(hsa04710)
 summary(hsa04710)
 analyze(hsa04710)
-# extract gene names from pathway
-get_genes(hsa04710)
 # plot pathway as igraph object
 plot(hsa04710)
 sample3 <- sample_genes(hsa04710, no = 3)

@@ -9,7 +9,7 @@ snp_info(snps, ...)
 \arguments{
 \item{snps}{A vector of SNP rsnumbers for which positions will be extracted.}
 
-\item{...}{additional aguments can be specified.}
+\item{...}{further arguments can be added.}
 }
 \value{
 A \code{data.frame} including the SNP positions with columns

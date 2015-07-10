@@ -1,3 +1,4 @@
+#################################################
 #
 # kernel object functions
 #
@@ -125,8 +126,8 @@ setGeneric('kernel', function(object, ...) standardGeneric('kernel'))
 #' For more details, check the references.
 #' @references
 #' \itemize{
-#'  \item Wu MC, Kraft P, Epstein MP, Taylor DM, Chanock SJ, Hunter DJ, Lin X: Powerful SNP-Set Analysis for Case-Control Genome-Wide Association Studies. Am J Hum Genet 2010, 86:929-42
-#'  \item Freytag S, Bickeboeller H, Amos CI, Kneib T, Schlather M: A Novel Kernel for Correcting Size Bias in the Logistic Kernel Machine Test with an Application to Rheumatoid Arthritis. Hum Hered. 2012, 74(2): 97-108.
+#'  \item Wu MC, Kraft P, Epstein MP, Taylor DM, Chanock SJ, Hunter DJ, Lin X Powerful SNP-Set Analysis for Case-Control Genome-Wide Association Studies. Am J Hum Genet 2010, 86:929-42
+#'  \item Freytag S, Bickeboeller H, Amos CI, Kneib T, Schlather M: A Novel Kernel for Correcting Size Bias in the Logistic Kernel Machine Test with an Application to Rheumatoid Arthritis. Hum Hered. 2012, 74(2):97-108.
 #'  \item Freytag S, Manitz J, Schlather M, Kneib T, Amos CI, Risch A, Chang-Claude J, Heinrich J, Bickeboeller H: A network-based kernel machine test for the identification of risk pathways in genome-wide association studies. Hum Hered. 2013, 76(2):64-75.
 #' }
 #' 
@@ -149,7 +150,7 @@ setMethod('kernel',
 lin_kernel <- setClass('lin_kernel', contains = 'kernel')
 # linear kernel object constructor
 setGeneric('lin_kernel', function(object, ...) standardGeneric('lin_kernel'))
-# @describeIn kernel
+#' @describeIn kernel
 setMethod('lin_kernel', 
           definition = function(data, pathway, 
                        parallel = c('none', 'cpu', 'gpu'), ...) {
@@ -320,7 +321,8 @@ rewire_network <- function(N, remov) {
 #' @export
 #' @author Juliane Manitz, Saskia Freytag, Stefanie Freidrichs
 #'
-#' @param anno \code{data.frame} with annotation information
+#' @param anno \code{data.frame} with annotation information as returned from 
+#' \cite{\link{get_anno}}
 #' @param SNPset vector with SNPs to be analyzed
 #' @param pathway pathway object
 #' @return matrix ANA' for inner part of network kernel
@@ -363,9 +365,9 @@ get_ana <- function(anno, SNPset, pathway){
 #' @author Juliane Manitz, Saskia Freytag, Stefanie Freidrichs
 #'
 #' @param N A kernelmatrix. 
-#' @return matrix N, if it was positive definite. The closes positive definite 
-#' matrix to N if N was not positive definite. 
-#' For more details check 
+#' @return The matrix N, if it is positive definite and the closes positive 
+#' definite matrix if N is not positive definite. 
+#' For more details check the references.
 #' @references
 #' \itemize{
 #'  \item Freytag S, Manitz J, Schlather M, Kneib T, Amos CI, Risch A, Chang-Claude J, Heinrich J, Bickeboeller H: A network-based kernel machine test for the identification of risk pathways in genome-wide association studies. Hum Hered. 2013, 76(2):64-75.

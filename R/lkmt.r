@@ -5,22 +5,23 @@
 #################################################
 
 
-#' An S4 class defining an object to represent the variance component test. 
+#' An S4 class to represent the variance component test. 
 #' 
-# @slot formula A formular stating the regression nullmodel that will be used in
+#' @rdname lkmt-class
+#' @slot formula A formular stating the regression nullmodel that will be used in
 #' the variance component test. 
-# @slot kernel An object of class \code{\link{kernel}} representing the similarity
+#' @slot kernel An object of class \code{\link{kernel}} representing the similarity
 #' matrix of the individuals based on which the pathways influence is evaluated.
-# @slot GWASdata An object of class \code{\link{GWASdata}} stating the data on 
+#' @slot GWASdata An object of class \code{\link{GWASdata}} stating the data on 
 #' which the test is conducted. 
-# @slot statistic A \code{vector} giving the value of the variance component 
+#' @slot statistic A \code{vector} giving the value of the variance component 
 #' ttest statistic.
-# @slot statistic A \code{vector} giving the number of degrees of freedom. 
-# @slot statistic A \code{vector} giving the p-value calculated for the pathway 
+#' @slot statistic A \code{vector} giving the number of degrees of freedom. 
+#' @slot statistic A \code{vector} giving the p-value calculated for the pathway 
 #' in the variance component test.
 #'
 #' @author Juliane Manitz, Stefanie Friedrichs
-#' @exportClass lkmt
+#' @export lkmt
 lkmt <- setClass('lkmt',
                  slots=c(formula='formula', kernel='kernel', GWASdata='GWASdata',
                          statistic='vector',df='vector',p.value='vector'))
@@ -33,32 +34,23 @@ setValidity('lkmt', function(object){  # to be defined !!
 })
 
 
-#' Test a pathway 
-#'
-#' This function calculates as first step the regression nullmodel which can include
-#' informative fixed effects covariates, but does not include the random effect
-#' genetic influence. The influence of a pathway on the pobability of being
-#' a case is than evaluated via a variance component test on the pathway's
-#' kernelmatrix. This kernelmatrix represents the similarity of individuals from the 
-#' dataset specified in the GWASdats argument in the particular pathway.
-#'
-#' @param formula A formular stating the regression nullmodel that will be used
-#' in the variance component test.
+#' Function to start the logistic kernel machine test. 
+#' 
+#' @param formula A formular for the regression nullmodel that will be used in
+#' the variance component test. 
 #' @param kernel An object of class \code{\link{kernel}} representing the similarity
 #' matrix of the individuals based on which the pathways influence is evaluated.
-#' @param GWASdata An object of class \code{\link{GWASdata}} repesenting the data on 
+#' @param GWASdata An object of class \code{\link{GWASdata}} representing the data on 
 #' which the test is conducted. 
-#' @param ... additional aguments can be specified.
-#' @return An object of class \code{\link{lkmt}} including the test results.
-#' @references 
-#' Details to the variance component test can be found in:
-#' \itemize{
-#'   \item Wu MC, Kraft P, Epstein MP, Taylor DM, Chanock SJ, Hunter DJ, Lin X: Powerful SNP-Set Analysis for Case-Control Genome-Wide Association Studies. Am J Hum Genet 2010, 86:929-42
-#' }   
-#' @examples 
-#' #### missing example ####
+#' @param ... additional arguments can be added.
+#' @return An \code{\link{lkmt}} object with the test results. 
+#' @author Juliane Manitz, Stefanie Friedrichs
 #'
-#' @author Stefanie Friedrichs, Juliane Manitz
+#' For details on the variance component test see the references.
+#' @references
+#' \itemize{
+#'  \item Wu MC, Kraft P, Epstein MP, Taylor DM, Chanock SJ, Hunter DJ, Lin X: Powerful SNP-Set Analysis for Case-Control Genome-Wide Association Studies. Am J Hum Genet 2010, 86:929-42
+#' }
 lkmt <- function(formula, kernel, GWASdata, ...){
     nullmodel <- glm(formula, data=GWASdata@pheno, family=binomial, x=TRUE)
     model     <- score_test(kernel@kernel, nullmodel, pd.check=FALSE)[[1]]
@@ -68,14 +60,14 @@ lkmt <- function(formula, kernel, GWASdata, ...){
     return(ret)
 }
 
-#' Shows basic information on \code{lkmt} object
+#' \code{show} Shows basic information on \code{lkmt} object
 #' 
-#' @param lkmt An object of class \code{\link{lkmt}}.
-#'
-#' @author Juliane Manitz
+#' @param object An object of class \code{\link{lkmt}}.
+#' @return \code{show} Basic information on \code{lkmt} object.
+#' #@author Juliane Manitz
 #' @export
 #' @rdname lkmt-class
-#' @aliases show,lkmt,ANY-method
+#' @aliases show,GWASdata,ANY-method
 setMethod('show', signature='lkmt',
           definition = function(object){
               cat('An object of class ', class(object), ':\n', sep='')
@@ -89,14 +81,14 @@ setMethod('show', signature='lkmt',
 ## summary
 setGeneric('summary', function(object, ...) standardGeneric('summary'))
 
-#' Summarizes information on \code{lkmt} object
+#' \code{summary} Summarizes information on \code{lkmt} object
 #' 
-#' @param lkmt An object of class \code{\link{lkmt}}.
-#'
-#' @author Juliane Manitz
+#' @param object An object of class \code{\link{lkmt}}.
+#' @return \code{summary} Summarized information on \code{lkmt} object.
+#' #@author Juliane Manitz
 #' @export
 #' @rdname lkmt-class
-#' @aliases summary,lkmt,ANY-method
+#' @aliases summary,GWASdata,ANY-method
 setMethod('summary', signature='lkmt',
           definition = function(object){
               cat('An object of class ', class(object), ':\n\n', sep='')
@@ -123,11 +115,12 @@ setMethod('summary', signature='lkmt',
 #' @param  pd.check boolean, whether to check for positive definiteness.
 #' @return A \code{list} including the test results of the pathway.   
 #' @author Stefanie Friedrichs, Saskia Freytag, Ngoc-Thuy Ha
-#' @references 
-#' Details to the p-value approxiamtion can be found in:
+#'
+#' For details on the p-value approximation see
 #' \itemize{
-#'   \item Schaid DJ: Genomic Similarity and Kernel Methods I: Advancements by Building on Mathematical and Statistical Foundations. Hum Hered 2010, 70:109-31
-#' }  
+#' \item Schaid DJ: Genomic Similarity and Kernel Methods I: Advancements by Building on Mathematical and Statistical Foundations. Hum Hered 2010, 70:109-31
+#' }
+
 score_test <- function(kernels, nullmodel, pd.check=TRUE){ 
                                                           
         if(is.matrix(kernels)){

@@ -19,19 +19,16 @@
 \S4method{GeneSNPsize}{GWASdata}(object)
 }
 \arguments{
-\item{object}{\code{GWASdata} object.}
+\item{object}{A \code{GWASdata} object.}
 
-\item{object}{\code{GWASdata} object.}
+\item{object}{A \code{GWASdata} object.}
 
-\item{gwas}{\code{GWASdata} object.}
+\item{object}{A \code{GWASdata} object.}
 }
 \value{
-This function shows the phenotype information and the object
-description included in a \code{\link{GWASdata}} object.
+This function shows the phenotype information and the object description included in a \code{\link{GWASdata}} object.
 
-This function gives an overview about the information included in a
-\code{\link{GWASdata}} object. Summary statistics for phenotype and genotype
-data are calculated.
+This function gives an overview about the information included in a \code{\link{GWASdata}} object. Summary statistics for phenotype and genotype data are calculated.
 
 Creates a list of pathway names with numbers of snps and genes in the pathway.
 }
@@ -47,18 +44,7 @@ Counts the number of Genes and SPNs in each pathway
 \section{Slots}{
 
 \describe{
-\item{\code{pheno}}{A \code{data.frame} specifying individual IDs, phenotypes and
-covariates to be included in the regression model e.g. ID, pheno, sex,
-pack.years. Note: IDs have to be in the first column!}
-
-\item{\code{geno}}{An \code{ffdf} data frame including genotype information.}
-
-\item{\code{anno}}{A \code{data.frame} with mapping SNPs to genes and genes to pathways.
-Needs to include the columns 'pathway' (pathway ID, e.g. hsa number from KEGG
-database), 'gene' (gene name (hgnc_symbol)), 'chr' (chromosome), 'snp'
-(rsnumber) and 'position' (base pair position of SNP).}
-
-\item{\code{desc}}{A \code{character} giving the GWAS description, e.g. name of study}
+\item{\code{pheno}}{A \code{data.frame} specifying individual IDs, phenotypes and   covariates to be included in the regression model e.g. ID, pheno, sex, pack.years. Note: IDs have to be in the first column!}
 }}
 \examples{
 data(pheno)
@@ -79,8 +65,5 @@ Juliane Manitz
 Juliane Manitz
 
 Juliane Manitz
-}
-\seealso{
-\code{\link{}}
 }
 

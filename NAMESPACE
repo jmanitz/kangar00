@@ -2,6 +2,7 @@
 
 export(get_ana)
 export(kernel)
+export(make_posdev)
 export(rewire_network)
 exportClasses(GWASdata)
 exportClasses(ffdf)
@@ -19,4 +20,5 @@ import(KEGGgraph)
 import(biomaRt)
 import(ff)
 import(igraph)
+import(sqldf)
 importFrom(graphics,plot)

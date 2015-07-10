@@ -8,20 +8,8 @@ lkmt(formula, kernel, GWASdata, ...)
 
 lkmt(formula, kernel, GWASdata, ...)
 }
-\arguments{
-\item{formula}{A formular stating the regression nullmodel that will be used
-in the variance component test.}
-
-\item{kernel}{An object of class \code{\link{kernel}} representing the similarity
-matrix of the individuals based on which the pathways influence is evaluated.}
-
-\item{GWASdata}{An object of class \code{\link{GWASdata}} repesenting the data on
-which the test is conducted.}
-
-\item{...}{additional aguments can be specified.}
-}
 \value{
-An object of class \code{\link{lkmt}} including the test results.
+An \code{\link{lkmt}} object with the test results.
 }
 \description{
 the variance component test.
@@ -30,25 +18,20 @@ which the test is conducted.
 ttest statistic.
 in the variance component test.
 
-This function calculates as first step the regression nullmodel which can include
-informative fixed effects covariates, but does not include the random effect
-genetic influence. The influence of a pathway on the pobability of being
-a case is than evaluated via a variance component test on the pathway's
-kernelmatrix. This kernelmatrix represents the similarity of individuals from the
-dataset specified in the GWASdats argument in the particular pathway.
-}
-\examples{
-#### missing example ####
+the variance component test.
+matrix of the individuals based on which the pathways influence is evaluated.
+which the test is conducted.
 }
 \author{
 Juliane Manitz, Stefanie Friedrichs
 
-Stefanie Friedrichs, Juliane Manitz
+Juliane Manitz, Stefanie Friedrichs
+
+For details on the variance component test see
 }
 \references{
-Details to the variance component test can be found in:
 \itemize{
-  \item Wu MC, Kraft P, Epstein MP, Taylor DM, Chanock SJ, Hunter DJ, Lin X: Powerful SNP-Set Analysis for Case-Control Genome-Wide Association Studies. Am J Hum Genet 2010, 86:929-42
+ \item Wu MC, Kraft P, Epstein MP, Taylor DM, Chanock SJ, Hunter DJ, Lin X: Powerful SNP-Set Analysis for Case-Control Genome-Wide Association Studies. Am J Hum Genet 2010, 86:929-42
 }
 }
 
