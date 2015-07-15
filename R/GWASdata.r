@@ -22,7 +22,7 @@ setOldClass('ffdf')
 #' covariates to be included in the regression model e.g. ID, pheno, sex, 
 #' pack.years. Note: IDs have to be in the first column!
 #' @slot geno An \code{ffdf} data frame including genotype information.
-#' @slot anno A \code{data.frame} with mapping SNPs to genes and genes to 
+#' Has an attribute anno which is a \code{data.frame} mapping SNPs to genes and genes to 
 #' pathways. Needs to include the columns 'pathway' (pathway ID, e.g. hsa 
 #' number from KEGG database), 'gene' (gene name (hgnc_symbol)), 'chr' 
 #' (chromosome), 'snp' (rsnumber) and 'position' (base pair position of SNP).

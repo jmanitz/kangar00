@@ -324,10 +324,10 @@ setMethod('sample_genes', signature='pathway',
           })
 
 
-#' Function to get genes names and numbers from kegg
+#' Function to get genes names and numbers from kegg (for internal use)
 #'
 #' This function extracts for a particular pathway all included genes and the
-#' numbers they are given within the corresponding KGML pathway file. 
+#' numbers they are given within the corresponding KGML pathway file.
 #'
 #' @param id A \code{character} hsa identifier of the pathway for which gene 
 #' infomation should be extracted as used in KEGG database ('hsa00100').    

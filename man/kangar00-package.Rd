@@ -6,7 +6,7 @@
 kangar00 package
 }
 \description{
-This package includes methods to extract information on pathways, genes and SNPs from online databases and to evaluate these data using the logistic kernel machine test (LKMT) (Wu et al. 2010) with three different kernel functions. P-values are derived in a variance component test using a moment matching methode (Schaid, 2010) or Davies' algorithm (Davies, 1980).
+This package includes methods to extract information on pathways, genes and SNPs from online databases and to evaluate these data using the logistic kernel machine test (LKMT) (Liu et al. 2008) with three different kernel functions. P-values are derived in a variance component test using a moment matching methode (Schaid, 2010) or Davies' algorithm (Davies, 1980).
 We defined SNP sets representing genes and whole pathways using knowledge on gene membership and interaction from the Kyoto Encyclopedia of Genes and Genomes (KEGG) database (Kanehisa et al. 2014) and the transcript start and end positions of genes, as well as the base pair positions of SNPs from the Ensemble database (Cunningham et al. 2015). 
 In the LKMT, we employed the linear kernel (Wu et al. 2010) as well as two more advanced kernels,  adjusting for size bias in the number of SNPs and genes in a pathway or incorporating the network structure of genes within the pathway, respectively (Freytag et al. 2012, 2014).
 }
@@ -32,6 +32,7 @@ Maintainer: Stefanie Friedrichs <stefanie.friedrichs@med.uni-goettingen.de>
 5. Kanehisa, M., Goto, S., Sato, Y., Kawashima, M., Furumichi, M., and Tanabe, M.; Data, information, knowledge and principle: back to metabolism in KEGG. Nucleic Acids Res. 42, D199-D205 (2014). 
 6. Freytag S, Bickeboeller H, Amos CI, Kneib T, Schlather M: A Novel Kernel for Correcting Size Bias in the Logistic Kernel Machine Test with an Application to Rheumatoid Arthritis. Hum Hered. 2012, 74(2):97-108.
 7. Freytag S, Manitz J, Schlather M, Kneib T, Amos CI, Risch A, Chang-Claude J, Heinrich J, Bickeboeller H: A network-based kernel machine test for the identification of risk pathways in genome-wide association studies. Hum Hered. 2013, 76(2):64-75. 
+8. Liu D, Ghosh D, Lin X. Estimation and testing for the effect of a genetic pathway on a disease outcome using logistic kernel machine regression via logistic mixed models. BMC Bioinformatics. 2008 9:292.
 }
 
 \keyword{ package }
