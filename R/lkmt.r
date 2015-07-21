@@ -58,7 +58,7 @@ lkmt <- function(formula, kernel, GWASdata, method=c('satt','davies'), ...){
    if ( !(method%in%c('satt','davies')) ){
    stop("p-value calculation method needs to be 'satt' or 'davies'")
    }
-   nullmmodel <- glm(formula, data=GWASdata@pheno, family=binomial, x=TRUE)
+   nullmodel <- glm(formula, data=GWASdata@pheno, family=binomial, x=TRUE)
    if(method=='satt'){
    model <- score.test(kernel@kernel, nullmodel, pd.check=FALSE)[[1]]
    }
