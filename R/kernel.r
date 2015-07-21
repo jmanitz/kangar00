@@ -135,19 +135,19 @@ setGeneric('kernel', function(object, ...) standardGeneric('kernel'))
 #' @rdname kernel-class
 #' @seealso \code{\link{GWASdata-class}}, \code{\link{pathway-class}}
 setMethod('kernel',
-          definition = function(type = c('lin', 'sia', 'net'), data, pathway,
-                                parallel = c('none', 'cpu', 'gpu'), ...) {
-              type <- match.arg(type)
-              parallel <- match.arg(parallel)
-              
-              if(type=='lin') k <- new('lin_kernel', data, pathway, parallel, ...)
-              if(type=='sia') k <- new('sia_kernel', data, pathway, parallel, ...)
-              if(type=='net') k <- new('net_kernel', data, pathway, parallel, ...)
-              return(k)
+       definition = function(type = c('lin', 'sia', 'net'), data, pathway,
+                             parallel = c('none', 'cpu', 'gpu'), ...) {
+           type     <- match.arg(type)
+           parallel <- match.arg(parallel)
+           
+           if(type=='lin') k <- new('lin_kernel', data, pathway, parallel, ...)
+           if(type=='sia') k <- new('sia_kernel', data, pathway, parallel, ...)
+           if(type=='net') k <- new('net_kernel', data, pathway, parallel, ...)
+           return(k)
 })
 
 # create linear kernel # subclass of kernel!
-lin_kernel <- setClass('lin_kernel', contains = 'kernel')
+lin_kernel <- setClass('lin_kernel', contains = 'kernel','pathway')
 # linear kernel object constructor
 setGeneric('lin_kernel', function(object, ...) standardGeneric('lin_kernel'))
 #' @describeIn kernel

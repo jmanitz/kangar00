@@ -2,7 +2,7 @@
 title: "Kernel Approaches for Nonlinear Genetic Association Regression"
 author: "Stefanie Friedrichs"
 date: "`r Sys.Date()`"
-output: rmarkdown::html_vignette
+output: pdf_document
 vignette: >
   %\VignetteIndexEntry{Kernel Approaches for Nonlinear Genetic Association Regression}
   %\VignetteEngine{knitr::rmarkdown}
@@ -63,13 +63,12 @@ pathway as an example.
    and chromosome information is extracted from Ensemble (Cunningham et al 2015).
    The database is accessed via the function `getBM()` in the biomaRt package. 
    This means that the gene boundaries given will equal the current build used 
-   in Ensemble. An internet connection is required for this step.  
- 
+   in Ensemble. An internet connection is required for this step.   
 ``` 
 pathway_info('hsa04710')   
 ```
 will return a data frame looking like 
-  
+    
 | pathway | gene_start| gene_end |chr|  gene |
 |:-------:|----------:|---------:|--:|:-----:|
 |hsa04710 | 13276652  | 13387266 | 11|ARNTL  |
@@ -78,6 +77,8 @@ will return a data frame looking like
 |hsa04710 |   ...     |    ...   | ...| ...  |
 
 listing informatin on all genes KEGG assigns to Circadian rhythm.
+
+
 
 ### Networkmatrix
 
@@ -327,8 +328,12 @@ defining a pathway with the function `lkmt`. It needs the following arguments
 *    A  `GWASdata` object including the genotype based on which the test
      should be performed.
      
+*    A `character` specifying which method should be used to calculate the 
+     p-value. Available are 'satt' for the Satterthwaite approximation (Schaid
+     2010) or 'davies' for Davies method (Davies 1980). 
+     
 ```
-pval_net <- lkmt(pheno ~ 1+sex+age, K_mat, my_gwas)
+pval_net <- lkmt(pheno ~ 1+sex+age, K_mat, my_gwas, method='satt')
 ```
 will return an object of type `lkmt` giving the test result for the pathway 
 on which the kernelmatrix 'K_mat' was calculated. The `GWASdata` object 

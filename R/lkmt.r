@@ -42,6 +42,8 @@ setValidity('lkmt', function(object){  # to be defined !!
 #' matrix of the individuals based on which the pathways influence is evaluated.
 #' @param GWASdata An object of class \code{\link{GWASdata}} representing the data on 
 #' which the test is conducted. 
+#' @param method A \code{character} specifying how p-values should be calculated.
+#' For Satterthwaite approximation use 'satt', for Davies method use 'davies'.
 #' @param ... additional arguments can be added.
 #' @return An \code{\link{lkmt}} object with the test results. 
 #' @author Juliane Manitz, Stefanie Friedrichs
@@ -51,13 +53,21 @@ setValidity('lkmt', function(object){  # to be defined !!
 #' \itemize{
 #'  \item Wu MC, Kraft P, Epstein MP, Taylor DM, Chanock SJ, Hunter DJ, Lin X: Powerful SNP-Set Analysis for Case-Control Genome-Wide Association Studies. Am J Hum Genet 2010, 86:929-42
 #' }
-lkmt <- function(formula, kernel, GWASdata, ...){
-    nullmodel <- glm(formula, data=GWASdata@pheno, family=binomial, x=TRUE)
-    model     <- score_test(kernel@kernel, nullmodel, pd.check=FALSE)[[1]]
-    ret       <- new('lkmt', formula=formula, kernel=kernel, GWASdata=GWASdata, 
-                     statistic=model$statistic, df=model$parameter, 
-                     p.value=model$p.value)
-    return(ret)
+lkmt <- function(formula, kernel, GWASdata, method=c('satt','davies'), ...){
+
+   if ( !(method%in%c('satt','davies')) ){
+   stop("p-value calculation method needs to be 'satt' or 'davies'")
+   }
+   nullmmodel <- glm(formula, data=GWASdata@pheno, family=binomial, x=TRUE)
+   if(method=='satt'){
+   model <- score.test(kernel@kernel, nullmodel, pd.check=FALSE)[[1]]
+   }
+   if(method=='davies'){
+   model <- davies_test(kernel@kernel, nullmodel)
+   } 
+   ret <- new('lkmt', formula=formula, kernel=kernel, GWASdata=GWASdata,
+          statistic=model$statistic, df=model$parameter, p.value=model$p.value)
+   return(ret)
 }
 
 #' \code{show} Shows basic information on \code{lkmt} object
@@ -102,13 +112,13 @@ setMethod('summary', signature='lkmt',
           })
 
 
-#' Calculates the p-value for a kernelmatrix  
+#' Calculates the p-value for a kernelmatrix using Satterthwaite approximation 
 #'
 #' This function evaluates a pathways influence on an individuals probability
 #' of beeing a case using the logistic kernel machine test. P-values are 
 #' determined using a Sattherthwaite Approximation as described by Dan Schaid. 
 #'
-#' @param kernels an object of \code{\link{kernel}} class. Includes the 
+#' @param kernels A \code{\link{matrix}} which is the 
 #' similarity matrix calculated for the pathway to be tested. 
 #' @param nullmodel A \code{glm} object of the nullmodel with fixed effects 
 #' covariates included, but no genetic random effects. 
@@ -173,3 +183,66 @@ score_test <- function(kernels, nullmodel, pd.check=TRUE){
         return(all_mod)
 }
 
+#' Calculates the p-value for a kernelmatrix using davies method 
+#'
+#' This function evaluates a pathways influence on an individuals probability
+#' of beeing a case using the logistic kernel machine test. P-values are 
+#' determined using the method described by Davies as implemented in the 
+#'  function \code{davies()} from the \code{CompQuadForm}. 
+#'
+#' @param kernels A \code{\link{matrix}} which is the 
+#' similarity matrix calculated for the pathway to be tested. 
+#' @param nullmodel A \code{glm} object of the nullmodel with fixed effects 
+#' covariates included, but no genetic random effects. 
+#' @param  pd.check boolean, whether to check for positive definiteness.
+#' @return A \code{list} including the test results of the pathway.  
+#' @author Stefanie Friedrichs
+#'
+#' For details on the p-value calculation see
+#' \itemize{
+#' \item Davies R: Algorithm as 155: the distribution of a linear combination of 
+#'      chi-2 random variables. J R Stat Soc Ser C 1980, 29:323-333.
+#' }
+davies_test <- function(K, nullmodel){
+
+        if(!is.matrix(K)){
+                stop("K should be a kernel-matrix!")
+        }
+        if(sum(is(nullmodel) %in% c("glm","lm")) == 0 ){
+                stop("nullmodel should be a glm- or lm-object!")
+        }
+        if(is.null(nullmodel$x)){
+                stop("The glm-object should have a design-matrix x!")
+        }
+
+        nas <- nullmodel$na.action
+        if(!is.null(nas)){
+           K <- K[-nas,-nas]
+        }
+
+        Y   <- nullmodel$y
+        X   <- nullmodel$x
+        mui <- nullmodel$fitted.values
+
+        Q <- 1/2*t(Y-mui)%*%K%*%(Y-mui)
+        P <- diag(nrow(X))-X%*%solve(t(X)%*%X,t(X))#solve(t(X)%*%X)%*%t(X)
+
+        W <- (mui*(1-mui))*diag(length(mui))
+        v <- eigen(W)$vectors   #Wsqrt <-  sqrtm(W)  ##needs expm, veeery slow
+        Wsqrt <- v %*% diag(sqrt(eigen(W)$values)) %*% t(v)
+
+        WP     <- Wsqrt%*%P
+        lambda <- eigen(0.5*WP%*%K%*%t(WP))$values
+        #delta <- rep(0, length(lambda))
+        #sigma <- 0
+        pval <- davies(Q,lambda, rep(1, length(lambda)), rep(0, length(lambda)),
+                       0, 10000, 0.0001)$Qq  #needs CompQuadForm
+
+        #p-value of test, test staistic value, degree of freedom, name
+        mod <- list(p.value=pval, statistic=Q, parameter=1,
+                   method="Davies Score Test")
+        names(mod$statistic) <- "Chi Squared Test Statictic Value"
+        names(mod$parameter) <- "Degree of Freedom"
+
+   return(mod)
+}
