@@ -7,7 +7,7 @@ library("ff")
 library("data.table")
 
 
-path.sim <- "Q:/1_PROJEKTE/kangar00-paket/kangar00/inst/data/"
+path.sim <- "Q:/1_PROJEKTE/kangar00-paket/kangar00/inst/ff/"
              
 
 ### data:
