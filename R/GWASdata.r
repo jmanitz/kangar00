@@ -14,7 +14,7 @@
 #' @import ff
 #' @exportClass ffdf
 #' @seealso ff::ffdf ff::read.table.ff
-setOldClass('ffdf')
+setOldClass('ff')
 
 #' An S4 class defining an object to represent a Genome-wide Assocaition Study.
 #'
@@ -35,7 +35,7 @@ setOldClass('ffdf')
 #' @exportClass GWASdata
 #' @export GWASdata
 #' @import methods
-GWASdata <- setClass('GWASdata', slots=c(pheno='data.frame', geno='ffdf', desc='character'))
+GWASdata <- setClass('GWASdata', slots=c(pheno='data.frame', geno='list', desc='character'))
     ## validy checks
     setValidity('GWASdata', function(object){
     msg   <- NULL
@@ -43,7 +43,7 @@ GWASdata <- setClass('GWASdata', slots=c(pheno='data.frame', geno='ffdf', desc='
     ## check annotation file
     if(is.null(attr(object@geno,"anno"))){
         valid <- FALSE
-        msg   <- c(msg, "ffdf object geno needs an additional attribute:
+        msg   <- c(msg, "object geno needs an additional attribute:
                  data.frame 'anno'")
     }
     if(!is.data.frame(attr(object@geno,"anno"))){
@@ -85,6 +85,35 @@ GWASdata <- setClass('GWASdata', slots=c(pheno='data.frame', geno='ffdf', desc='
     if(valid) TRUE else msg
 })
 
+# GWASdata object constructor
+setGeneric('GWASdata', function(object, ...) standardGeneric('GWASdata'))
+
+#' \code{'GWASdata'} is a GWASdata object constructor
+#'
+#' @param geno an \code{ff} data frame including genotype information.
+#' @param pheno A \code{data.frame} specifying individual IDs, phenotypes and
+#' covariates to be included in the regression model e.g. ID, pheno, sex,
+#' pack.years. Note: IDs have to be in the first column!
+#' @param anno a \code{data.frame} mapping SNPs to genes and genes to
+#' pathways. Needs to include the columns 'pathway' (pathway ID, e.g. hsa
+#' number from KEGG database), 'gene' (gene name (hgnc_symbol)), 'chr'
+#' (chromosome), 'snp' (rsnumber) and 'position' (base pair position of SNP).
+#' @param desc A \code{character} giving the GWAS description, e.g. name of study
+#'
+#' #@author Juliane Manitz
+#' @export
+#' @rdname GWASdata-class
+#' @aliases show,GWASdata,ANY-method
+setMethod('GWASdata',
+       definition = function(geno, pheno = NULL, anno = NULL, desc = NULL){
+# <FIXME> 
+})
+
+#' import data.table
+setMethod('read_geno',
+       definition = function(path){
+# <FIXME> 
+})
 
 #' \code{show} Shows basic information on \code{GWASdata} object
 #'
