@@ -22,6 +22,7 @@
 #'
 #' @author Juliane Manitz, Stefanie Friedrichs
 #' @export lkmt
+#' @import methods
 lkmt <- setClass('lkmt',
                  slots=c(formula='formula', kernel='kernel', GWASdata='GWASdata',
                          statistic='vector',df='vector',p.value='vector'))
@@ -188,7 +189,7 @@ score_test <- function(kernels, nullmodel, pd.check=TRUE){
 #' This function evaluates a pathways influence on an individuals probability
 #' of beeing a case using the logistic kernel machine test. P-values are 
 #' determined using the method described by Davies as implemented in the 
-#'  function \code{davies()} from the \code{CompQuadForm}. 
+#'  function \code{davies()} from package \code{CompQuadForm}. 
 #'
 #' @param kernels A \code{\link{matrix}} which is the 
 #' similarity matrix calculated for the pathway to be tested. 
@@ -203,6 +204,7 @@ score_test <- function(kernels, nullmodel, pd.check=TRUE){
 #' \item Davies R: Algorithm as 155: the distribution of a linear combination of 
 #'      chi-2 random variables. J R Stat Soc Ser C 1980, 29:323-333.
 #' }
+#' @import CompQuadForm
 davies_test <- function(K, nullmodel){
 
         if(!is.matrix(K)){

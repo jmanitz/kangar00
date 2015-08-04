@@ -14,6 +14,7 @@
 #' 
 #' @author Juliane Manitz
 #' @export
+#' @import methods
 pathway <- setClass('pathway',
                     slots=c(id='character', adj='matrix', sign='vector'))
 

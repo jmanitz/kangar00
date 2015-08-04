@@ -34,6 +34,7 @@ setOldClass('ffdf')
 #' @author Juliane Manitz, Stefanie Friedrichs
 #' @exportClass GWASdata
 #' @export GWASdata
+#' @import methods
 GWASdata <- setClass('GWASdata', slots=c(pheno='data.frame', geno='ffdf', desc='character'))
     ## validy checks
     setValidity('GWASdata', function(object){

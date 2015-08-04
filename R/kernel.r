@@ -16,6 +16,7 @@
 #' 
 #' @author Juliane Manitz
 #' @export
+#' @import methods
 kernel <- setClass('kernel',
                    slots=c(type='character', kernel='matrix', pathway='pathway'))
 
