@@ -2,12 +2,12 @@
 % Please edit documentation in R/lkmt.r
 \name{score_test}
 \alias{score_test}
-\title{Calculates the p-value for a kernelmatrix}
+\title{Calculates the p-value for a kernelmatrix using Satterthwaite approximation}
 \usage{
 score_test(kernels, nullmodel, pd.check = TRUE)
 }
 \arguments{
-\item{kernels}{an object of \code{\link{kernel}} class. Includes the
+\item{kernels}{A \code{\link{matrix}} which is the
 similarity matrix calculated for the pathway to be tested.}
 
 \item{nullmodel}{A \code{glm} object of the nullmodel with fixed effects
@@ -25,6 +25,7 @@ determined using a Sattherthwaite Approximation as described by Dan Schaid.
 }
 \author{
 Stefanie Friedrichs, Saskia Freytag, Ngoc-Thuy Ha
+
 For details on the p-value approximation see
 \itemize{
 \item Schaid DJ: Genomic Similarity and Kernel Methods I: Advancements by Building on Mathematical and Statistical Foundations. Hum Hered 2010, 70:109-31

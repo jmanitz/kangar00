@@ -26,25 +26,35 @@
 \item{object}{A \code{GWASdata} object.}
 }
 \value{
-This function shows the phenotype information and the object description included in a \code{\link{GWASdata}} object.
+\code{show} This function shows the phenotype information and the object description included in a \code{\link{GWASdata}} object.
 
-This function gives an overview about the information included in a \code{\link{GWASdata}} object. Summary statistics for phenotype and genotype data are calculated.
+\code{summary} This function gives an overview about the information included in a \code{\link{GWASdata}} object. Summary statistics for phenotype and genotype data are calculated.
 
-Creates a list of pathway names with numbers of snps and genes in the pathway.
+\code{GeneSNPsize} Creates a list of pathway names with numbers of snps and genes in the pathway.
 }
 \description{
 An S4 class defining an object to represent a Genome-wide Assocaition Study.
 
-Shows basic information on \code{GWASdata} object
+\code{show} Shows basic information on \code{GWASdata} object
 
-Summarizes the content of a \code{GWASdata} object
+\code{summary} Summarizes the content of a \code{GWASdata} object
 
-Counts the number of Genes and SPNs in each pathway
+\code{GeneSNPsize} Counts the number of Genes and SPNs in each pathway
 }
 \section{Slots}{
 
 \describe{
-\item{\code{pheno}}{A \code{data.frame} specifying individual IDs, phenotypes and   covariates to be included in the regression model e.g. ID, pheno, sex, pack.years. Note: IDs have to be in the first column!}
+\item{\code{pheno}}{A \code{data.frame} specifying individual IDs, phenotypes and
+covariates to be included in the regression model e.g. ID, pheno, sex,
+pack.years. Note: IDs have to be in the first column!}
+
+\item{\code{geno}}{An \code{ffdf} data frame including genotype information.
+Has an attribute anno which is a \code{data.frame} mapping SNPs to genes and genes to
+pathways. Needs to include the columns 'pathway' (pathway ID, e.g. hsa
+number from KEGG database), 'gene' (gene name (hgnc_symbol)), 'chr'
+(chromosome), 'snp' (rsnumber) and 'position' (base pair position of SNP).}
+
+\item{\code{desc}}{A \code{character} giving the GWAS description, e.g. name of study}
 }}
 \examples{
 data(pheno)
@@ -52,10 +62,16 @@ data(geno)
 #gwas <- new('GWASdata', pheno=pheno, geno=geno, desc="some study") ### ERROR
 data(gwas)
 show(gwas)
+
+#
 # data(gwas)   #### ERROR
 # summary(gwas) ### ERROR
+
+#
 #data(gwas)### ERROR
 #GeneSNPsize(gwas) ### ERROR
+
+#
 }
 \author{
 Juliane Manitz, Stefanie Friedrichs

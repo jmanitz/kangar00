@@ -4,6 +4,7 @@
 \name{kernel}
 \alias{kernel}
 \alias{kernel,ANY-method}
+\alias{lin_kernel,ANY-method}
 \alias{net_kernel,ANY-method}
 \alias{plot,kernel,ANY-method}
 \alias{plot,kernel,missing-method}
@@ -24,6 +25,9 @@ kernel(object, ...)
 
 \S4method{kernel}{ANY}(type = c("lin", "sia", "net"), data, pathway,
   parallel = c("none", "cpu", "gpu"), ...)
+
+\S4method{lin_kernel}{ANY}(data, pathway, parallel = c("none", "cpu", "gpu"),
+  ...)
 
 \S4method{sia_kernel}{ANY}(data, pathway, parallel = c("none", "cpu", "gpu"),
   ...)
@@ -69,6 +73,8 @@ For more details, check the references.
 }
 \section{Methods (by generic)}{
 \itemize{
+\item \code{lin_kernel}: 
+
 \item \code{sia_kernel}: 
 
 \item \code{net_kernel}: 

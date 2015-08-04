@@ -2,7 +2,7 @@
 % Please edit documentation in R/pathway.r
 \name{gene_name_number}
 \alias{gene_name_number}
-\title{Function to get genes names and numbers from kegg}
+\title{Function to get genes names and numbers from kegg (for internal use)}
 \usage{
 gene_name_number(id)
 }

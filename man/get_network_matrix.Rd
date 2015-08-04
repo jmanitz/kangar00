@@ -19,7 +19,7 @@ should be returned directed (\code{TRUE}) or undirected (\code{FALSE}).}
 A \code{matrix} representing the interaction network in the pathway.
 }
 \description{
-This function creates the networkmatrix representing the genge-gene interaction
+This function creates the networkmatrix representing the gene-gene interaction
 structure within a particular pathway.
 }
 \examples{

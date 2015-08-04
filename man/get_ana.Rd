@@ -7,7 +7,8 @@
 get_ana(anno, SNPset, pathway)
 }
 \arguments{
-\item{anno}{\code{data.frame} with annotation information}
+\item{anno}{\code{data.frame} with annotation information as returned from
+\cite{\link{get_anno}}}
 
 \item{SNPset}{vector with SNPs to be analyzed}
 

@@ -2,32 +2,35 @@
 % Please edit documentation in R/lkmt.r
 \name{lkmt}
 \alias{lkmt}
-\title{An S4 class defining an object to represent the variance component test.}
+\title{Function to start the logistic kernel machine test.}
 \usage{
-lkmt(formula, kernel, GWASdata, ...)
+lkmt(formula, kernel, GWASdata, method = c("satt", "davies"), ...)
+}
+\arguments{
+\item{formula}{A formular for the regression nullmodel that will be used in
+the variance component test.}
 
-lkmt(formula, kernel, GWASdata, ...)
+\item{kernel}{An object of class \code{\link{kernel}} representing the similarity
+matrix of the individuals based on which the pathways influence is evaluated.}
+
+\item{GWASdata}{An object of class \code{\link{GWASdata}} representing the data on
+which the test is conducted.}
+
+\item{method}{A \code{character} specifying how p-values should be calculated.
+For Satterthwaite approximation use 'satt', for Davies method use 'davies'.}
+
+\item{...}{additional arguments can be added.}
 }
 \value{
 An \code{\link{lkmt}} object with the test results.
 }
 \description{
-the variance component test.
-matrix of the individuals based on which the pathways influence is evaluated.
-which the test is conducted.
-ttest statistic.
-in the variance component test.
-
-the variance component test.
-matrix of the individuals based on which the pathways influence is evaluated.
-which the test is conducted.
+Function to start the logistic kernel machine test.
 }
 \author{
 Juliane Manitz, Stefanie Friedrichs
 
-Juliane Manitz, Stefanie Friedrichs
-
-For details on the variance component test see
+For details on the variance component test see the references.
 }
 \references{
 \itemize{

@@ -8,11 +8,11 @@ get_anno(snp_info, pathway_info, ...)
 }
 \arguments{
 \item{snp_info}{A \code{data frame} with SNP information as returned by
-\code{\link{snp_info}}. The \code{data frame} has to contain culumns "chr",
+\code{\link{snp_info}}. The \code{data frame} has to contain columns "chr",
 "position" and "rsnumber".}
 
 \item{pathway_info}{A \code{data frame} with information on the genes forming
-a pathway. Output from \code{\link{pathway_info}}.}
+the pathway. Output from \code{\link{pathway_info}}.}
 
 \item{...}{further arguments can be added.}
 }

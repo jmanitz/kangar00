@@ -10,9 +10,9 @@ make_posdev(N)
 \item{N}{A kernelmatrix.}
 }
 \value{
-matrix N, if it was positive definite. The closes positive definite
-matrix to N if N was not positive definite.
-For more details check
+The matrix N, if it is positive definite and the closes positive
+definite matrix if N is not positive definite.
+For more details check the references.
 }
 \description{
 Adjust matrix to be positive definite
