@@ -160,13 +160,9 @@ setMethod('lin_kernel',
         data <- data@geno }
     if (!inherits(data, "ffdf"))
         stop("not a ffdf object")
-    if (is.null(attr(data, "anno")))
-        stop("SNP data needs annotation as ",
-             sQuote('attr(, "anno")'))
 
-    anno <- attr(data, "anno")
     ## which SNPs are in specified pathway
-    SNPset <- unique(anno$snp[which(anno$pathway == pathway@id)])
+    SNPset <- unique(object@anno$snp[which(object@anno$pathway == pathway@id)])
     ## subset genotype data for specified SNP set
     z <- as(data[,as.character(SNPset)],'matrix')
     if(any(is.na(z))){stop("genotype information contains missing values")}
@@ -205,9 +201,6 @@ setMethod('sia_kernel',
         data <- data@geno }
     if (!inherits(data, "ffdf"))
         stop("not a ffdf object")
-    if (is.null(attr(data, "anno")))
-        stop("SNP data needs annotation as ",
-             sQuote('attr(, "anno")'))
 
     genemat <- function(g, data, anno){
         SNPset <- unique(anno[which(anno[,"gene"]==g),"snp"])
@@ -219,16 +212,17 @@ setMethod('sia_kernel',
         a <- matrix( rep(rowSums(z*z),nrow(z)),nrow=nrow(z))
         distances <- a -2*tcrossprod(z) + t(a)
         distances <- round(distances, digits=3)
-     return( list(distances, (nn*(1-(nn-1)*var(e.val)/(nn^2))), ncol(z)) ) }
+        return( list(distances, (nn*(1-(nn-1)*var(e.val)/(nn^2))), ncol(z)) ) 
+    }
                   #matrix,         eff.length.gene,           length.gene
 
     genemat2 <- function(l, max.eff){
         delta <- sqrt(l[[2]]/max.eff) #delta <- sqrt(eff.length.gene/max.eff)
         roh   <- (mean(c(l[[1]])))^(-delta)*(l[[2]]/l[[3]])^(-delta)
-    return(-roh*(l[[1]]/l[[3]])^(delta)) }
+        return(-roh*(l[[1]]/l[[3]])^(delta)) 
+    }
 
-    anno <- attr(data, "anno")
-    anno <- anno[anno[,"pathway"]==pathway@id,c("gene","snp")]#anno subset for pathway
+    anno <- object@anno[object@anno[,"pathway"]==pathway@id,c("gene","snp")]#anno subset for pathway
     gene.counts <- table(anno[,"gene"]) #counts number of different SNPs per gene
     g.10 <- names(gene.counts[gene.counts >= 2]) #genes with >= 2 snps
 
@@ -257,22 +251,15 @@ setMethod('net_kernel',
                        parallel = c('none', 'cpu', 'gpu'), ...) {
     if (inherits(data, "GWASdata")) {
         data <- data@geno }
-    if (!inherits(data, "ffdf"))
-        stop("not a ffdf object")
-    if (is.null(attr(data, "anno")))
-        stop("SNP data needs annotation as ",
-             sQuote('attr(, "anno")'))
-
-    anno <- attr(data, "anno")
 
     #genotype matrix Z, which SNPs are in specified pathway
-    SNPset <- unique(anno$snp[which(anno$pathway==pathway@id)])
+    SNPset <- unique(object@anno$snp[which(object@anno$pathway==pathway@id)])
     #subset genotype data for specified SNP set
     Z <- as(data[,as.character(SNPset)],'matrix')
     if(any(is.na(Z))){stop("genotype information contains missing values")}
 
     # compute kernel
-    ANA <- get.ana(anno, SNPset, pathway)
+    ANA <- get.ana(object@anno, SNPset, pathway)
     K = Z %*% ANA %*% t(Z)
 
     #return kernel object

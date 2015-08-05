@@ -19,14 +19,14 @@ setOldClass('ff_matrix')
 
 #' An S4 class defining an object to represent a Genome-wide Assocaition Study.
 #'
-#' @slot pheno A \code{data.frame} specifying individual IDs, phenotypes and
-#' covariates to be included in the regression model e.g. ID, pheno, sex,
-#' pack.years. Note: IDs have to be in the first column!
 #' @slot geno An \code{ffdf} data frame including genotype information.
-#' Has an attribute anno which is a \code{data.frame} mapping SNPs to genes and genes to
+#' @slot anno A \code{data.frame} mapping SNPs to genes and genes to
 #' pathways. Needs to include the columns 'pathway' (pathway ID, e.g. hsa
 #' number from KEGG database), 'gene' (gene name (hgnc_symbol)), 'chr'
 #' (chromosome), 'snp' (rsnumber) and 'position' (base pair position of SNP).
+#' @slot pheno A \code{data.frame} specifying individual IDs, phenotypes and
+#' covariates to be included in the regression model e.g. ID, pheno, sex,
+#' pack.years. Note: IDs have to be in the first column!
 #' @slot desc A \code{character} giving the GWAS description, e.g. name of study
 #' @examples
 #' data(pheno)
@@ -36,26 +36,16 @@ setOldClass('ff_matrix')
 #' @exportClass GWASdata
 #' @export GWASdata
 #' @import methods
-GWASdata <- setClass('GWASdata', slots=c(pheno='data.frame', geno="ff_matrix", desc='character'))
+GWASdata <- setClass('GWASdata', slots=c(geno="ff_matrix", anno = "data.frame", 
+	                                 pheno='data.frame', desc='character'))
     ## validy checks
     setValidity('GWASdata', function(object){
     msg   <- NULL
     valid <- TRUE
-    ## check annotation file
-    if(is.null(attr(object@geno,"anno"))){
+    ## check genotype has colnames (=SNP names) and rownames (individuals)
+    if(any(is.null(colnames(object@geno)), is.null(rownames(object@geno)))){
         valid <- FALSE
-        msg   <- c(msg, "object geno needs an additional attribute:
-                 data.frame 'anno'")
-    }
-    if(!is.data.frame(attr(object@geno,"anno"))){
-  	    valid <- FALSE
-        msg   <- c(msg, "geno attribute anno needs to be a data frame")
-    }
-    ## check anno data frame variable names
-    anno_names <- c('pathway','gene','chr','snp','position')
-    if(!all(anno_names %in% colnames(attr(object@geno,'anno')))){
-        valid <- FALSE
-        msg   <- c(msg, paste("anno variable names do not match:",anno_names))
+        msg   <- c(msg, "object geno needs specified col- and/or rownames")
     }
     ## check whether GWASdata@geno has missings
     # <FIXME> Currently not working
@@ -63,23 +53,36 @@ GWASdata <- setClass('GWASdata', slots=c(pheno='data.frame', geno="ff_matrix", d
     #     valid <- FALSE
     #     msg   <- c(msg, "genotypes include missing values and need to be imputed!")
     # }
-    ## phenotypes for more individuals than have genotypes
-    if(length(unique(object@pheno[,1]))>length(row.names(object@geno))){
+    ## check phenotypes
+    if(length(object@pheno)>0){
+      ## phenotypes for more individuals than have genotypes
+      if(length(unique(object@pheno[,1])) > length(row.names(object@geno))){
         valid <- FALSE
-        msg <- c(msg, "phenotypes exist for more individuals than have genotypes!")
-    }
-    ## check order of individuals in genotypes and phenotypes
-    if(!all.equal(as.character(object@pheno[,1]),row.names(object@geno))){
+        msg <- c(msg, 
+                 "phenotypes exist for more individuals than have genotypes!")
+      }
+      ## check order of individuals in genotypes and phenotypes
+      if(!all.equal(as.character(object@pheno[,1]),row.names(object@geno))){
         valid <- FALSE
-        msg <- c(msg, "order of individuals differs in genotype and phenotype file!")
+        msg <- c(msg, 
+                 "order of individuals differs in genotype and phenotype file!")
+      }
+    }else{
+      message("Note that phenotypes are not specified.")
     }
-    ## more snps in annotation, than genotyped
-    if(length(unique(attr(object@geno,'anno')$snp))>ncol(object@geno)){
+    ## check annotation file: variable names
+    anno_names <- c('pathway','gene','chr','snp','position')
+    if(!all(anno_names %in% colnames(object@anno))){
+        valid <- FALSE
+        msg   <- c(msg, paste("anno variable names do not match:",anno_names))
+    }
+    ## more snps in annotation, than genotyped: <FIXME> Why do we needthis? <FIXME>
+    if(length(unique(object@anno$snp)) > ncol(object@geno)){
         valid <- FALSE
         msg <- c(msg, "annotation includes more SNPs than genotyped!")
     }
     ## SNPs in annotation file, that are not in genotype file (too big?)
-    if(!all(unique(attr(object@geno,'anno')$snp) %in% colnames(object@geno))){
+    if(!all(unique(object@anno$snp) %in% colnames(object@geno))){
         valid <- FALSE
         msg <- c(msg, "there are SNPs in the annotation file that have no genotypes!")
     }
@@ -92,24 +95,27 @@ setGeneric('GWASdata', function(object, ...) standardGeneric('GWASdata'))
 #' \code{'GWASdata'} is a GWASdata object constructor
 #'
 #' @param geno an \code{ff} data frame including genotype information.
-#' @param pheno A \code{data.frame} specifying individual IDs, phenotypes and
-#' covariates to be included in the regression model e.g. ID, pheno, sex,
-#' pack.years. Note: IDs have to be in the first column!
 #' @param anno a \code{data.frame} mapping SNPs to genes and genes to
 #' pathways. Needs to include the columns 'pathway' (pathway ID, e.g. hsa
 #' number from KEGG database), 'gene' (gene name (hgnc_symbol)), 'chr'
 #' (chromosome), 'snp' (rsnumber) and 'position' (base pair position of SNP).
-#' @param desc A \code{character} giving the GWAS description, e.g. name of study
+#' @param pheno A \code{data.frame} specifying individual IDs, phenotypes and
+#' covariates to be included in the regression model e.g. ID, pheno, sex,
+#' pack.years. Note: IDs have to be in the first column. Default is \code{NULL}.
+#' @param desc A \code{character} giving the GWAS description, e.g. name of study. Defaul is ''.
 #'
 #' #@author Juliane Manitz
-#' @exportla
+#' @export
 #' @rdname GWASdata-class
 #' @aliases show,GWASdata,ANY-method
 setMethod('GWASdata',
-       definition = function(geno, pheno = NULL, anno = NULL, desc = NULL){
-# <FIXME> 
+       definition = function(geno, anno, pheno = NULL, desc = ''){
+       ## create GWASdata object
+       new('GWASdata', geno = geno, anno = anno, pheno = as.data.frame(pheno), 
+           desc = desc)
 })
 
+# read genotype data from file
 setGeneric('read_geno', function(object, ...) standardGeneric('read_geno'))
 
 #' read genotype data from file to ff_matrix object, which can be passed to a  GWASdata object
@@ -132,6 +138,7 @@ setMethod('read_geno',
 
     ## clean up
     rm(geno, geno.mat)
+    close(geno.ff)
 
     return(geno.ff)
 })
@@ -151,9 +158,16 @@ setMethod('read_geno',
 #' @aliases show,GWASdata,ANY-method
 setMethod('show', signature='GWASdata',
           definition = function(object){
-              cat('An object of class ', class(object), ' from ',object@desc,'\n\n',sep='')
-              cat('Phenotypes for ', dim(object@pheno)[1], ' individuals: \n',sep='')
-              print(head(object@pheno))
+              cat('An object of class ', class(object), 
+                  ' from ',object@desc,'\n\n',sep='')
+
+              if(length(object@pheno) == 0){
+		cat('No phenotypes specified.\n')
+              }else{ # summary of phenotype and covariate data
+                cat('Phenotypes for ', dim(object@pheno)[1], 
+                ' individuals: \n',sep='')
+              	print(head(object@pheno))
+              }
               invisible(NULL)
           })
 
@@ -177,8 +191,13 @@ setGeneric('summary', function(object, ...) standardGeneric('summary'))
 setMethod('summary', signature='GWASdata',
           definition = function(object){
               cat('An object of class ', class(object), ' from ',object@desc,'\n\n',sep='')
-              cat('Phenotypes for ', dim(object@pheno)[1], ' individuals: \n\n',sep='')
-              print(summary(object@pheno)) # summary of phenotype and covariate data
+              if(length(object@pheno) == 0){
+		cat('No phenotypes specified.\n')
+              }else{ # summary of phenotype and covariate data
+	        cat('Phenotypes for ', dim(object@pheno)[1], 
+                    ' individuals: \n\n',sep='')
+                print(summary(object@pheno)) 
+              }
               cat('\nGenotypes: \n\n')
 	      cat('Total number of genes and SNPs per pathway:\n')
               print(GeneSNPsize(object)) # overview of pathway - gene - snp mapping
@@ -205,9 +224,8 @@ setGeneric('GeneSNPsize', function(object, ...) standardGeneric('GeneSNPsize'))
 #' @aliases GeneSNPsize,GWASdata,ANY-method
 setMethod('GeneSNPsize', signature='GWASdata',
           definition <- function(object){
-              anno <- attr(object@geno, 'anno')
-              nrsnps <- table(unique(anno[,c('pathway','gene','snp')])$pathway)
-              nrgenes <- table(unique(anno[,c('pathway','gene')])$pathway)
+              nrsnps <- table(unique(object@anno[,c('pathway','gene','snp')])$pathway)
+              nrgenes <- table(unique(object@anno[,c('pathway','gene')])$pathway)
               tab <- cbind(nrgenes,nrsnps)
 	        colnames(tab) <- c('genes','SNPs')
           return(tab)

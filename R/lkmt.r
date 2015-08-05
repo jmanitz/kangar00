@@ -56,6 +56,8 @@ setValidity('lkmt', function(object){  # to be defined !!
 #' }
 lkmt <- function(formula, kernel, GWASdata, method=c('satt','davies'), ...){
 
+   if(length(GWASdata@pheno) == 0) stop("Please specify phenotypes.")
+   
    if ( !(method%in%c('satt','davies')) ){
    stop("p-value calculation method needs to be 'satt' or 'davies'")
    }
