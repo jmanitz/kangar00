@@ -4,15 +4,15 @@
 #
 #################################################
 
-## make sure that class "ffdf" is formally defined
-#' "ffdf" class for memory-efficient storage of genotype data frame on disk and fast access
+### make sure that class "ff" is formally defined
+#' "ff" class for memory-efficient storage of genotype matrix on disk and fast access
 #'
-#' @name ffdf-class
-#' @aliases ffdf
-#' @family ffdf
+#' @name ff-class
+#' @aliases ff
+#' @family ff
 #'
 #' @import ff
-#' @exportClass ffdf
+#' @exportClass ff
 #' @seealso ff::ffdf ff::read.table.ff
 setOldClass('ff')
 
@@ -35,7 +35,7 @@ setOldClass('ff')
 #' @exportClass GWASdata
 #' @export GWASdata
 #' @import methods
-GWASdata <- setClass('GWASdata', slots=c(pheno='data.frame', geno='list', desc='character'))
+GWASdata <- setClass('GWASdata', slots=c(pheno='data.frame', geno="ff_matrix", desc='character'))
     ## validy checks
     setValidity('GWASdata', function(object){
     msg   <- NULL
@@ -109,10 +109,26 @@ setMethod('GWASdata',
 # <FIXME> 
 })
 
-#' import data.table
+setGeneric('read_geno', function(object, ...) standardGeneric('read_geno'))
+
+#' read genotype data from file to ff_matrix object, which can be passed to a  GWASdata object
+#' 
+#' @param path character, which contains the path to the txt file
+#'
+#' import data.table ff
+#' export
 setMethod('read_geno',
        definition = function(path){
-# <FIXME> 
+    geno <- fread(path, sep='auto', header=TRUE, data.table=FALSE)
+    geno.mat <- as.matrix(geno)
+    ## convert to ff_matrix object
+    geno.ff <- ff(geno.mat, dim = dim(geno.mat))
+    ## set column names
+    colnames(geno.ff) <- colnames(geno.mat)
+    ## make individual ids:
+    rownames(geno.ff) <- paste0("ind", sprintf("%04.0f", 1:nrow(geno.ff)))
+
+    return(geno.ff)
 })
 
 #' \code{show} Shows basic information on \code{GWASdata} object
