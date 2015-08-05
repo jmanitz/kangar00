@@ -12,7 +12,7 @@ Collate: 'pathway.r'
           'GWASdata.r' 
           'lkmt.r'
 Depends: R (>= 3.1.0)
-Imports: methods, ff, igraph, biomaRt, KEGGgraph, sqldf, CompQuadForm
+Imports: methods, ff, igraph, biomaRt, KEGGgraph, sqldf, CompQuadForm, data.table
 #Suggests: gputools
 LazyData: true
 Suggests: knitr

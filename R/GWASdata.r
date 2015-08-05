@@ -106,7 +106,7 @@ setGeneric('GWASdata', function(object, ...) standardGeneric('GWASdata'))
 #'
 #' #@author Juliane Manitz
 #' @export
-#' @rdname GWASdata-class
+#' @rdname GWASdata
 #' @aliases show,GWASdata,ANY-method
 setMethod('GWASdata',
        definition = function(geno, anno, pheno = NULL, desc = ''){
@@ -122,8 +122,9 @@ setGeneric('read_geno', function(object, ...) standardGeneric('read_geno'))
 #' 
 #' @param path character, which contains the path to the txt file
 #'
-#' import data.table ff
-#' export
+#' @rdname GWASdata-class
+#' @import data.table ff
+#' @export
 setMethod('read_geno',
        definition = function(path){
 
