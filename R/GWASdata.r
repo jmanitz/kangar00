@@ -15,6 +15,7 @@
 #' @exportClass ff
 #' @seealso ff::ffdf ff::read.table.ff
 setOldClass('ff')
+setOldClass('ff_matrix')
 
 #' An S4 class defining an object to represent a Genome-wide Assocaition Study.
 #'
@@ -101,7 +102,7 @@ setGeneric('GWASdata', function(object, ...) standardGeneric('GWASdata'))
 #' @param desc A \code{character} giving the GWAS description, e.g. name of study
 #'
 #' #@author Juliane Manitz
-#' @export
+#' @exportla
 #' @rdname GWASdata-class
 #' @aliases show,GWASdata,ANY-method
 setMethod('GWASdata',
@@ -119,14 +120,18 @@ setGeneric('read_geno', function(object, ...) standardGeneric('read_geno'))
 #' export
 setMethod('read_geno',
        definition = function(path){
+
     geno <- fread(path, sep='auto', header=TRUE, data.table=FALSE)
     geno.mat <- as.matrix(geno)
     ## convert to ff_matrix object
-    geno.ff <- ff(geno.mat, dim = dim(geno.mat))
+    geno.ff <- ff(geno.mat, dim = dim(geno.mat), vmode = "quad")
     ## set column names
     colnames(geno.ff) <- colnames(geno.mat)
     ## make individual ids:
     rownames(geno.ff) <- paste0("ind", sprintf("%04.0f", 1:nrow(geno.ff)))
+
+    ## clean up
+    rm(geno, geno.mat)
 
     return(geno.ff)
 })
