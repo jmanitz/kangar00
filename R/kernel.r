@@ -8,12 +8,12 @@
 #'
 #' @rdname kernel-class
 #'
-#' @slot type character, kernel type: Use \code{"lin"} for linear kernels, 
+#' @slot type character, kernel type: Use \code{"lin"} for linear kernels,
 #' \code{"sia"} for size-adjusted or \code{"net"} for network-based kernels.
 #' @slot kernel kernel matrix of dimension equal to individuals
 #' @slot GWASdata GWASdata object
 #' @slot pathway pathway object
-#' 
+#'
 #' @author Juliane Manitz
 #' @export
 #' @import methods
@@ -66,7 +66,7 @@ setGeneric('summary', function(object, ...) standardGeneric('summary'))
 #' \code{summary} generates a kernel object summary including the number of individuals and genes for the pathway
 #'
 #' @export
-#' @rdname kernel-class 
+#' @rdname kernel-class
 #' @aliases summary,kernel,ANY-method
 setMethod('summary', signature='kernel',
           definition = function(object){
@@ -83,9 +83,9 @@ if (!isGeneric("plot")) setGeneric('plot')
 #'
 #' @param y missing (placeholder)
 #' @param hclust \code{logical}, indicating whether a dendrogram should be added
-#' 
+#'
 #' @export
-#' @rdname kernel-class 
+#' @rdname kernel-class
 #' @aliases plot,kernel,ANY-method
 setMethod('plot', signature(x='kernel',y='missing'),
           function(x, y=NA, hclust=FALSE, ...){
@@ -110,7 +110,7 @@ setMethod('plot', signature(x='kernel',y='missing'),
 # kernel object constructor
 setGeneric('kernel', function(object, ...) standardGeneric('kernel'))
 
-#' \code{kernel} is a kernel object constructor and creates a kernel to be evaluated in the logistic kernel machine test. 
+#' \code{kernel} is a kernel object constructor and creates a kernel to be evaluated in the logistic kernel machine test.
 #'
 #' @param type character, kernel type: Use \code{"lin"} for linear kernels, \code{"sia"} for size-adjusted or \code{"net"} for network-based kernels.
 #' @param data Object of the class \code{GWASdata} containing the genotypes of the individuals for which a kernel will be calculated.
@@ -120,7 +120,7 @@ setGeneric('kernel', function(object, ...) standardGeneric('kernel'))
 #' @details
 #' Different types of kernels can be constructed:
 #' \itemize{
-#'   \item \code{type='lin'} creates the linear kernel assuming additive SNP effects to be evaluated in the logistic kernel machine test. 
+#'   \item \code{type='lin'} creates the linear kernel assuming additive SNP effects to be evaluated in the logistic kernel machine test.
 #'   \item \code{type='sia'} calculates the size-adjusted kernel which takes into consideration the numbers of SNPs and genes in a pathway to correct for size bias.
 #'   \item \code{type='net'} calculates a network-based kernel to be evaluated in the logistic kernel machine test. Not only information on gene membership and gene/pathway size in number of SNPs is incorporated in the calculation, but also the interaction structure of genes in the pathway.
 #' }
@@ -131,7 +131,7 @@ setGeneric('kernel', function(object, ...) standardGeneric('kernel'))
 #'  \item Freytag S, Bickeboeller H, Amos CI, Kneib T, Schlather M: A Novel Kernel for Correcting Size Bias in the Logistic Kernel Machine Test with an Application to Rheumatoid Arthritis. Hum Hered. 2012, 74(2):97-108.
 #'  \item Freytag S, Manitz J, Schlather M, Kneib T, Amos CI, Risch A, Chang-Claude J, Heinrich J, Bickeboeller H: A network-based kernel machine test for the identification of risk pathways in genome-wide association studies. Hum Hered. 2013, 76(2):64-75.
 #' }
-#' 
+#'
 #' @author Juliane Manitz, Saskia Freytag, Ngoc Thuy Ha
 #' @rdname kernel-class
 #' @seealso \code{\link{GWASdata-class}}, \code{\link{pathway-class}}
@@ -140,7 +140,7 @@ setMethod('kernel',
                              parallel = c('none', 'cpu', 'gpu'), ...) {
            type     <- match.arg(type)
            parallel <- match.arg(parallel)
-           
+
            if(type=='lin') k <- new('lin_kernel', data, pathway, parallel, ...)
            if(type=='sia') k <- new('sia_kernel', data, pathway, parallel, ...)
            if(type=='net') k <- new('net_kernel', data, pathway, parallel, ...)
@@ -152,20 +152,19 @@ lin_kernel <- setClass('lin_kernel', contains = 'kernel','pathway')
 # linear kernel object constructor
 setGeneric('lin_kernel', function(object, ...) standardGeneric('lin_kernel'))
 #' @describeIn kernel
-setMethod('lin_kernel', 
-          definition = function(data, pathway, 
+setMethod('lin_kernel',
+          definition = function(data, pathway,
                        parallel = c('none', 'cpu', 'gpu'), ...) {
     parallel <- match.arg(parallel)
-    if (inherits(data, "GWASdata")) {
-        data <- data@geno }
-    if (!inherits(data, "ffdf"))
-        stop("not a ffdf object")
+    if (!inherits(data, "GWASdata"))
+        stop("data must inherit from class GWASdata")
 
     ## which SNPs are in specified pathway
-    SNPset <- unique(object@anno$snp[which(object@anno$pathway == pathway@id)])
+    SNPset <- unique(data@anno$snp[which(data@anno$pathway == pathway@id)])
     ## subset genotype data for specified SNP set
-    z <- as(data[,as.character(SNPset)],'matrix')
-    if(any(is.na(z))){stop("genotype information contains missing values")}
+    z <- as(data@geno[,as.character(SNPset)],'matrix')
+    if(any(is.na(z)))
+        stop("genotype information contains missing values")
 
     # K=ZZ' kernel matrix = genetic similarity
     if(parallel=='none'){
@@ -194,44 +193,43 @@ sia_kernel <- setClass('sia_kernel', contains = 'kernel')
 setGeneric('sia_kernel', function(object, ...) standardGeneric('sia_kernel'))
 #' @describeIn kernel
 setMethod('sia_kernel',
-          definition = function(data, pathway, 
+          definition = function(data, pathway,
                        parallel = c('none', 'cpu', 'gpu'), ...) {
     parallel <- match.arg(parallel)
-    if (inherits(data, "GWASdata")) {
-        data <- data@geno }
-    if (!inherits(data, "ffdf"))
-        stop("not a ffdf object")
+    if (!inherits(data, "GWASdata"))
+        stop("data must inherit from class GWASdata")
 
     genemat <- function(g, data, anno){
         SNPset <- unique(anno[which(anno[,"gene"]==g),"snp"])
         z <- as(data[,as.character(SNPset)],'matrix')
-        if(any(is.na(z))){stop("genotype information contains missing values")}
+        if(any(is.na(z)))
+            stop("genotype information contains missing values")
         z <- z[, apply(z,2,sum)/(2*nrow(z)) >= 0.001 ] #only snps maf >= 0.1%
         e.val <- eigen(cor(z), symmetric=TRUE, only.values=TRUE)$values
         nn    <- length(e.val)
         a <- matrix( rep(rowSums(z*z),nrow(z)),nrow=nrow(z))
         distances <- a -2*tcrossprod(z) + t(a)
         distances <- round(distances, digits=3)
-        return( list(distances, (nn*(1-(nn-1)*var(e.val)/(nn^2))), ncol(z)) ) 
+        return( list(distances, (nn*(1-(nn-1)*var(e.val)/(nn^2))), ncol(z)) )
     }
                   #matrix,         eff.length.gene,           length.gene
 
     genemat2 <- function(l, max.eff){
         delta <- sqrt(l[[2]]/max.eff) #delta <- sqrt(eff.length.gene/max.eff)
         roh   <- (mean(c(l[[1]])))^(-delta)*(l[[2]]/l[[3]])^(-delta)
-        return(-roh*(l[[1]]/l[[3]])^(delta)) 
+        return(-roh*(l[[1]]/l[[3]])^(delta))
     }
 
-    anno <- object@anno[object@anno[,"pathway"]==pathway@id,c("gene","snp")]#anno subset for pathway
+    anno <- data@anno[data@anno[,"pathway"]==pathway@id,c("gene","snp")]#anno subset for pathway
     gene.counts <- table(anno[,"gene"]) #counts number of different SNPs per gene
     g.10 <- names(gene.counts[gene.counts >= 2]) #genes with >= 2 snps
 
     #[[1]]:genematrix, [[2]]:eff.length.gene, [[3]]:length.gene
-    liste <- lapply(g.10, genemat, data, anno)
+    liste <- lapply(g.10, genemat, data@geno, anno)
     get2    <- function(l){ return(l[[2]]) }
     max.eff <- max( unlist( lapply(liste, get2) ) )
 
-    kerneltimes <- matrix( rep(0,(nrow(data))^2), nrow=nrow(data))
+    kerneltimes <- matrix( rep(0,(nrow(data@geno))^2), nrow=nrow(data@geno))
     kerneltimes <- Reduce('+', lapply(liste,genemat2,max.eff))
     k <- exp( sqrt(1/(length(unique(anno[,"gene"])))) * kerneltimes )
     k <- make_posdev(k)
@@ -247,19 +245,20 @@ net_kernel <- setClass('net_kernel', contains = 'kernel')
 setGeneric('net_kernel', function(object, ...) standardGeneric('net_kernel'))
 #' @describeIn kernel
 setMethod('net_kernel',
-          definition = function(data, pathway, 
+          definition = function(data, pathway,
                        parallel = c('none', 'cpu', 'gpu'), ...) {
-    if (inherits(data, "GWASdata")) {
-        data <- data@geno }
+    if (!inherits(data, "GWASdata"))
+        stop("data must inherit from class GWASdata")
 
     #genotype matrix Z, which SNPs are in specified pathway
-    SNPset <- unique(object@anno$snp[which(object@anno$pathway==pathway@id)])
+    SNPset <- unique(data@anno$snp[which(data@anno$pathway==pathway@id)])
     #subset genotype data for specified SNP set
-    Z <- as(data[,as.character(SNPset)],'matrix')
-    if(any(is.na(Z))){stop("genotype information contains missing values")}
+    Z <- as(data@geno[,as.character(SNPset)],'matrix')
+    if (any(is.na(Z)))
+        stop("genotype information contains missing values")
 
     # compute kernel
-    ANA <- get.ana(object@anno, SNPset, pathway)
+    ANA <- get.ana(data@anno, SNPset, pathway)
     K = Z %*% ANA %*% t(Z)
 
     #return kernel object
@@ -309,7 +308,7 @@ rewire_network <- function(N, remov) {
 #' @export
 #' @author Juliane Manitz, Saskia Freytag, Stefanie Freidrichs
 #'
-#' @param anno \code{data.frame} with annotation information as returned from 
+#' @param anno \code{data.frame} with annotation information as returned from
 #' \cite{\link{get_anno}}
 #' @param SNPset vector with SNPs to be analyzed
 #' @param pathway pathway object
@@ -318,7 +317,8 @@ get_ana <- function(anno, SNPset, pathway){
 
     N <- as.matrix(pathway@adj)
     N[N!=0] <- pathway@sign
-    if(any(is.na(N))){stop("network information contains missing values")}
+    if(any(is.na(N)))
+        stop("network information contains missing values")
 
     ### remove genes that have no SNPs (not in anno):
     # genes in pathway
@@ -347,20 +347,20 @@ get_ana <- function(anno, SNPset, pathway){
     return(A.star %*% N %*% t(A.star))
 }
 
-#' Adjust matrix to be positive definite 
+#' Adjust matrix to be positive definite
 #'
 #' @export
 #' @author Juliane Manitz, Saskia Freytag, Stefanie Freidrichs
 #'
-#' @param N A kernelmatrix. 
-#' @return The matrix N, if it is positive definite and the closes positive 
-#' definite matrix if N is not positive definite. 
+#' @param N A kernelmatrix.
+#' @return The matrix N, if it is positive definite and the closes positive
+#' definite matrix if N is not positive definite.
 #' For more details check the references.
 #' @references
 #' \itemize{
 #'  \item Freytag S, Manitz J, Schlather M, Kneib T, Amos CI, Risch A, Chang-Claude J, Heinrich J, Bickeboeller H: A network-based kernel machine test for the identification of risk pathways in genome-wide association studies. Hum Hered. 2013, 76(2):64-75.
 #' }
-#'  
+#'
 make_posdev <- function(N) {
     lambda <- min(eigen(N, only.values = TRUE, symmetric = TRUE)$values)
     # smallest eigenvalue negative = not semipositive definite
