@@ -17,6 +17,26 @@
 setOldClass('ff')
 setOldClass('ff_matrix')
 
+## some helper functions to use ff:
+get_filename <- function(x) {
+    attr(attr(x, "physical"), "filename")
+}
+
+## allows to use relative paths
+set_filename <- function(x, file) {
+    attr(attr(x, "physical"), "filename") <- file
+}
+
+## move ff files on hard disk
+move_ff <- function(x, path, filename = NULL) {
+    if (!is.null(filename))
+        to <- paste(path, filename, sep = "/")
+    sucess <- file.move(from = get_filename(x), to = to)
+    if (sucess && !is.null(filename))
+        set_filename(x, file = filename)
+    return(x)
+}
+
 #' An S4 class defining an object to represent a Genome-wide Assocaition Study.
 #'
 #' @slot geno An \code{ffdf} data frame including genotype information.
@@ -126,20 +146,30 @@ setGeneric('read_geno', function(object, ...) standardGeneric('read_geno'))
 #' @import data.table ff
 #' @export
 setMethod('read_geno',
-       definition = function(path){
+       definition = function(file.path, save.path=NULL){
 
-    geno <- fread(path, sep='auto', header=TRUE, data.table=FALSE)
+    geno <- fread(file.path, sep='auto', header=TRUE, data.table=FALSE)
     geno.mat <- as.matrix(geno)
     ## convert to ff_matrix object
-    geno.ff <- ff(geno.mat, dim = dim(geno.mat), vmode = "quad")
+    geno.ff <- ff(geno.mat, dim = dim(geno.mat), vmode = "quad")  # needs longer than 
+								  # integer mode
     ## set column names
     colnames(geno.ff) <- colnames(geno.mat)
     ## make individual ids:
     rownames(geno.ff) <- paste0("ind", sprintf("%04.0f", 1:nrow(geno.ff)))
 
+    ## move file to current working directory
+    geno.ff <- move_ff(geno.ff, path = getwd(), filename = "geno.ff")
+
     ## clean up
     rm(geno, geno.mat)
     close(geno.ff)
+
+    ## save the ff object permanently
+    if(!is.null(save.path)){
+      dir.create('ff_data')
+      file.copy(from = "geno.ff", to = paste("ff_data/",save.path, sep=''))
+    }
 
     return(geno.ff)
 })
