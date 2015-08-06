@@ -4,6 +4,7 @@
 #
 #################################################
 
+#################################### kernel class definition #################
 #' An S4 class to represent a kernel for a SNPset
 #'
 #' @rdname kernel-class
@@ -47,68 +48,10 @@ setValidity('kernel', function(object){
     if(valid) TRUE else msg
 })
 
-# show method
-#' \code{show} displays the kernel object briefly
-#' @param object kernel object
-#' @export
-#' @rdname kernel-class
-#' @aliases show,kernel,ANY-method
-setMethod('show', signature='kernel',
-          definition = function(object){
-              cat('An object of class ', class(object), ' of type ', object@type,' for pathway ', object@pathway@id, '\n\n',sep='')
-              print(object@kernel)
-              invisible(NULL)
-          })
-
-# summary method
-setGeneric('summary', function(object, ...) standardGeneric('summary'))
-
-#' \code{summary} generates a kernel object summary including the number of individuals and genes for the pathway
-#'
-#' @export
-#' @rdname kernel-class
-#' @aliases summary,kernel,ANY-method
-setMethod('summary', signature='kernel',
-          definition = function(object){
-              cat('An object of class ', class(object), ' of type ', object@type,' for pathway ', object@pathway@id, ' with values: \n\n',sep='')
-              cat(paste('\nNumber of Individuals:',dim(object@kernel)[1]),'\n')
-              cat(paste('The pathway contains',dim(object@pathway@adj)[1],'genes.\n'))#,'genes and', SNPno[2], 'SNPs.\n'))
-              invisible(NULL)
-          })
-
-# plot method
-if (!isGeneric("plot")) setGeneric('plot')
-
-#' \code{plot} creates an image plot of a kernel object
-#'
-#' @param y missing (placeholder)
-#' @param hclust \code{logical}, indicating whether a dendrogram should be added
-#'
-#' @export
-#' @rdname kernel-class
-#' @aliases plot,kernel,ANY-method
-setMethod('plot', signature(x='kernel',y='missing'),
-          function(x, y=NA, hclust=FALSE, ...){
-              if(hclust) {
-                  heatmap(x@kernel, symm=TRUE, col=rev(heat.colors(n=20)), Colv=NA,labRow=NA,labCol=NA, main=list(paste('Genetic Similarity Kernel Matrix for Pathway',x@pathway@id), cex=1.4), ...)
-              }else{
-                  print(levelplot(x@kernel, col.regions=rev(heat.colors(n=20)),  drop.unused.levels=FALSE, scales=list(alternating=0), main=paste('Genetic Similarity Kernel Matrix for Pathway',x@pathway@id)), ...)
-              }
-              invisible(NULL)
-          })
-
-# S3 plot
-#plot.kernel <- function(object, hclust=FALSE, ...){
-#              if(hclust) {
-#                  heatmap(object@kernel, symm=TRUE, col=rev(heat.colors(n=20)), Colv=NA,labRow=NA,labCol=NA, main=list(paste('Genetic Similarity Kernel Matrix for Pathway',object@pathway@id), cex=1.4), ...)
-#              }else{
-#                  print(levelplot(x@kernel, col.regions=rev(heat.colors(n=20)),  drop.unused.levels=FALSE, scales=list(alternating=0), main=paste('Genetic Similarity Kernel Matrix for Pathway',object@pathway@id)), ...)
-#              }
-#              invisible(NULL)
-#          }
+#################################### kernel object constructor #################
 
 # kernel object constructor
-setGeneric('kernel', function(object, ...) standardGeneric('kernel'))
+#setGeneric('kernel', function(object, ...) standardGeneric('kernel'))
 
 #' \code{kernel} is a kernel object constructor and creates a kernel to be evaluated in the logistic kernel machine test.
 #'
@@ -136,9 +79,9 @@ setGeneric('kernel', function(object, ...) standardGeneric('kernel'))
 #' @rdname kernel-class
 #' @seealso \code{\link{GWASdata-class}}, \code{\link{pathway-class}}
 setMethod('kernel',
-       definition = function(type = c('lin', 'sia', 'net'), data, pathway,
-                             parallel = c('none', 'cpu', 'gpu'), ...) {
-           type     <- match.arg(type)
+       definition = function(type, data, pathway, ...) {
+#parallel = c('none', 'cpu', 'gpu'),
+           type     <- match.arg(c('lin', 'sia', 'net'))
            parallel <- match.arg(parallel)
 
            if(type=='lin') k <- new('lin_kernel', data, pathway, parallel, ...)
@@ -147,8 +90,9 @@ setMethod('kernel',
            return(k)
 })
 
+############################### kernel functions ##############################
 # create linear kernel # subclass of kernel!
-lin_kernel <- setClass('lin_kernel', contains = 'kernel','pathway')
+lin_kernel <- setClass('lin_kernel', contains = 'kernel')
 # linear kernel object constructor
 setGeneric('lin_kernel', function(object, ...) standardGeneric('lin_kernel'))
 #' @describeIn kernel
@@ -265,6 +209,8 @@ setMethod('net_kernel',
     return(kernel(type='network',kernel=K,pathway=pathway))
 })
 
+################################## helper function ##################################
+
 #' Apply two-step network to rewire network genes if it contains no SNPs in GWASdata (for internal use)
 #'
 #' @export
@@ -372,3 +318,55 @@ make_posdev <- function(N) {
     }
     return(N)
 }
+
+#################################### basic methods for kernel #################
+# show method
+#' \code{show} displays the kernel object briefly
+#' @param object kernel object
+#' @export
+#' @rdname kernel-class
+#' @aliases show,kernel,ANY-method
+setMethod('show', signature='kernel',
+          definition = function(object){
+              cat('An object of class ', class(object), ' of type ', object@type,' for pathway ', object@pathway@id, '\n\n',sep='')
+              print(object@kernel)
+              invisible(NULL)
+          })
+
+# summary method
+setGeneric('summary', function(object, ...) standardGeneric('summary'))
+
+#' \code{summary} generates a kernel object summary including the number of individuals and genes for the pathway
+#'
+#' @export
+#' @rdname kernel-class
+#' @aliases summary,kernel,ANY-method
+setMethod('summary', signature='kernel',
+          definition = function(object){
+              cat('An object of class ', class(object), ' of type ', object@type,' for pathway ', object@pathway@id, ' with values: \n\n',sep='')
+              cat(paste('\nNumber of Individuals:',dim(object@kernel)[1]),'\n')
+              cat(paste('The pathway contains',dim(object@pathway@adj)[1],'genes.\n'))#,'genes and', SNPno[2], 'SNPs.\n'))
+              invisible(NULL)
+          })
+
+# plot method
+if (!isGeneric("plot")) setGeneric('plot')
+
+#' \code{plot} creates an image plot of a kernel object
+#'
+#' @param y missing (placeholder)
+#' @param hclust \code{logical}, indicating whether a dendrogram should be added
+#'
+#' @export
+#' @rdname kernel-class
+#' @aliases plot,kernel,ANY-method
+setMethod('plot', signature(x='kernel',y='missing'),
+          function(x, y=NA, hclust=FALSE, ...){
+              if(hclust) {
+                  heatmap(x@kernel, symm=TRUE, col=rev(heat.colors(n=20)), Colv=NA,labRow=NA,labCol=NA, main=list(paste('Genetic Similarity Kernel Matrix for Pathway',x@pathway@id), cex=1.4), ...)
+              }else{
+                  print(levelplot(x@kernel, col.regions=rev(heat.colors(n=20)),  drop.unused.levels=FALSE, scales=list(alternating=0), main=paste('Genetic Similarity Kernel Matrix for Pathway',x@pathway@id)), ...)
+              }
+              invisible(NULL)
+          })
+
