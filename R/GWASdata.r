@@ -23,7 +23,7 @@
 #' @exportClass GWASdata
 #' @export GWASdata
 #' @import methods
-GWASdata <- setClass('GWASdata', slots=c(geno="big.matrix", anno = "data.frame", 
+GWASdata <- setClass('GWASdata', slots=c(geno="big.matrix", anno = "data.frame",
 	                                 pheno='data.frame', desc='character'))
     ## validy checks
     setValidity('GWASdata', function(object){
@@ -45,13 +45,13 @@ GWASdata <- setClass('GWASdata', slots=c(geno="big.matrix", anno = "data.frame",
       ## phenotypes for more individuals than have genotypes
       if(length(unique(object@pheno[,1])) > length(row.names(object@geno))){
         valid <- FALSE
-        msg <- c(msg, 
+        msg <- c(msg,
                  "phenotypes exist for more individuals than have genotypes!")
       }
       ## check order of individuals in genotypes and phenotypes
       if(!all.equal(as.character(object@pheno[,1]),row.names(object@geno))){
         valid <- FALSE
-        msg <- c(msg, 
+        msg <- c(msg,
                  "order of individuals differs in genotype and phenotype file!")
       }
     }else{
@@ -98,17 +98,20 @@ setGeneric('GWASdata', function(object, ...) standardGeneric('GWASdata'))
 setMethod('GWASdata',
        definition = function(geno, anno, pheno = NULL, desc = ''){
        ## create GWASdata object
-       new('GWASdata', geno = geno, anno = anno, pheno = as.data.frame(pheno), 
+       new('GWASdata', geno = geno, anno = anno, pheno = as.data.frame(pheno),
            desc = desc)
 })
 
 # read genotype data from file
-setGeneric('read_geno', function(object, ...) standardGeneric('read_geno'))
+setGeneric('read_geno', function(file.path, ...) standardGeneric('read_geno'))
 
-#' read genotype data from file to ff_matrix object, which can be passed to a  GWASdata object
-#' 
+#' read genotype data from file to bigmemory object, which can be passed to a  GWASdata object
+#'
 #' @param file.path character, which contains the path to the data file to be read
 #' @param save.path character, which contains the path for the backingfile
+#' @param sep character. A field delimeter. See \code{bigmemory::read.big.matrix} for
+#'  details.
+#' @param header logical. Does the data set contain column names?
 #' @param ... further arguments to be passed to \code{bigmemory::read.big.matrix}.
 #' @details If the data set contains rownames specified, set option \code{has.row.names = TRUE}.
 #'
@@ -117,16 +120,27 @@ setGeneric('read_geno', function(object, ...) standardGeneric('read_geno'))
 #' @import bigmemory
 #' @export
 setMethod('read_geno',
-       definition = function(file.path, save.path=NULL, ...){ 
+       definition = function(file.path, save.path = NULL, sep = " ",
+                             header = TRUE, ...) {
 
-     	# backing file path
-        if(is.null(save.path)) save.path <- paste(file.path,'.bin',sep='')
-	# read data frame
-	options(bigmemory.allow.dimnames=TRUE)
-	df <- read.big.matrix(file.path, type='char', sep =' ', header = TRUE,   
-           		      backingfile = save.path, ...)
-        
-	return(df)
+           cat("Loading data. This might take a while depending on the size of the data set.")
+           ## backing file path
+           if(is.null(save.path))
+               save.path <- paste0(file.path, '.bin')
+
+           ## read data frame
+           options(bigmemory.allow.dimnames=TRUE)
+
+## <FIXME>:
+## we should explain better what is expected (i.e., what data files can be
+## imported) and show all possible options (type, sep, header, ... to the user)
+## and not only implicitely via ... .
+           df <- read.big.matrix(file.path, type='char',
+                                 backingfile = save.path,
+                                 descriptorfile = paste0(save.path, '.desc'),
+                                 sep = sep, header = header, ...)
+           rownames(df) <- paste0("ind", 1:nrow(df))
+           return(df)
 })
 
 #' \code{show} Shows basic information on \code{GWASdata} object
@@ -136,7 +150,7 @@ setMethod('read_geno',
 #'
 #' @examples
 #' #data(gwas) <FIXME> define example with new structure
-#' #show(gwas) 
+#' #show(gwas)
 #'
 #' #@author Juliane Manitz
 #' @export
@@ -144,13 +158,13 @@ setMethod('read_geno',
 #' @aliases show,GWASdata,ANY-method
 setMethod('show', signature='GWASdata',
           definition = function(object){
-              cat('An object of class ', class(object), 
+              cat('An object of class ', class(object),
                   ' from ',object@desc,'\n\n',sep='')
 
               if(length(object@pheno) == 0){
 		cat('No phenotypes specified.\n')
               }else{ # summary of phenotype and covariate data
-                cat('Phenotypes for ', dim(object@pheno)[1], 
+                cat('Phenotypes for ', dim(object@pheno)[1],
                 ' individuals: \n',sep='')
               	print(head(object@pheno))
               }
@@ -180,9 +194,9 @@ setMethod('summary', signature='GWASdata',
               if(length(object@pheno) == 0){
 		cat('No phenotypes specified.\n')
               }else{ # summary of phenotype and covariate data
-	        cat('Phenotypes for ', dim(object@pheno)[1], 
+	        cat('Phenotypes for ', dim(object@pheno)[1],
                     ' individuals: \n\n',sep='')
-                print(summary(object@pheno)) 
+                print(summary(object@pheno))
               }
               cat('\nGenotypes: \n\n')
 	      cat('Total number of genes and SNPs per pathway:\n')
@@ -202,7 +216,7 @@ setGeneric('GeneSNPsize', function(object, ...) standardGeneric('GeneSNPsize'))
 #'
 #' @examples
 #' #data(gwas) <FIXME> define example with new structure
-#' #GeneSNPsize(gwas) 
+#' #GeneSNPsize(gwas)
 #'
 #' #@author Juliane Manitz
 #' @export

@@ -82,6 +82,7 @@ setGeneric('calc_kernel', function(GWASdata, ...) standardGeneric('calc_kernel')
 #'
 #' @author Juliane Manitz, Saskia Freytag, Ngoc Thuy Ha
 #' @rdname calc_kernel
+#' @export
 #' @seealso \code{\link{kernel-class}}, \code{\link{GWASdata-class}}, \code{\link{pathway-class}}
 setMethod('calc_kernel',
        definition = function(GWASdata, pathway, type = c('lin', 'sia', 'net'),
@@ -96,14 +97,20 @@ setMethod('calc_kernel',
 	       stop("GWASdata must inherit from class 'pathway'")
 	   }
 	   # transfer to specific kernel function
-           if(type=='lin') k <- lin_kernel(GWASdata, pathway, parallel, ...)
-           if(type=='sia') k <- sia_kernel(GWASdata, pathway, parallel, ...)
-           if(type=='net') k <- net_kernel(GWASdata, pathway, parallel, ...)
+           if(type=='lin')
+               k <- lin_kernel(GWASdata = GWASdata,
+                               pathway = pathway, parallel = parallel, ...)
+           if(type=='sia')
+               k <- sia_kernel(GWASdata = GWASdata,
+                               pathway = pathway, parallel = parallel, ...)
+           if(type=='net')
+               k <- net_kernel(GWASdata = GWASdata,
+                               pathway = pathway, parallel = parallel, ...)
            return(k)
 })
 
 ############################### kernel functions ##############################
-# calculate linear kernel 
+# calculate linear kernel
 setGeneric('lin_kernel', function(GWASdata, ...) standardGeneric('lin_kernel'))
 #' @describeIn calc_kernel
 setMethod('lin_kernel',
@@ -138,11 +145,11 @@ setMethod('lin_kernel',
 })
 
 # create size-adjusted kernel
-setGeneric('sia_kernel', function(object, ...) standardGeneric('sia_kernel'))
+setGeneric('sia_kernel', function(GWASdata, ...) standardGeneric('sia_kernel'))
 #' @describeIn calc_kernel
 setMethod('sia_kernel',
           definition = function(GWASdata, pathway,
-                       parallel = c('none', 'cpu', 'gpu'), ...) { 
+                       parallel = c('none', 'cpu', 'gpu'), ...) {
     genemat <- function(g, data, anno){
         SNPset <- unique(anno[which(anno[,"gene"]==g),"snp"])
         z <- as(data[,as.character(SNPset)],'matrix')
@@ -183,7 +190,7 @@ setMethod('sia_kernel',
 
 
 # calculate network-based kernel
-setGeneric('net_kernel', function(object, ...) standardGeneric('net_kernel'))
+setGeneric('net_kernel', function(GWASdata, ...) standardGeneric('net_kernel'))
 #' @describeIn calc_kernel
 setMethod('net_kernel',
           definition = function(GWASdata, pathway,
@@ -196,7 +203,7 @@ setMethod('net_kernel',
         stop("genotype information contains missing values")
 
     # compute kernel
-    ANA <- get.ana(GWASdata@anno, SNPset, pathway)
+    ANA <- get_ana(GWASdata@anno, SNPset, pathway)
     K = Z %*% ANA %*% t(Z)
 
     #return kernel object
