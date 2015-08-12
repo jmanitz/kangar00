@@ -7,13 +7,13 @@ Author: Stefanie Friedrichs [aut], Juliane Manitz [aut], Patricia Burger [aut], 
 Maintainer: Stefanie Friedrichs <stefanie.friedrichs@med.uni-goettingen.de>
 Description: This package includes methods to extract information on pathways, genes and SNPs from online databases. It provides functions for data prparation and evaluation using the logistic kernel machine test (LKMT). For this variance component test three different kernel functions are offered in the package. We employed the linear kernel as well as two more advanced kernels, adjusting for size bias in the number of SNPs and genes in a pathway or incorporating the network structure of genes within the pathway, respectively.
 License: GPL-2
-Collate: 'pathway.r' 
-          'kernel.r' 
-          'GWASdata.r' 
-          'lkmt.r'
+Collate: 'pathway.r' 'kernel.r' 'GWASdata.r' 'lkmt.r'
 Depends: R (>= 3.1.0)
-Imports: methods, ff, igraph, biomaRt, KEGGgraph, sqldf, CompQuadForm, data.table
+Imports: methods, igraph, biomaRt, KEGGgraph, sqldf, CompQuadForm,
+        bigmemory
 #Suggests: gputools
 LazyData: true
 Suggests: knitr
 VignetteBuilder: knitr
+NeedsCompilation: no
+Packaged: 2015-08-07 14:22:56 UTC; jmanitz

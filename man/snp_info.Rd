@@ -23,7 +23,7 @@ extracted from the Ensemble database. The database is accessed via the
 R-package \code{biomaRt}.
 }
 \examples{
-# snp_info("rs234") ### ERROR
+# snp_info("rs234") <FIXME>
 }
 \author{
 Stefanie Friedrichs

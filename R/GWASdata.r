@@ -4,39 +4,6 @@
 #
 #################################################
 
-### make sure that class "ff" is formally defined
-#' "ff" class for memory-efficient storage of genotype matrix on disk and fast access
-#'
-#' @name ff-class
-#' @aliases ff
-#' @family ff
-#'
-#' @import ff
-#' @exportClass ff
-#' @seealso ff::ffdf ff::read.table.ff
-setOldClass('ff')
-setOldClass('ff_matrix')
-
-## some helper functions to use ff:
-get_filename <- function(x) {
-    attr(attr(x, "physical"), "filename")
-}
-
-## allows to use relative paths
-set_filename <- function(x, file) {
-    attr(attr(x, "physical"), "filename") <- file
-}
-
-## move ff files on hard disk
-move_ff <- function(x, path, filename = NULL) {
-    if (!is.null(filename))
-        to <- paste(path, filename, sep = "/")
-    sucess <- file.move(from = get_filename(x), to = to)
-    if (sucess && !is.null(filename))
-        set_filename(x, file = filename)
-    return(x)
-}
-
 #' An S4 class defining an object to represent a Genome-wide Assocaition Study.
 #'
 #' @slot geno An \code{ffdf} data frame including genotype information.
@@ -56,7 +23,7 @@ move_ff <- function(x, path, filename = NULL) {
 #' @exportClass GWASdata
 #' @export GWASdata
 #' @import methods
-GWASdata <- setClass('GWASdata', slots=c(geno="ff_matrix", anno = "data.frame", 
+GWASdata <- setClass('GWASdata', slots=c(geno="big.matrix", anno = "data.frame", 
 	                                 pheno='data.frame', desc='character'))
     ## validy checks
     setValidity('GWASdata', function(object){
@@ -140,38 +107,26 @@ setGeneric('read_geno', function(object, ...) standardGeneric('read_geno'))
 
 #' read genotype data from file to ff_matrix object, which can be passed to a  GWASdata object
 #' 
-#' @param path character, which contains the path to the txt file
+#' @param file.path character, which contains the path to the data file to be read
+#' @param save.path character, which contains the path for the backingfile
+#' @param ... further arguments to be passed to \code{bigmemory::read.big.matrix}.
+#' @details If the data set contains rownames specified, set option \code{has.row.names = TRUE}.
 #'
-#' @rdname GWASdata-class
-#' @import data.table ff
+#' @rdname read_geno
+#' @seealso \code{\link{GWASdata-class}}
+#' @import bigmemory
 #' @export
 setMethod('read_geno',
-       definition = function(file.path, save.path=NULL){
+       definition = function(file.path, save.path=NULL, ...){ 
 
-    geno <- fread(file.path, sep='auto', header=TRUE, data.table=FALSE)
-    geno.mat <- as.matrix(geno)
-    ## convert to ff_matrix object
-    geno.ff <- ff(geno.mat, dim = dim(geno.mat), vmode = "quad")  # needs longer than 
-								  # integer mode
-    ## set column names
-    colnames(geno.ff) <- colnames(geno.mat)
-    ## make individual ids:
-    rownames(geno.ff) <- paste0("ind", sprintf("%04.0f", 1:nrow(geno.ff)))
-
-    ## move file to current working directory
-    geno.ff <- move_ff(geno.ff, path = getwd(), filename = "geno.ff")
-
-    ## clean up
-    rm(geno, geno.mat)
-    close(geno.ff)
-
-    ## save the ff object permanently
-    if(!is.null(save.path)){
-      dir.create('ff_data')
-      file.copy(from = "geno.ff", to = paste("ff_data/",save.path, sep=''))
-    }
-
-    return(geno.ff)
+     	# backing file path
+        if(is.null(save.path)) save.path <- paste(file.path,'.bin',sep='')
+	# read data frame
+	options(bigmemory.allow.dimnames=TRUE)
+	df <- read.big.matrix(file.path, type='char', sep =' ', header = TRUE,   
+           		      backingfile = save.path, ...)
+        
+	return(df)
 })
 
 #' \code{show} Shows basic information on \code{GWASdata} object
@@ -180,8 +135,8 @@ setMethod('read_geno',
 #' @return \code{show} This function shows the phenotype information and the object description included in a \code{\link{GWASdata}} object.
 #'
 #' @examples
-#' data(gwas)
-#' show(gwas)
+#' #data(gwas) <FIXME> define example with new structure
+#' #show(gwas) 
 #'
 #' #@author Juliane Manitz
 #' @export
@@ -212,8 +167,8 @@ setGeneric('summary', function(object, ...) standardGeneric('summary'))
 #' @return \code{summary} This function gives an overview about the information included in a \code{\link{GWASdata}} object. Summary statistics for phenotype and genotype data are calculated.
 #'
 #' @examples
-#' # data(gwas)   #### ERROR
-#' # summary(gwas) ### ERROR
+#' #data(gwas)   <FIXME> define example with new structure
+#' #summary(gwas)
 #'
 #' #@author Juliane Manitz
 #' @export
@@ -246,8 +201,8 @@ setGeneric('GeneSNPsize', function(object, ...) standardGeneric('GeneSNPsize'))
 #' @return \code{GeneSNPsize} Creates a list of pathway names with numbers of snps and genes in the pathway.
 #'
 #' @examples
-#' #data(gwas)### ERROR
-#' #GeneSNPsize(gwas) ### ERROR
+#' #data(gwas) <FIXME> define example with new structure
+#' #GeneSNPsize(gwas) 
 #'
 #' #@author Juliane Manitz
 #' @export
@@ -276,7 +231,7 @@ setMethod('GeneSNPsize', signature='GWASdata',
 #' not be listed in the returned \code{data.frame}, SNPs with multiple positions
 #' will appear several times.
 #' @examples
-#' # snp_info("rs234") ### ERROR
+#' # snp_info("rs234") <FIXME>
 #'
 #' @author Stefanie Friedrichs
 #' @import biomaRt
@@ -304,7 +259,7 @@ snp_info <- function(snps, ...) {
 #' @return A \code{data.frame} mapping SNPs to genes and genes to pathways. Includes
 #' the columns "pathway", "gene", "chr", "snp" and "position".
 #' @examples
-#' #### missing example ####
+#' #### missing example #### <FIXME>
 #'
 #' @author Stefanie Friedrichs, Saskia Freytag, Ngoc-Thuy Ha
 #' @import sqldf

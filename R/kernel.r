@@ -50,14 +50,16 @@ setValidity('kernel', function(object){
 
 #################################### kernel object constructor #################
 
-# kernel object constructor
-#setGeneric('kernel', function(object, ...) standardGeneric('kernel'))
+# calculate kernel object
+setGeneric('calc_kernel', function(GWASdata, ...) standardGeneric('calc_kernel'))
 
-#' \code{kernel} is a kernel object constructor and creates a kernel to be evaluated in the logistic kernel machine test.
+#' calculates a kernel to be evaluated in the logistic kernel machine test.
 #'
-#' @param type character, kernel type: Use \code{"lin"} for linear kernels, \code{"sia"} for size-adjusted or \code{"net"} for network-based kernels.
-#' @param data Object of the class \code{GWASdata} containing the genotypes of the individuals for which a kernel will be calculated.
+#' @param GWASdata Object of the class \code{GWASdata} containing the genotypes of the individuals for which a kernel will be calculated.
 #' @param pathway Object of the class \code{pathway} specifying the SNP set for which a kernel will be calculated.
+#' @param type character, kernel type: Use \code{"lin"} for linear kernels, \code{"sia"} for size-adjusted or \code{"net"} for network-based kernels.
+#' @param parallel character specifying if the kernel matrix is computed in parallel: Use \code{"none"} for ... <FIXME>
+#' @param ... further arguments to be passed to the kernel computations
 #'
 #' @return Returns object of class kernel, including the similarity matrix of the corresponding pathway for the considered individuals (\code{kernel}).
 #' @details
@@ -75,38 +77,42 @@ setValidity('kernel', function(object){
 #'  \item Freytag S, Manitz J, Schlather M, Kneib T, Amos CI, Risch A, Chang-Claude J, Heinrich J, Bickeboeller H: A network-based kernel machine test for the identification of risk pathways in genome-wide association studies. Hum Hered. 2013, 76(2):64-75.
 #' }
 #'
+#' @examples
+#' #### missing example #### <FIXME>
+#'
 #' @author Juliane Manitz, Saskia Freytag, Ngoc Thuy Ha
-#' @rdname kernel-class
-#' @seealso \code{\link{GWASdata-class}}, \code{\link{pathway-class}}
-setMethod('kernel',
-       definition = function(type, data, pathway, ...) {
-#parallel = c('none', 'cpu', 'gpu'),
-           type     <- match.arg(c('lin', 'sia', 'net'))
+#' @rdname calc_kernel
+#' @seealso \code{\link{kernel-class}}, \code{\link{GWASdata-class}}, \code{\link{pathway-class}}
+setMethod('calc_kernel',
+       definition = function(GWASdata, pathway, type = c('lin', 'sia', 'net'),
+                             parallel = c('none', 'cpu', 'gpu'), ...) {
+           # user inputs
+           type     <- match.arg(type)
            parallel <- match.arg(parallel)
-
-           if(type=='lin') k <- new('lin_kernel', data, pathway, parallel, ...)
-           if(type=='sia') k <- new('sia_kernel', data, pathway, parallel, ...)
-           if(type=='net') k <- new('net_kernel', data, pathway, parallel, ...)
+	   if(!inherits(GWASdata, "GWASdata")){
+	       stop("GWASdata must inherit from class 'GWASdata'")
+	   }
+	   if(!inherits(pathway, "pathway")){
+	       stop("GWASdata must inherit from class 'pathway'")
+	   }
+	   # transfer to specific kernel function
+           if(type=='lin') k <- lin_kernel(GWASdata, pathway, parallel, ...)
+           if(type=='sia') k <- sia_kernel(GWASdata, pathway, parallel, ...)
+           if(type=='net') k <- net_kernel(GWASdata, pathway, parallel, ...)
            return(k)
 })
 
 ############################### kernel functions ##############################
-# create linear kernel # subclass of kernel!
-lin_kernel <- setClass('lin_kernel', contains = 'kernel')
-# linear kernel object constructor
-setGeneric('lin_kernel', function(object, ...) standardGeneric('lin_kernel'))
-#' @describeIn kernel
+# calculate linear kernel 
+setGeneric('lin_kernel', function(GWASdata, ...) standardGeneric('lin_kernel'))
+#' @describeIn calc_kernel
 setMethod('lin_kernel',
-          definition = function(data, pathway,
+          definition = function(GWASdata, pathway,
                        parallel = c('none', 'cpu', 'gpu'), ...) {
-    parallel <- match.arg(parallel)
-    if (!inherits(data, "GWASdata"))
-        stop("data must inherit from class GWASdata")
-
     ## which SNPs are in specified pathway
-    SNPset <- unique(data@anno$snp[which(data@anno$pathway == pathway@id)])
+    SNPset <- unique(GWASdata@anno$snp[which(GWASdata@anno$pathway == pathway@id)])
     ## subset genotype data for specified SNP set
-    z <- as(data@geno[,as.character(SNPset)],'matrix')
+    z <- as(GWASdata@geno[,as.character(SNPset)],'matrix')
     if(any(is.na(z)))
         stop("genotype information contains missing values")
 
@@ -117,7 +123,7 @@ setMethod('lin_kernel',
     if(parallel=='cpu'){
         stop('sorry, not yet defined')
     }
-    if(parallel=='gpu'){   ##### Suggests gputools #######
+    if(parallel=='gpu'){   # Suggests gputools #
       if('gputools' %in% (.packages(all.available=TRUE))){
         require(gputools)
         z <- as.numeric(z)
@@ -128,21 +134,15 @@ setMethod('lin_kernel',
     }
     k <- make_posdev(k)
     #return kernel object
-    return(kernel(type='linear', kernel=k, pathway=pathway))
+    return(new('kernel', type='lin', kernel=k, pathway=pathway))
 })
 
 # create size-adjusted kernel
-sia_kernel <- setClass('sia_kernel', contains = 'kernel')
-# object constructor
 setGeneric('sia_kernel', function(object, ...) standardGeneric('sia_kernel'))
-#' @describeIn kernel
+#' @describeIn calc_kernel
 setMethod('sia_kernel',
-          definition = function(data, pathway,
-                       parallel = c('none', 'cpu', 'gpu'), ...) {
-    parallel <- match.arg(parallel)
-    if (!inherits(data, "GWASdata"))
-        stop("data must inherit from class GWASdata")
-
+          definition = function(GWASdata, pathway,
+                       parallel = c('none', 'cpu', 'gpu'), ...) { 
     genemat <- function(g, data, anno){
         SNPset <- unique(anno[which(anno[,"gene"]==g),"snp"])
         z <- as(data[,as.character(SNPset)],'matrix')
@@ -164,16 +164,16 @@ setMethod('sia_kernel',
         return(-roh*(l[[1]]/l[[3]])^(delta))
     }
 
-    anno <- data@anno[data@anno[,"pathway"]==pathway@id,c("gene","snp")]#anno subset for pathway
+    anno <- GWASdata@anno[GWASdata@anno[,"pathway"]==pathway@id, c("gene","snp")] #anno subset for pathway
     gene.counts <- table(anno[,"gene"]) #counts number of different SNPs per gene
     g.10 <- names(gene.counts[gene.counts >= 2]) #genes with >= 2 snps
 
     #[[1]]:genematrix, [[2]]:eff.length.gene, [[3]]:length.gene
-    liste <- lapply(g.10, genemat, data@geno, anno)
+    liste <- lapply(g.10, genemat, GWASdata@geno, anno)
     get2    <- function(l){ return(l[[2]]) }
     max.eff <- max( unlist( lapply(liste, get2) ) )
 
-    kerneltimes <- matrix( rep(0,(nrow(data@geno))^2), nrow=nrow(data@geno))
+    kerneltimes <- matrix( rep(0,(nrow(GWASdata@geno))^2), nrow=nrow(GWASdata@geno))
     kerneltimes <- Reduce('+', lapply(liste,genemat2,max.eff))
     k <- exp( sqrt(1/(length(unique(anno[,"gene"])))) * kerneltimes )
     k <- make_posdev(k)
@@ -182,34 +182,28 @@ setMethod('sia_kernel',
 })
 
 
-# network-based kernel
-net_kernel <- setClass('net_kernel', contains = 'kernel')
-
-# object constructor
+# calculate network-based kernel
 setGeneric('net_kernel', function(object, ...) standardGeneric('net_kernel'))
-#' @describeIn kernel
+#' @describeIn calc_kernel
 setMethod('net_kernel',
-          definition = function(data, pathway,
+          definition = function(GWASdata, pathway,
                        parallel = c('none', 'cpu', 'gpu'), ...) {
-    if (!inherits(data, "GWASdata"))
-        stop("data must inherit from class GWASdata")
-
     #genotype matrix Z, which SNPs are in specified pathway
-    SNPset <- unique(data@anno$snp[which(data@anno$pathway==pathway@id)])
+    SNPset <- unique(GWASdata@anno$snp[which(GWASdata@anno$pathway==pathway@id)])
     #subset genotype data for specified SNP set
-    Z <- as(data@geno[,as.character(SNPset)],'matrix')
+    Z <- as(GWASdata@geno[,as.character(SNPset)],'matrix')
     if (any(is.na(Z)))
         stop("genotype information contains missing values")
 
     # compute kernel
-    ANA <- get.ana(data@anno, SNPset, pathway)
+    ANA <- get.ana(GWASdata@anno, SNPset, pathway)
     K = Z %*% ANA %*% t(Z)
 
     #return kernel object
     return(kernel(type='network',kernel=K,pathway=pathway))
 })
 
-################################## helper function ##################################
+################################## helper function #############################
 
 #' Apply two-step network to rewire network genes if it contains no SNPs in GWASdata (for internal use)
 #'

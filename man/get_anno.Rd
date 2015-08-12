@@ -26,7 +26,7 @@ extracted from the Ensemble database. The database is accessed via the
 R-package \code{biomaRt}.
 }
 \examples{
-#### missing example ####
+#### missing example #### <FIXME>
 }
 \author{
 Stefanie Friedrichs, Saskia Freytag, Ngoc-Thuy Ha

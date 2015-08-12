@@ -6,13 +6,14 @@
 
 #' An S4 class to represent a gene-gene interaction network
 #'
-#' @aliases pathway
+#' @rdname pathway-class
 #'
 #' @slot id a character repesenting the pathway id, e.g. hsa00100 as used in the KEGG database.
 #' @slot adj a matrix respresenting the network adjacency matrix  of dimension equaling the number of genes (1 interaction, 0 otherwise)
 #' @slot sign a numeric vector indicating the interaction type for each link (1 activation, -1 inhibition). Represents the interaction network within the pathway.
 #' 
 #' @author Juliane Manitz
+#'
 #' @export
 #' @import methods
 pathway <- setClass('pathway',
