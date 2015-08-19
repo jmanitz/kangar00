@@ -204,8 +204,9 @@ setMethod('net_kernel',
 
     # compute kernel
     ANA <- get_ana(GWASdata@anno, SNPset, pathway)
-    K = Z %*% ANA %*% t(Z)
+    K <- Z %*% ANA %*% t(Z)
 
+    K <- make_posdev(K)
     #return kernel object
     return(kernel(type='network',kernel=K,pathway=pathway))
 })
