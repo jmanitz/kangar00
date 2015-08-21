@@ -310,7 +310,12 @@ get_ana <- function(anno, SNPset, pathway){
 #' }
 #'
 make_posdev <- function(N) {
+
+## <FIXME>Perhaps we should use an option for the tolerance?</FIXME>
+
     lambda <- min(eigen(N, only.values = TRUE, symmetric = TRUE)$values)
+    ## use some additional tolerance to ensure semipositive definite matrices
+    lambda <- lambda - sqrt(.Machine$double.eps)
     # smallest eigenvalue negative = not semipositive definite
     if (lambda < 0) {
         rho <- 1/(1-lambda)
