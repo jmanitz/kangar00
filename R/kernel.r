@@ -316,7 +316,7 @@ make_posdev <- function(N) {
     ## use some additional tolerance to ensure semipositive definite matrices
     lambda <- lambda - sqrt(.Machine$double.eps)
     # smallest eigenvalue negative = not semipositive definite
-    if (lambda < 0) {
+    if (lambda < -1e-10) {
         rho <- 1/(1-lambda)
         N <- rho * N + (1-rho) * diag(dim(N)[1])
         ## now check if it is really positive definite by recursively calling
