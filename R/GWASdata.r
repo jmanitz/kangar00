@@ -6,7 +6,7 @@
 
 #' An S4 class defining an object to represent a Genome-wide Assocaition Study.
 #'
-#' @slot geno An \code{ffdf} data frame including genotype information.
+#' @slot geno An \code{big.matrix} object including genotype information.
 #' @slot anno A \code{data.frame} mapping SNPs to genes and genes to
 #' pathways. Needs to include the columns 'pathway' (pathway ID, e.g. hsa
 #' number from KEGG database), 'gene' (gene name (hgnc_symbol)), 'chr'
@@ -122,14 +122,15 @@ setGeneric('read_geno', function(file.path, ...) standardGeneric('read_geno'))
 setMethod('read_geno',
        definition = function(file.path, save.path = NULL, sep = " ",
                              header = TRUE, ...) {
+       cat("Loading data. This might take a while depending on the size of the 
+            data set.")
+            
+       ## backing file path
+       if(is.null(save.path))
+          save.path <- paste0(file.path, '.bin')
 
-           cat("Loading data. This might take a while depending on the size of the data set.")
-           ## backing file path
-           if(is.null(save.path))
-               save.path <- paste0(file.path, '.bin')
-
-           ## read data frame
-           options(bigmemory.allow.dimnames=TRUE)
+       ## read data frame
+       options(bigmemory.allow.dimnames=TRUE)
 
 ## <FIXME>:
 ## we should explain better what is expected (i.e., what data files can be

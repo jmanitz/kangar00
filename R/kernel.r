@@ -229,6 +229,7 @@ rewire_network <- function(N, remov) {
 
     # identify genes that need to be carried forward to the subnetwork
     ind_sub <- which(N[remov,] != 0)
+    if(is.null(dim(Nsub))){ return(N) } #if gene to remove had no connections
     # extract the subnetwork
     Nsub <- N[ind_sub, ind_sub]
     # exclude self-interaction
@@ -281,8 +282,6 @@ get_ana <- function(anno, SNPset, pathway){
 
     # include selfinteractions for main effects
     diag(N) <- 1
-    #ensure positive definiteness by network weighting
-    N <- make_posdev(N)
 
     #A: SNP to gene mapping
     Atab <- table(anno_sub[c('snp','gene')])
