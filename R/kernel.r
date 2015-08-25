@@ -228,12 +228,26 @@ rewire_network <- function(N, remov) {
     if(length(remov)==0){ return(N) }
 
     # identify genes that need to be carried forward to the subnetwork
-    ind_sub <- which(N[remov,] != 0)
-    if(is.null(dim(Nsub))){ return(N) } #if gene to remove had no connections
-    # extract the subnetwork
-    Nsub <- N[ind_sub, ind_sub]
-    # exclude self-interaction
-    diag(Nsub) <- 0
+    a <- (N[remov,]!=0) 
+    # can be vector or matrix -> make matrix to apply colsums 
+    if(is.null(dim(a))){ 
+       a <- rbind(rep(0,length(a)),a)
+    }
+    ind_sub <- which(colSums(a)!= 0)  
+    # extract the subnetwork               
+    Nsub <- N[ind_sub, ind_sub]  
+    
+    #if gene to remove had no connections
+    if(is.null(dim(Nsub))){   
+       return(N[-remov,-remov]) 
+    }
+    
+    # exclude self-interaction 
+    diag(Nsub) <- 0  
+    # if nullmatrix
+    if(sum(Nsub!=0)==0){  
+       return(N[-remov,-remov])                   
+    }
 
     # calculate the two-step network
     Nsub2step <- Nsub %*% Nsub
@@ -255,7 +269,7 @@ rewire_network <- function(N, remov) {
 #' Produce middle part of Network Kernel (for internal use)
 #'
 #' @export
-#' @author Juliane Manitz, Saskia Freytag, Stefanie Freidrichs
+#' @author Juliane Manitz, Saskia Freytag, Stefanie Friedrichs
 #'
 #' @param anno \code{data.frame} with annotation information as returned from
 #' \cite{\link{get_anno}}
