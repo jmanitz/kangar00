@@ -282,6 +282,8 @@ get_ana <- function(anno, SNPset, pathway){
 
     # include selfinteractions for main effects
     diag(N) <- 1
+    ## make N positive semidefinit
+    N <- make_posdev(N)
 
     #A: SNP to gene mapping
     Atab <- table(anno_sub[c('snp','gene')])
