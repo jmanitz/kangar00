@@ -116,6 +116,9 @@ setGeneric('lin_kernel', function(GWASdata, ...) standardGeneric('lin_kernel'))
 setMethod('lin_kernel',
           definition = function(GWASdata, pathway,
                        parallel = c('none', 'cpu', 'gpu'), ...) {
+    further_args <- list(...)
+    if (!is.null(further_args))
+        stop("handling of '...' not yet implemented")
     ## which SNPs are in specified pathway
     SNPset <- unique(GWASdata@anno$snp[which(GWASdata@anno$pathway == pathway@id)])
     ## subset genotype data for specified SNP set
@@ -150,6 +153,9 @@ setGeneric('sia_kernel', function(GWASdata, ...) standardGeneric('sia_kernel'))
 setMethod('sia_kernel',
           definition = function(GWASdata, pathway,
                        parallel = c('none', 'cpu', 'gpu'), ...) {
+    further_args <- list(...)
+    if (!is.null(further_args))
+        stop("handling of '...' not yet implemented")
     genemat <- function(g, data, anno){
         SNPset <- unique(anno[which(anno[,"gene"]==g),"snp"])
         z <- as(data[,as.character(SNPset)],'matrix')
@@ -195,16 +201,21 @@ setGeneric('net_kernel', function(GWASdata, ...) standardGeneric('net_kernel'))
 setMethod('net_kernel',
           definition = function(GWASdata, pathway,
                        parallel = c('none', 'cpu', 'gpu'), ...) {
+    further_args <- list(...)
     #genotype matrix Z, which SNPs are in specified pathway
     SNPset <- unique(GWASdata@anno$snp[which(GWASdata@anno$pathway==pathway@id)])
     #subset genotype data for specified SNP set
-    Z <- as(GWASdata@geno[,as.character(SNPset)],'matrix')
-    if (any(is.na(Z)))
+    Z1 <- Z2 <- as(GWASdata@geno[,as.character(SNPset)],'matrix')
+    if (any(is.na(Z1)))
         stop("genotype information contains missing values")
-
+    ## check if knots are specified
+    if (!is.null(further_args) && "knots" %in% names(further_args)) {
+        Z2 <- further_args$knots@geno
+        Z2 <- as(Z2[,as.character(SNPset)],'matrix')
+    }
     # compute kernel
     ANA <- get_ana(GWASdata@anno, SNPset, pathway)
-    K <- Z %*% ANA %*% t(Z)
+    K <- Z1 %*% ANA %*% t(Z2)
 
     K <- make_posdev(K)
     #return kernel object
