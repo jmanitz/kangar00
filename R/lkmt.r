@@ -63,7 +63,7 @@ lkmt <- function(formula, kernel, GWASdata, method=c('satt','davies'), ...){
    }
    nullmodel <- glm(formula, data=GWASdata@pheno, family=binomial, x=TRUE)
    if(method=='satt'){
-   model <- score.test(kernel@kernel, nullmodel, pd.check=FALSE)[[1]]
+   model <- score_test(kernel@kernel, nullmodel, pd.check=FALSE)[[1]]
    }
    if(method=='davies'){
    model <- davies_test(kernel@kernel, nullmodel)
