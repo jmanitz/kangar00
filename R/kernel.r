@@ -39,7 +39,7 @@ setValidity('kernel', function(object){
         valid <- FALSE
         msg <- c(msg, "kernel matrix has to be symmetric")
     }
-    # pos def?
+    # pos semi def?
     lambda <- min(eigen(object@kernel, only.values=TRUE, symmetric=TRUE)$values)
     if(lambda< -1e-6){ # smallest eigenvalue negative = not semipositive definite
         valid <- FALSE
@@ -304,7 +304,7 @@ get_ana <- function(anno, SNPset, pathway){
     # include selfinteractions for main effects
     diag(N) <- 1
     ## make N positive semidefinit
-    N <- make_posdev(N)
+    N <- make_psd(N)
 
     #A: SNP to gene mapping
     Atab <- table(anno_sub[c('snp','gene')])
@@ -317,21 +317,20 @@ get_ana <- function(anno, SNPset, pathway){
     return(A.star %*% N %*% t(A.star))
 }
 
-#' Adjust matrix to be positive definite
+#' Adjust network matrix to be positive semi-definite
 #'
 #' @export
-#' @author Juliane Manitz, Saskia Freytag, Stefanie Freidrichs
+#' @author Juliane Manitz, Saskia Freytag, Stefanie Friedrichs
 #'
 #' @param N A kernelmatrix.
-#' @return The matrix N, if it is positive definite and the closes positive
-#' definite matrix if N is not positive definite.
+#' @return The matrix N, if it is positive definite and the closest positive semi-definite matrix if N is not positive semi-definite.
 #' For more details check the references.
 #' @references
 #' \itemize{
 #'  \item Freytag S, Manitz J, Schlather M, Kneib T, Amos CI, Risch A, Chang-Claude J, Heinrich J, Bickeboeller H: A network-based kernel machine test for the identification of risk pathways in genome-wide association studies. Hum Hered. 2013, 76(2):64-75.
 #' }
 #'
-make_posdev <- function(N) {
+make_psd <- function(N) {
 
 ## <FIXME>Perhaps we should use an option for the tolerance?</FIXME>
 
@@ -343,7 +342,7 @@ make_posdev <- function(N) {
         rho <- 1/(1-lambda)
         N <- rho * N + (1-rho) * diag(dim(N)[1])
         ## now check if it is really positive definite by recursively calling
-        N <- make_posdev(N)
+        N <- make_psd(N)
     }
     return(N)
 }
