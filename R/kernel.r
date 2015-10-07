@@ -142,7 +142,6 @@ setMethod('lin_kernel',
         stop("Please install package 'gputools' to run matrix multiplication on GPU")
       }
     }
-    k <- make_posdev(k)
     #return kernel object
     return(new('kernel', type='lin', kernel=k, pathway=pathway))
 })
@@ -189,7 +188,6 @@ setMethod('sia_kernel',
     kerneltimes <- matrix( rep(0,(nrow(GWASdata@geno))^2), nrow=nrow(GWASdata@geno))
     kerneltimes <- Reduce('+', lapply(liste,genemat2,max.eff))
     k <- exp( sqrt(1/(length(unique(anno[,"gene"])))) * kerneltimes )
-    k <- make_posdev(k)
     #return kernel object
     return(kernel(type='size-adjusted',kernel=k,pathway=pathway))
 })
@@ -216,8 +214,6 @@ setMethod('net_kernel',
     # compute kernel
     ANA <- get_ana(GWASdata@anno, SNPset, pathway)
     K <- Z1 %*% ANA %*% t(Z2)
-
-    K <- make_posdev(K)
     #return kernel object
     return(kernel(type='network',kernel=K,pathway=pathway))
 })
@@ -239,25 +235,25 @@ rewire_network <- function(N, remov) {
     if(length(remov)==0){ return(N) }
 
     # identify genes that need to be carried forward to the subnetwork
-    a <- (N[remov,]!=0) 
-    # can be vector or matrix -> make matrix to apply colsums 
-    if(is.null(dim(a))){ 
+    a <- (N[remov,]!=0)
+    # can be vector or matrix -> make matrix to apply colsums
+    if(is.null(dim(a))){
        a <- rbind(rep(0,length(a)),a)
     }
-    ind_sub <- which(colSums(a)!= 0)  
-    # extract the subnetwork               
-    Nsub <- N[ind_sub, ind_sub]  
-    
+    ind_sub <- which(colSums(a)!= 0)
+    # extract the subnetwork
+    Nsub <- N[ind_sub, ind_sub]
+
     #if gene to remove had no connections
-    if(is.null(dim(Nsub))){   
-       return(N[-remov,-remov]) 
+    if(is.null(dim(Nsub))){
+       return(N[-remov,-remov])
     }
-    
-    # exclude self-interaction 
-    diag(Nsub) <- 0  
+
+    # exclude self-interaction
+    diag(Nsub) <- 0
     # if nullmatrix
-    if(sum(Nsub!=0)==0){  
-       return(N[-remov,-remov])                   
+    if(sum(Nsub!=0)==0){
+       return(N[-remov,-remov])
     }
 
     # calculate the two-step network
