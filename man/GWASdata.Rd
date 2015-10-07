@@ -7,7 +7,7 @@
 \alias{show,GWASdata,ANY-method}
 \title{An S4 class defining an object to represent a Genome-wide Assocaition Study.}
 \usage{
-GWASdata(object, ...)
+GWASdata(x, ...)
 
 \S4method{GWASdata}{ANY}(geno, anno, pheno = NULL, desc = "")
 }
@@ -35,7 +35,7 @@ An S4 class defining an object to represent a Genome-wide Assocaition Study.
 \section{Slots}{
 
 \describe{
-\item{\code{geno}}{An \code{ffdf} data frame including genotype information.}
+\item{\code{geno}}{An \code{big.matrix} object including genotype information.}
 
 \item{\code{anno}}{A \code{data.frame} mapping SNPs to genes and genes to
 pathways. Needs to include the columns 'pathway' (pathway ID, e.g. hsa

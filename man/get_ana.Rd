@@ -21,6 +21,6 @@ matrix ANA' for inner part of network kernel
 Produce middle part of Network Kernel (for internal use)
 }
 \author{
-Juliane Manitz, Saskia Freytag, Stefanie Freidrichs
+Juliane Manitz, Saskia Freytag, Stefanie Friedrichs
 }
 
