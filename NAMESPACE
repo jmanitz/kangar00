@@ -3,7 +3,7 @@
 export(GWASdata)
 export(get_ana)
 export(lkmt)
-export(make_posdev)
+export(make_psd)
 export(rewire_network)
 exportClasses(GWASdata)
 exportClasses(kernel)
