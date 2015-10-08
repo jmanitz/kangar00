@@ -7,7 +7,7 @@
 \alias{show,GWASdata,ANY-method}
 \title{An S4 class defining an object to represent a Genome-wide Assocaition Study.}
 \usage{
-GWASdata(x, ...)
+GWASdata(object, ...)
 
 \S4method{GWASdata}{ANY}(geno, anno, pheno = NULL, desc = "")
 }
