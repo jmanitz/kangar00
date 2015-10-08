@@ -179,8 +179,10 @@ Data from a case control study is needed to test a pathways influence on disease
  
 *   Genotype data for each individual. 
  
-       *  Genotype data needs to be one line per individual and in `ffdf` format,         
-          which is a data frame as specified within the `ff` package. 
+       *  Genotype data needs to be one line per individual and in 
+          `big.matrix` format, which is a memory efficient matrix object as 
+          specified in the `big.memory` package (currently only availyble for 
+          unix / linux systems). 
        *  Columnames give ID numbers for the individuals while rownames give the
           rsnumbers corresponding to the SNPs genotyped in the study.          
        *  Note that missing values are not allowed and SNPs with missing genotypes
@@ -207,8 +209,12 @@ A `GWASdata` object can be constructed as
 ```
 anno  <- get_anno(snp_info, pathway_info)                   
 pheno <- read.table("...path/to/file/containing/phenotypes")
-geno  <- read.table("...path/to/file/containing/genotypes")          
-geno  <- as.ffdf(geno)                    
+geno  <- read.table("...path/to/file/containing/genotypes") 
+
+ADD READ_GENO FUNCTION HERE WEHEN FINISHED         
+geno  <- as.big.matrix(geno)  
+
+                  
 attr(geno,"anno") <- anno
 
 my_gwas <- GWASdata(pheno=pheno, geno=geno, desc="study xy")
@@ -240,7 +246,7 @@ It requires as arguments
     for gpu calculation are available.  
  
 ```
-K_lin <- kernel_lin(gwas, p, parallel='none')
+K_lin <- lin_kernel(gwas, p, parallel='none')
 ```
 
 will return a quadratic `matrix` of dimension equal to the number of individuals
@@ -271,7 +277,7 @@ the following arguments
     for gpu calculation are available.  
  
 ```
-K_sia <- kernel_sia(gwas, p, parallel='gpu')
+K_sia <- sia_kernel(gwas, p, parallel='gpu')
 ```
 will return a quadratic `matrix` of dimension equal to the number of individuals
 in the `GWASdata` object.
@@ -296,7 +302,7 @@ The network based kernelmatrix for a pathway can be calculated with the function
     for gpu calculation are available.  
  
 ```
-K_net <- kernel_net(gwas, p, parallel='none')
+K_net <- net_kernel(gwas, p, parallel='none')
 ```
 will return a quadratic `matrix` of dimension equal to the number of individuals
 in the `GWASdata` object.

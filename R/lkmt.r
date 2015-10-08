@@ -228,14 +228,16 @@ davies_test <- function(K, nullmodel){
         X   <- nullmodel$x
         mui <- nullmodel$fitted.values
 
+        if( min(eigen(K)$values)<0 ){ K <- make_psd(K) }   
+
         Q <- 1/2*t(Y-mui)%*%K%*%(Y-mui)
         P <- diag(nrow(X))-X%*%solve(t(X)%*%X,t(X))#solve(t(X)%*%X)%*%t(X)
 
         W <- (mui*(1-mui))*diag(length(mui))
         v <- eigen(W)$vectors   #Wsqrt <-  sqrtm(W)  ##needs expm, veeery slow
         Wsqrt <- v %*% diag(sqrt(eigen(W)$values)) %*% t(v)
-
-        WP     <- Wsqrt%*%P
+        WP     <- Wsqrt%*%P         
+     
         lambda <- eigen(0.5*WP%*%K%*%t(WP))$values
         #delta <- rep(0, length(lambda))
         #sigma <- 0
