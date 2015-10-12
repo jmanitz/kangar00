@@ -310,7 +310,7 @@ setMethod('rewire_network', signature = 'matrix',
     x[ind_sub,ind_sub] <- xsub2step
     # remove the genes and return network
     return(x[-remov,-remov])
-}
+})
 
 setGeneric('get_ana', function(x, ...) standardGeneric('get_ana'))
 #' Produce middle part of network kernel (for internal use)
@@ -356,7 +356,7 @@ setMethod('get_ana', signature = 'data.frame',
     A.star <- A/colSums(A)
 
     return(A.star %*% N %*% t(A.star))
-}
+})
 
 setGeneric('make_psd', function(x, ...) standardGeneric('make_psd'))
 #' Adjust network matrix to be positive semi-definite
@@ -388,7 +388,7 @@ setMethod('make_psd', signature = 'matrix',
         x <- make_psd(x)
     }
     return(x)
-}
+})
 
 #################################### basic methods for kernel #################
 # show method

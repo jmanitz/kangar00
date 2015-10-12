@@ -362,7 +362,7 @@ setMethod('gene_name_number', signature='character', #<FIXME> check signiture
     }
     liste[,2] <- substr(liste[,2],1,nchar(liste[,2])-1) #cut ";"
     return(liste)
-}
+})
 
 setGeneric('pathway_info', function(x, ...) standardGeneric('pathway_info'))
 #' Get information on genes in a pathway
@@ -400,7 +400,7 @@ setMethod('pathway_info', signature='character', #<FIXME> check signiture
     pathway_info           <- cbind(rep(paste(id,sep=""),length(info[,1])),info)
     colnames(pathway_info) <- c("pathway","gene_start","gene_end","chr","gene")             
     return(pathway_info)
-}
+})
 
 setGeneric('set_one', function(x, ...) standardGeneric('set_one'))
  
@@ -424,7 +424,7 @@ setMethod('set_one', signature='numeric', #<FIXME> check signiture
      print(paste(x, ": Edges value < -1 set to -1!",sep=""))
      x[x < (-1)] <- -1 }
   return(x)
-}
+})
 
 setGeneric('set_names', function(x, ...) standardGeneric('set_names'))
 
@@ -451,7 +451,7 @@ setMethod('set_names', signature='numeric', #<FIXME> check signiture
     }
     colnames(x) <- rownames(x) <- name
     return(x)
-}
+})
  
 setGeneric('get_network_matrix', function(x, ...) standardGeneric('get_network_matrix'))
 
@@ -550,5 +550,5 @@ setMethod('get_network_matrix', signature='character', #<FIXME> check signiture
     }else{
       return(M)
     }    
-}
+})
           

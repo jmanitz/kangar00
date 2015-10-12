@@ -231,7 +231,7 @@ setMethod('GeneSNPsize', signature='GWASdata',
 
 
 # <FIXME> create object snp_info and corresponding constructor <FIXME>
-#setGeneric('snp_info', function(x, ...) standardGeneric('snp_info'))
+setGeneric('snp_info', function(x, ...) standardGeneric('snp_info'))
 #' Get SNP positions
 #'
 #' This function gives for a vector of SNPs the position of each SNP as
@@ -257,7 +257,7 @@ setMethod('snp_info', signature='character',
               filters=c("snp_filter"),values=x, mart=snp)
   colnames(snp_info) <- c("chr","position","rsnumber")
   return(snp_info)
-}
+})
 
 setGeneric('get_anno', function(obecjt, ...) standardGeneric('get_anno'))
 #' Create annotation for GWASdata object
@@ -314,5 +314,4 @@ get_anno <- function(snp_info, pathway_info, ...){
   anno <- do.call("rbind", lapply(anno, data.frame, stringsAsFactors = FALSE))
   return(anno)
 }
-
 
