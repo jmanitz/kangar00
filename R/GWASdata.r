@@ -122,8 +122,7 @@ setGeneric('read_geno', function(file.path, ...) standardGeneric('read_geno'))
 setMethod('read_geno',
        definition = function(file.path, save.path = NULL, sep = " ",
                              header = TRUE, ...) {
-       cat("Loading data. This might take a while depending on the size of the 
-            data set.")
+       cat("Loading data. This might take a while depending on the size of the data set.\n")
             
        ## backing file path
        if(is.null(save.path))
