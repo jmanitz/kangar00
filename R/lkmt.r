@@ -115,6 +115,8 @@ setMethod('summary', signature='lkmt',
           })
 
 
+
+# <FIXME> Please incorporate in OOP 
 #' Calculates the p-value for a kernelmatrix using Satterthwaite approximation 
 #'
 #' This function evaluates a pathways influence on an individuals probability
@@ -186,7 +188,8 @@ score_test <- function(kernels, nullmodel, pd.check=TRUE){
         return(all_mod)
 }
 
-#' Calculates the p-value for a kernelmatrix using davies method 
+# <FIXME> Please incorporate in OOP 
+#' Calculates the p-value for a kernel matrix using davies method 
 #'
 #' This function evaluates a pathways influence on an individuals probability
 #' of beeing a case using the logistic kernel machine test. P-values are 

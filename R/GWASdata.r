@@ -76,9 +76,6 @@ GWASdata <- setClass('GWASdata', slots=c(geno="big.matrix", anno = "data.frame",
     if(valid) TRUE else msg
 })
 
-# GWASdata object constructor
-setGeneric('GWASdata', function(object, ...) standardGeneric('GWASdata'))
-
 #' \code{'GWASdata'} is a GWASdata object constructor
 #'
 #' @param geno an \code{ff} data frame including genotype information.
@@ -101,10 +98,11 @@ setMethod('GWASdata',
        new('GWASdata', geno = geno, anno = anno, pheno = as.data.frame(pheno),
            desc = desc)
 })
+# GWASdata object constructor
+setGeneric('GWASdata')#, function(object, ...) standardGeneric('GWASdata'))
 
 # read genotype data from file
-setGeneric('read_geno', function(file.path, ...) standardGeneric('read_geno'))
-
+setGeneric('read_geno', function(x, ...) standardGeneric('read_geno'))
 #' read genotype data from file to bigmemory object, which can be passed to a  GWASdata object
 #'
 #' @param file.path character, which contains the path to the data file to be read
@@ -119,14 +117,14 @@ setGeneric('read_geno', function(file.path, ...) standardGeneric('read_geno'))
 #' @seealso \code{\link{GWASdata-class}}
 #' @import bigmemory
 #' @export
-setMethod('read_geno',
-       definition = function(file.path, save.path = NULL, sep = " ",
+setMethod('read_geno', signature='character',
+       definition = function(x, save.path = NULL, sep = " ",
                              header = TRUE, ...) {
-       cat("Loading data. This might take a while depending on the size of the data set.\n")
+       cat("Loading data. This might take a while, depending on the size of the data set.\n")
             
        ## backing file path
        if(is.null(save.path))
-          save.path <- paste0(file.path, '.bin')
+          save.path <- paste0(x, '.bin')
 
        ## read data frame
        options(bigmemory.allow.dimnames=TRUE)
@@ -135,7 +133,7 @@ setMethod('read_geno',
 ## we should explain better what is expected (i.e., what data files can be
 ## imported) and show all possible options (type, sep, header, ... to the user)
 ## and not only implicitely via ... .
-           df <- read.big.matrix(file.path, type='char',
+           df <- read.big.matrix(x, type='char',
                                  backingfile = save.path,
                                  descriptorfile = paste0(save.path, '.desc'),
                                  sep = sep, header = header, ...)
@@ -201,8 +199,8 @@ setMethod('summary', signature='GWASdata',
               cat('\nGenotypes: \n\n')
 	      cat('Total number of genes and SNPs per pathway:\n')
               print(GeneSNPsize(object)) # overview of pathway - gene - snp mapping
- 	      cat('\n')
-	      print(object@geno)
+# 	      cat('\n')
+#	      print(object@geno)
               invisible(NULL)
           })
 
@@ -232,15 +230,17 @@ setMethod('GeneSNPsize', signature='GWASdata',
           })
 
 
+# <FIXME> create object snp_info and corresponding constructor <FIXME>
+#setGeneric('snp_info', function(x, ...) standardGeneric('snp_info'))
 #' Get SNP positions
 #'
 #' This function gives for a vector of SNPs the position of each SNP as
 #' extracted from the Ensemble database. The database is accessed via the
 #' R-package \code{biomaRt}.
 #'
-#' @param snps A vector of SNP rsnumbers for which positions will be extracted.
+#' @param x a vector of SNP rsnumbers for which positions will be extracted. <FIXME> what type of vector? specify signature
 #' @param ... further arguments can be added.
-#' @return A \code{data.frame} including the SNP positions with columns
+#' @return a \code{data.frame} including the SNP positions with columns
 #' chromosome, position and rsnumber. SNPs not found in the Ensemble database
 #' not be listed in the returned \code{data.frame}, SNPs with multiple positions
 #' will appear several times.
@@ -249,15 +249,17 @@ setMethod('GeneSNPsize', signature='GWASdata',
 #'
 #' @author Stefanie Friedrichs
 #' @import biomaRt
-snp_info <- function(snps, ...) {
+setMethod('snp_info', signature='character',
+          definition <- function(x, ...) {
   #set database; Homo sapiens Short Variation (SNPs and indels):
   snp <- useMart("snp", dataset="hsapiens_snp")
   snp_info <- getBM(attributes=c("chr_name","chrom_start","refsnp_id"),
-              filters=c("snp_filter"),values=snps, mart=snp)
+              filters=c("snp_filter"),values=x, mart=snp)
   colnames(snp_info) <- c("chr","position","rsnumber")
   return(snp_info)
 }
 
+setGeneric('get_anno', function(obecjt, ...) standardGeneric('get_anno'))
 #' Create annotation for GWASdata object
 #'
 #' This function gives for a vector of SNPs the position of each SNP as
@@ -277,6 +279,8 @@ snp_info <- function(snps, ...) {
 #'
 #' @author Stefanie Friedrichs, Saskia Freytag, Ngoc-Thuy Ha
 #' @import sqldf
+#setMethod('get_anno', signature='snp_info',
+#          definition <- function(object, ...) {
 get_anno <- function(snp_info, pathway_info, ...){
   if (!inherits(snp_info, "data.frame"))
       stop("SNP object is not a data frame")

@@ -78,14 +78,14 @@ setValidity('lowrank_kernel', function(object){
 #################################### kernel object constructor #################
 
 # calculate kernel object
-setGeneric('calc_kernel', function(GWASdata, ...) standardGeneric('calc_kernel'))
+setGeneric('calc_kernel', function(object, ...) standardGeneric('calc_kernel'))
 
 #' calculates a kernel to be evaluated in the logistic kernel machine test.
 #'
-#' @param GWASdata object of the class \code{GWASdata} containing the genotypes of the individuals for which a kernel will be calculated.
+#' @param object \code{GWASdata} object containing the genotypes of the individuals for which a kernel will be calculated.
 #' @param pathway object of the class \code{pathway} specifying the SNP set for which a kernel will be calculated.
 #' @param type character, kernel type: Use \code{"lin"} for linear kernels, \code{"sia"} for size-adjusted or \code{"net"} for network-based kernels.
-#' @param knots GWASdata object, if specified low-rank kernel be computed
+#' @param knots \code{GWASdata} object, if specified low-rank kernel be computed
 #' @param parallel character specifying if the kernel matrix is computed in parallel: Use \code{"none"} for ... <FIXME>
 #' @param ... further arguments to be passed to the kernel computations
 #'
@@ -112,14 +112,14 @@ setGeneric('calc_kernel', function(GWASdata, ...) standardGeneric('calc_kernel')
 #' @rdname calc_kernel
 #' @export
 #' @seealso \code{\link{kernel-class}}, \code{\link{GWASdata-class}}, \code{\link{pathway-class}}
-setMethod('calc_kernel',
-       definition = function(GWASdata, pathway, knots = NULL, 
+setMethod('calc_kernel', signature = 'GWASdata',
+       definition = function(object, pathway, knots = NULL, 
 			     type = c('lin', 'sia', 'net'),
                              parallel = c('none', 'cpu', 'gpu'), ...) {
            # user inputs
            type     <- match.arg(type)
            parallel <- match.arg(parallel)
-	   if(!inherits(GWASdata, "GWASdata")){
+	   if(!inherits(object, "GWASdata")){
 	       stop("GWASdata must inherit from class 'GWASdata'")
 	   }
 	   if(!inherits(pathway, "pathway")){
@@ -130,26 +130,26 @@ setMethod('calc_kernel',
 	   }
 	   # transfer to specific kernel function
            k <- eval(parse(text=paste(type, "_kernel(
-                           GWASdata = GWASdata, pathway = pathway, 
+                           GWASdata = object, pathway = pathway, 
                            knots = knots, parallel = parallel, ...)",sep='')))
            return(k)
 })
 
 ############################### kernel functions ##############################
 # calculate linear kernel
-setGeneric('lin_kernel', function(GWASdata, ...) standardGeneric('lin_kernel'))
+setGeneric('lin_kernel', function(object, ...) standardGeneric('lin_kernel'))
 #' @describeIn calc_kernel
-setMethod('lin_kernel',
-          definition = function(GWASdata, pathway, knots=NULL,
+setMethod('lin_kernel', signature = 'GWASdata',
+          definition = function(object, pathway, knots=NULL,
                        parallel = c('none', 'cpu', 'gpu'), ...) {
     lowrank <- !is.null(knots)
 #    further_args <- list(...)
 #    if (!is.null(further_args))
 #        stop("handling of '...' not yet implemented")
     ## which SNPs are in specified pathway
-    SNPset <- unique(GWASdata@anno$snp[which(GWASdata@anno$pathway == pathway@id)])
+    SNPset <- unique(object@anno$snp[which(object@anno$pathway == pathway@id)])
     ## subset genotype data for specified SNP set
-    Z1 <- Z2 <- as(GWASdata@geno[,as.character(SNPset)],'matrix')
+    Z1 <- Z2 <- as(object@geno[,as.character(SNPset)],'matrix')
     if(any(is.na(Z1)))
         stop("genotype information contains missing values")
     if(lowrank){
@@ -180,10 +180,10 @@ setMethod('lin_kernel',
 })
 
 # create size-adjusted kernel
-setGeneric('sia_kernel', function(GWASdata, ...) standardGeneric('sia_kernel'))
+setGeneric('sia_kernel', function(object, ...) standardGeneric('sia_kernel'))
 #' @describeIn calc_kernel
-setMethod('sia_kernel',
-          definition = function(GWASdata, pathway, knots=NULL,
+setMethod('sia_kernel', signature = 'GWASdata',
+          definition = function(object, pathway, knots=NULL,
                        parallel = c('none', 'cpu', 'gpu'), ...) {
 
 # <FIXME> add calculations with knots 
@@ -208,16 +208,16 @@ setMethod('sia_kernel',
         return(-roh*(l[[1]]/l[[3]])^(delta))
     }
 
-    anno <- GWASdata@anno[GWASdata@anno[,"pathway"]==pathway@id, c("gene","snp")] #anno subset for pathway
+    anno <- object@anno[object@anno[,"pathway"]==pathway@id, c("gene","snp")] #anno subset for pathway
     gene.counts <- table(anno[,"gene"]) #counts number of different SNPs per gene
     g.10 <- names(gene.counts[gene.counts >= 2]) #genes with >= 2 snps
 
     #[[1]]:genematrix, [[2]]:eff.length.gene, [[3]]:length.gene
-    liste <- lapply(g.10, genemat, GWASdata@geno, anno)
+    liste <- lapply(g.10, genemat, object@geno, anno)
     get2    <- function(l){ return(l[[2]]) }
     max.eff <- max( unlist( lapply(liste, get2) ) )
 
-    kerneltimes <- matrix( rep(0,(nrow(GWASdata@geno))^2), nrow=nrow(GWASdata@geno))
+    kerneltimes <- matrix( rep(0,(nrow(object@geno))^2), nrow=nrow(object@geno))
     kerneltimes <- Reduce('+', lapply(liste,genemat2,max.eff))
     k <- exp( sqrt(1/(length(unique(anno[,"gene"])))) * kerneltimes )
     #return kernel object
@@ -226,17 +226,17 @@ setMethod('sia_kernel',
 
 
 # calculate network-based kernel
-setGeneric('net_kernel', function(GWASdata, ...) standardGeneric('net_kernel'))
+setGeneric('net_kernel', function(object, ...) standardGeneric('net_kernel'))
 #' @describeIn calc_kernel
-setMethod('net_kernel',
-          definition = function(GWASdata, pathway, knots=NULL,
+setMethod('net_kernel', signature = 'GWASdata',
+          definition = function(object, pathway, knots=NULL,
                        parallel = c('none', 'cpu', 'gpu'), ...) {
     ## check if knots are specified
     lowrank <- !is.null(knots)
     #genotype matrix Z, which SNPs are in specified pathway
-    SNPset <- unique(GWASdata@anno$snp[which(GWASdata@anno$pathway==pathway@id)])
+    SNPset <- unique(object@anno$snp[which(object@anno$pathway==pathway@id)])
     #subset genotype data for specified SNP set
-    Z1 <- Z2 <- as(GWASdata@geno[,as.character(SNPset)],'matrix')
+    Z1 <- Z2 <- as(object@geno[,as.character(SNPset)],'matrix')
     if (any(is.na(Z1)))
         stop("genotype information contains missing values")
     ## if knots are specified
@@ -245,82 +245,86 @@ setMethod('net_kernel',
         Z2 <- as(Z2[,as.character(SNPset)],'matrix')
     }
     # compute kernel
-    ANA <- get_ana(GWASdata@anno, SNPset, pathway)
+    ANA <- get_ana(object@anno, SNPset, pathway)
     K <- Z1 %*% ANA %*% t(Z2)
     #return kernel object
     if (lowrank) {
        return(lowrank_kernel(type='network',kernel=K,pathway=pathway))
-    } else {
+    }else{
        return(kernel(type='network',kernel=K,pathway=pathway))
     }
 })
 
 ################################## helper function #############################
 
+setGeneric('rewire_network', function(x, ...) standardGeneric('rewire_network'))
 #' Apply two-step network to rewire network genes if it contains no SNPs in GWASdata (for internal use)
 #'
 #' @export
 #' @author Juliane Manitz
 #'
-#' @param N adjacency matrix
+#' @param x adjacency matrix
 #' @param remov indication which genes should be removed
 #' @return An adjacency matrix containing rewired network
 #'
 #' @references TODO Newman?
-rewire_network <- function(N, remov) {
+setMethod('rewire_network', signature = 'matrix',
+          definition = function(x, remov) {
     # early exist if no genes have to be removed
-    if(length(remov)==0){ return(N) }
+    if(length(remov)==0){ return(x) }
 
     # identify genes that need to be carried forward to the subnetwork
-    a <- (N[remov,]!=0)
+    a <- (x[remov,]!=0)
     # can be vector or matrix -> make matrix to apply colsums
     if(is.null(dim(a))){
        a <- rbind(rep(0,length(a)),a)
     }
     ind_sub <- which(colSums(a)!= 0)
     # extract the subnetwork
-    Nsub <- N[ind_sub, ind_sub]
+    xsub <- x[ind_sub, ind_sub]
 
     #if gene to remove had no connections
-    if(is.null(dim(Nsub))){
-       return(N[-remov,-remov])
+    if(is.null(dim(xsub))){
+       return(x[-remov,-remov])
     }
 
     # exclude self-interaction
-    diag(Nsub) <- 0
+    diag(xsub) <- 0
     # if nullmatrix
-    if(sum(Nsub!=0)==0){
-       return(N[-remov,-remov])
+    if(sum(xsub!=0)==0){
+       return(x[-remov,-remov])
     }
 
     # calculate the two-step network
-    Nsub2step <- Nsub %*% Nsub
-    Nsub2step[Nsub2step>0] <-  1
-    Nsub2step[Nsub2step<0] <- -1
+    xsub2step <- xsub %*% xsub
+    xsub2step[xsub2step>0] <-  1
+    xsub2step[xsub2step<0] <- -1
 
     # check whether interaction types contradict
-    check_contradicts <- ((Nsub != 0) & (Nsub + Nsub2step == 0))
+    check_contradicts <- ((xsub != 0) & (xsub + xsub2step == 0))
     if(any(check_contradicts)){
-       Nsub2step[(Nsub != 0) & (Nsub + Nsub2step == 0)] <- 0
+       xsub2step[(xsub != 0) & (xsub + xsub2step == 0)] <- 0
        message('Interaction types contradict after rewiring: Edges removed.')
     }
     # replace the subnetwork in the adjacency matrix
-    N[ind_sub,ind_sub] <- Nsub2step
+    x[ind_sub,ind_sub] <- xsub2step
     # remove the genes and return network
-    return(N[-remov,-remov])
+    return(x[-remov,-remov])
 }
 
-#' Produce middle part of Network Kernel (for internal use)
+setGeneric('get_ana', function(x, ...) standardGeneric('get_ana'))
+#' Produce middle part of network kernel (for internal use)
 #'
 #' @export
 #' @author Juliane Manitz, Saskia Freytag, Stefanie Friedrichs
 #'
-#' @param anno \code{data.frame} with annotation information as returned from
+#' @param x \code{data.frame} with annotation information as returned from
 #' \cite{\link{get_anno}}
 #' @param SNPset vector with SNPs to be analyzed
 #' @param pathway pathway object
 #' @return matrix ANA' for inner part of network kernel
-get_ana <- function(anno, SNPset, pathway){
+setMethod('get_ana', signature = 'data.frame',
+          definition = function(x, SNPset, pathway){
 
     N <- as.matrix(pathway@adj)
     N[N!=0] <- pathway@sign
@@ -331,8 +335,8 @@ get_ana <- function(anno, SNPset, pathway){
     # genes in pathway
     net_genes <- get_genes(pathway)
     # genes in annotation -> genes with SNPs in GWASdata
-    anno_sub <- anno[anno$pathway==pathway@id,]
-    anno_genes <- unique(anno_sub$gene)
+    anno_sub <- x[x$pathway==pathway@id,]
+    anno_genes <- unique(x_sub$gene)
     # pathway genes that are not in annotation
     remov <- which(! net_genes %in% anno_genes)
     # rewire network -> separate function
@@ -354,11 +358,12 @@ get_ana <- function(anno, SNPset, pathway){
     return(A.star %*% N %*% t(A.star))
 }
 
+setGeneric('make_psd', function(x, ...) standardGeneric('make_psd'))
 #' Adjust network matrix to be positive semi-definite
 #'
-#' @param N a kernelmatrix.
+#' @param x matrix specifying the network adjacency matrix.
 #' @param eps numeric, tolance for smallest eigenvalue adjustment
-#' @return The matrix N, if it is positive definite and the closest positive semi-definite matrix if N is not positive semi-definite.
+#' @return The matrix x, if it is positive definite and the closest positive semi-definite matrix if x is not positive semi-definite.
 #' 
 #' @details <FIXME> Add formula. For more details check the references.
 #'
@@ -369,19 +374,20 @@ get_ana <- function(anno, SNPset, pathway){
 #'
 #' @export
 #' @author Juliane Manitz, Saskia Freytag, Stefanie Friedrichs
-make_psd <- function(N, eps = sqrt(.Machine$double.eps)) {
+setMethod('make_psd', signature = 'matrix',
+          definition = function(x, eps = sqrt(.Machine$double.eps)) {
 
-    lambda <- min(eigen(N, only.values = TRUE, symmetric = TRUE)$values)
+    lambda <- min(eigen(x, only.values = TRUE, symmetric = TRUE)$values)
     ## use some additional tolerance to ensure semipositive definite matrices
     lambda <- lambda - sqrt(.Machine$double.eps)
     # smallest eigenvalue negative = not semipositive definite
     if (lambda < -1e-10) {
         rho <- 1/(1-lambda)
-        N <- rho * N + (1-rho) * diag(dim(N)[1])
+        x <- rho * x + (1-rho) * diag(dim(x)[1])
         ## now check if it is really positive definite by recursively calling
-        N <- make_psd(N)
+        x <- make_psd(x)
     }
-    return(N)
+    return(x)
 }
 
 #################################### basic methods for kernel #################

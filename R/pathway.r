@@ -326,12 +326,13 @@ setMethod('sample_genes', signature='pathway',
           })
 
 
+setGeneric('gene_name_number', function(x, ...) standardGeneric('gene_name_number'))
 #' Function to get genes names and numbers from kegg (for internal use)
 #'
 #' This function extracts for a particular pathway all included genes and the
 #' numbers they are given within the corresponding KGML pathway file.
 #'
-#' @param id A \code{character} hsa identifier of the pathway for which gene 
+#' @param x A \code{character} hsa identifier of the pathway for which gene 
 #' infomation should be extracted as used in KEGG database ('hsa00100').    
 #' @return A \code{data.frame} listing the genes included in the pathway with 
 #' their names as well as numbers used in KEGG database.
@@ -339,9 +340,10 @@ setMethod('sample_genes', signature='pathway',
 #' #pathway_info("hsa04710") #### DOES NOT WORK ###
 #' 
 #' @author Stefanie Friedrichs
-gene_name_number <- function(id){  
+setMethod('gene_name_number', signature='character', #<FIXME> check signiture
+          definition = function(x){
     info <- scan(url(paste("http://togows.dbcls.jp/entry/pathway/",
-                           id,"/genes",sep="")), what="character")   
+                           x,"/genes",sep="")), what="character")   
     pos <- which(substr(info,nchar(info),nchar(info))==";")
     #if ";" entry is pos and pos-2 has "]" as last character -> ok. 
     #else: search until pos-j ends with "]".
@@ -362,16 +364,15 @@ gene_name_number <- function(id){
     return(liste)
 }
 
-
+setGeneric('pathway_info', function(x, ...) standardGeneric('pathway_info'))
 #' Get information on genes in a pathway
 #'
 #' This function lists all genes formig a particular pathway. Start and end  
 #' positions of these genes are extracted from the Ensemble database. The 
 #' database is accessed via the R-package \code{biomaRt}.
 #'
-#' @param id A \code{character} identifying the pathway for which gene infomation 
+#' @param x A \code{character} identifying the pathway for which gene infomation 
 #' should be extracted. Here KEGG IDs ('hsa00100') are used.
-#' @param ... additional aguments can be specified.   
 #' @return A \code{data.frame} including as many rows as genes appear in the 
 #' pathway. for each gene its name, the start and end point and the chromosome 
 #' it lies on are given.
@@ -380,7 +381,8 @@ gene_name_number <- function(id){
 #'
 #' @author Stefanie Friedrichs
 #' @import biomaRt  
-pathway_info <- function(id,  ...){
+setMethod('pathway_info', signature='character', #<FIXME> check signiture
+          definition = function(x){              #<FIXME> ... removed
     ##get genes from kegg
     #input <- scan(url(paste("http://togows.dbcls.jp/entry/pathway/"
     #              ,id,"/genes",sep="")), what="character")
@@ -400,6 +402,7 @@ pathway_info <- function(id,  ...){
     return(pathway_info)
 }
 
+setGeneric('set_one', function(x, ...) standardGeneric('set_one'))
  
 #' Helper function to set matrix entries to 0/1/-1 only 
 #'
@@ -407,29 +410,32 @@ pathway_info <- function(id,  ...){
 #' smaller than -1 to -1. It is called by \code{\link{get_network_matrix}}.
 #' (For internal use)
 #'
-#' @param M A \code{matrix} representing the networkmatrix. 
+#' @param x numeric \code{matrix} representing the network adjacency matrix. 
 #' @return A \code{matrix} representing the interaction network in the pathway
 #' with entries equal to 1, -1 or 0.
 #'
 #' @author Stefanie Friedrichs
-set_one <- function(M){
-  if(length(M[M>1])>0){ 
+setMethod('set_one', signature='numeric', #<FIXME> check signiture
+          definition = function(x){       #<FIXME> more elegance possible ?
+  if(length(x[x>1])>0){ 
      print(paste("Edges value > 1 set to 1!",sep=""))
-     M[M>1] <- 1 }
-  if(length(M[M < (-1)])>0){
-     print(paste(M, ": Edges value < -1 set to -1!",sep=""))
-     M[M < (-1)] <- -1 }
-  return(M)
+     x[x>1] <- 1 }
+  if(length(x[x < (-1)])>0){
+     print(paste(x, ": Edges value < -1 set to -1!",sep=""))
+     x[x < (-1)] <- -1 }
+  return(x)
 }
+
+setGeneric('set_names', function(x, ...) standardGeneric('set_names'))
 
 #' Helper function to translate gene numbers to names  
 #'
 #' This function exchanges the numbers used for genes in KEGG download KGML files
-#' with the corresponding gene names. Names are set to be the columnnames and 
-#' rownames of the pathway's networkmatrix. The function 
+#' with the corresponding gene names. Names are set to be the column names and 
+#' rownames of the pathway's network matrix. The function 
 #' is called by \code{\link{get_network_matrix}}. (For internal use)
 #'
-#' @param N A \code{matrix} representing the networkmatrix. 
+#' @param x A \code{matrix} representing the networkmatrix. 
 #' @param nodes A \code{vector} of gene numbers to be replaced by names.   
 #' @param my_list A \code{data.frame} listing gene names and numbers. Output from 
 #' \code{gene_name_number}.  
@@ -437,38 +443,40 @@ set_one <- function(M){
 #' with gene names as rownames and columnnames. 
 #'
 #' @author Stefanie Friedrichs
-set_names <- function(N, nodes, my_list){
+setMethod('set_names', signature='numeric', #<FIXME> check signiture
+          definition = function(x, nodes, my_list){
     name <- substr(nodes,5,nchar(nodes)) 
     for(i in 1:length(name)){ 
       name[i] <- my_list[my_list[,1]==name[i],2] 
     }
-    colnames(N) <- rownames(N) <- name
-    return(N)
+    colnames(x) <- rownames(x) <- name
+    return(x)
 }
  
+setGeneric('get_network_matrix', function(x, ...) standardGeneric('get_network_matrix'))
+
 #' Function to calculate the network matrix
 #'
 #' This function creates the networkmatrix representing the gene-gene interaction 
 #' structure within a particular pathway.
 #'
-#' @param id A \code{character} identifying the pathway for which gene infomation 
+#' @param x A \code{character} identifying the pathway for which gene infomation 
 #' should be extracted. Here KEGG IDs ('hsa00100') are used. 
 #' @param directed A \code{logic} argument, stating whether the networkmatrix 
 #' should be returned directed (\code{TRUE}) or undirected (\code{FALSE}).
-#' @param ... additional aguments can be specified.
 #' @return A \code{matrix} representing the interaction network in the pathway.
 #' @examples
 #' # get_network_matrix("hsa04710", TRUE) ### DOES NOT WORK
 #'
 #' @author Stefanie Friedrichs
 #' @import KEGGgraph 
-#' @import biomaRt        
-get_network_matrix <- function(id, directed,  ...){
-
-    retrieveKGML(substr(id,4,nchar(id)), organism="hsa",
-                 destfile=paste(id,".xml",sep=""), method="internal")
-    filename  <- paste(id,".xml",sep="")
-    liste     <- gene_name_number(id)
+#' @import biomaRt    
+setMethod('get_network_matrix', signature='character', #<FIXME> check signiture
+          definition = function(x, directed){    # ... removed
+    retrieveKGML(substr(x,4,nchar(x)), organism="hsa",
+                 destfile=paste(x,".xml",sep=""), method="internal")
+    filename  <- paste(x,".xml",sep="")
+    liste     <- gene_name_number(x)
     pathgraph <- parseKGML2Graph(filename, expandGenes=TRUE)
     nodes     <- nodes(pathgraph)  #Vektor mit Nummern der Gene (format: "hsa:226")
     edgelist  <- parseKGML2DataFrame(filename)
@@ -476,10 +484,10 @@ get_network_matrix <- function(id, directed,  ...){
 
   # --- Skip pathway, if no edges or wrong number of genes ---
     if(length(edgelist)==0){
-       print(paste("KGML-file for ",id," has no edges!",sep=""))
+       print(paste("KGML-file for ",x," has no edges!",sep=""))
        next}   
     if(length(nodes)!=length(liste[,2])){
-       paste(paste("Wrong number of genes in ",id,"!",sep=""))
+       paste(paste("Wrong number of genes in ",x,"!",sep=""))
        next}               
     #set up empty matrix:
     N <- matrix(rep(0, (length(nodes)^2)),nrow=length(nodes))
@@ -491,9 +499,9 @@ get_network_matrix <- function(id, directed,  ...){
   
   # --- if activations/inhibitions specified: Signed matrix ---
     if( (length(verb.a[,1])+length(verb.i[,1]))>0 ){
-      if(length(verb.s[,1])==0){ print(paste(id,": Activation/Inhibition only: 
+      if(length(verb.s[,1])==0){ print(paste(x,": Activation/Inhibition only: 
                                  Signed graph!",sep="")) }
-      if(length(verb.s[,1])>0){ print(paste(id," has both: A/I edges and edges 
+      if(length(verb.s[,1])>0){ print(paste(x," has both: A/I edges and edges 
                                 without type!",sep=""))}
      # -- Directed --- 
      #           to 
