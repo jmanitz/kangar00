@@ -129,18 +129,9 @@ setMethod('calc_kernel',
 	       stop("knots must inherit from class 'GWASdata'")
 	   }
 	   # transfer to specific kernel function
-           if(type=='lin')
-               k <- lin_kernel(GWASdata = GWASdata,
-                               pathway = pathway, knots = knots, 
-			       parallel = parallel, ...)
-           if(type=='sia')
-               k <- sia_kernel(GWASdata = GWASdata,
-                               pathway = pathway, knots = knots, 
-			       parallel = parallel, ...)
-           if(type=='net')
-               k <- net_kernel(GWASdata = GWASdata,
-                               pathway = pathway, knots = knots, 
-			       parallel = parallel, ...)
+           k <- eval(parse(text=paste(type, "_kernel(
+                           GWASdata = GWASdata, pathway = pathway, 
+                           knots = knots, parallel = parallel, ...)",sep='')))
            return(k)
 })
 
@@ -431,6 +422,7 @@ if (!isGeneric("plot")) setGeneric('plot')
 #' @param y missing (placeholder)
 #' @param hclust \code{logical}, indicating whether a dendrogram should be added
 #'
+#' @import lattice
 #' @export
 #' @rdname kernel-class
 #' @aliases plot,kernel,ANY-method

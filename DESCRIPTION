@@ -10,7 +10,7 @@ License: GPL-2
 Collate: 'pathway.r' 'kernel.r' 'GWASdata.r' 'lkmt.r'
 Depends: R (>= 3.1.0)
 Imports: methods, igraph, biomaRt, KEGGgraph, sqldf, CompQuadForm,
-        bigmemory
+        bigmemory, lattice
 #Suggests: gputools
 LazyData: true
 Suggests: knitr
