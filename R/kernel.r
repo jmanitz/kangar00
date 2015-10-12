@@ -12,7 +12,6 @@
 #' @slot type character, kernel type: Use \code{"lin"} for linear kernels,
 #' \code{"sia"} for size-adjusted or \code{"net"} for network-based kernels.
 #' @slot kernel kernel matrix of dimension equal to individuals
-#' @slot GWASdata GWASdata object
 #' @slot pathway pathway object
 #'
 #' @author Juliane Manitz
@@ -21,19 +20,19 @@
 kernel <- setClass('kernel',
                    slots=c(type='character', kernel='matrix', pathway='pathway'))
 
-setValidity('kernel', function(object, ...){
+setValidity('kernel', function(object){
     msg  <- NULL
     valid <- TRUE
-    ## if knots are specified, skip validy check
-    further_args <- list(...)
-    if (!is.null(further_args) && "knots" %in% names(further_args)) {
-  	return(TRUE)
-    }
+#    ## if knots are specified, skip validy check
+#    further_args <- list(...)
+#    if (!is.null(further_args) && "knots" %in% names(further_args)) {
+#  	return(TRUE)
+#    }
     # kernel matrix quadratic
-    if(nrow(object@kernel)!=ncol(object@kernel)){
-        valid <- FALSE
-        msg <- c(msg, "kernel matrix has to be quadratic")
-    }
+#    if(nrow(object@kernel)!=ncol(object@kernel)){
+#        valid <- FALSE
+#        msg <- c(msg, "kernel matrix has to be quadratic")
+#    }
     #	# nrow/ncol = # individuals
     #	if(nrow(object@kernel)!=nrow(object@GWASdata@pheno)){
     #	  valid <- FALSE
@@ -53,6 +52,29 @@ setValidity('kernel', function(object, ...){
     if(valid) TRUE else msg
 })
 
+#' An S4 class to represent a low-rank kernel for a SNPset at specified knots
+#'
+#' @rdname lowrank_kernel-class
+#'
+#' @slot type character, kernel type: Use \code{"lin"} for linear kernels,
+#' \code{"sia"} for size-adjusted or \code{"net"} for network-based kernels.
+#' @slot kernel kernel matrix of dimension equal to individuals
+#' @slot pathway pathway object
+#'
+#' @details This kernel is used for predictions. If observations and knots are equal, better construct a full-rank kernel of class \code{\link{kernel}}.
+#'
+#' @author Juliane Manitz
+#' @export
+#' @import methods
+lowrank_kernel <- setClass('lowrank_kernel',
+                   slots=c(type='character', kernel='matrix', pathway='pathway'))
+
+setValidity('lowrank_kernel', function(object){
+    msg  <- NULL
+    valid <- TRUE
+#    <FIXME> any validity check required
+    if(valid) TRUE else msg
+})
 #################################### kernel object constructor #################
 
 # calculate kernel object
@@ -60,13 +82,14 @@ setGeneric('calc_kernel', function(GWASdata, ...) standardGeneric('calc_kernel')
 
 #' calculates a kernel to be evaluated in the logistic kernel machine test.
 #'
-#' @param GWASdata Object of the class \code{GWASdata} containing the genotypes of the individuals for which a kernel will be calculated.
-#' @param pathway Object of the class \code{pathway} specifying the SNP set for which a kernel will be calculated.
+#' @param GWASdata object of the class \code{GWASdata} containing the genotypes of the individuals for which a kernel will be calculated.
+#' @param pathway object of the class \code{pathway} specifying the SNP set for which a kernel will be calculated.
 #' @param type character, kernel type: Use \code{"lin"} for linear kernels, \code{"sia"} for size-adjusted or \code{"net"} for network-based kernels.
+#' @param knots GWASdata object, if specified low-rank kernel be computed
 #' @param parallel character specifying if the kernel matrix is computed in parallel: Use \code{"none"} for ... <FIXME>
 #' @param ... further arguments to be passed to the kernel computations
 #'
-#' @return Returns object of class kernel, including the similarity matrix of the corresponding pathway for the considered individuals (\code{kernel}).
+#' @return Returns object of class kernel, including the similarity matrix of the corresponding pathway for the considered individuals (\code{kernel}). If \code{knots} are specified low-rank kernel of class \code{lowrank_kernel} will be returned, which is not necessarily quadratic and symmetric.
 #' @details
 #' Different types of kernels can be constructed:
 #' \itemize{
@@ -90,7 +113,8 @@ setGeneric('calc_kernel', function(GWASdata, ...) standardGeneric('calc_kernel')
 #' @export
 #' @seealso \code{\link{kernel-class}}, \code{\link{GWASdata-class}}, \code{\link{pathway-class}}
 setMethod('calc_kernel',
-       definition = function(GWASdata, pathway, type = c('lin', 'sia', 'net'),
+       definition = function(GWASdata, pathway, knots = NULL, 
+			     type = c('lin', 'sia', 'net'),
                              parallel = c('none', 'cpu', 'gpu'), ...) {
            # user inputs
            type     <- match.arg(type)
@@ -101,16 +125,22 @@ setMethod('calc_kernel',
 	   if(!inherits(pathway, "pathway")){
 	       stop("GWASdata must inherit from class 'pathway'")
 	   }
+	   if(!is.null(knots) && !inherits(knots, "GWASdata")){
+	       stop("knots must inherit from class 'GWASdata'")
+	   }
 	   # transfer to specific kernel function
            if(type=='lin')
                k <- lin_kernel(GWASdata = GWASdata,
-                               pathway = pathway, parallel = parallel, ...)
+                               pathway = pathway, knots = knots, 
+			       parallel = parallel, ...)
            if(type=='sia')
                k <- sia_kernel(GWASdata = GWASdata,
-                               pathway = pathway, parallel = parallel, ...)
+                               pathway = pathway, knots = knots, 
+			       parallel = parallel, ...)
            if(type=='net')
                k <- net_kernel(GWASdata = GWASdata,
-                               pathway = pathway, parallel = parallel, ...)
+                               pathway = pathway, knots = knots, 
+			       parallel = parallel, ...)
            return(k)
 })
 
@@ -119,47 +149,53 @@ setMethod('calc_kernel',
 setGeneric('lin_kernel', function(GWASdata, ...) standardGeneric('lin_kernel'))
 #' @describeIn calc_kernel
 setMethod('lin_kernel',
-          definition = function(GWASdata, pathway,
+          definition = function(GWASdata, pathway, knots=NULL,
                        parallel = c('none', 'cpu', 'gpu'), ...) {
-    further_args <- list(...)
-    if (!is.null(further_args))
-        stop("handling of '...' not yet implemented")
+    lowrank <- !is.null(knots)
+#    further_args <- list(...)
+#    if (!is.null(further_args))
+#        stop("handling of '...' not yet implemented")
     ## which SNPs are in specified pathway
     SNPset <- unique(GWASdata@anno$snp[which(GWASdata@anno$pathway == pathway@id)])
     ## subset genotype data for specified SNP set
-    z <- as(GWASdata@geno[,as.character(SNPset)],'matrix')
-    if(any(is.na(z)))
+    Z1 <- Z2 <- as(GWASdata@geno[,as.character(SNPset)],'matrix')
+    if(any(is.na(Z1)))
         stop("genotype information contains missing values")
-
-    # K=ZZ' kernel matrix = genetic similarity
-    if(parallel=='none'){
-        k <- tcrossprod(z)
-    }
-    if(parallel=='cpu'){
+    if(lowrank){
+        Z2 <- further_args$knots@geno
+        Z2 <- as(Z2[,as.character(SNPset)],'matrix')
+        k <- Z1 %*% t(Z2)
+      return(new('lowrank_kernel', type='lin', kernel=k, pathway=pathway))
+    }else{
+      # K=ZZ' kernel matrix = genetic similarity
+      if(parallel=='none'){
+        k <- tcrossprod(Z1)
+      }
+      if(parallel=='cpu'){
         stop('sorry, not yet defined')
-    }
-    if(parallel=='gpu'){   # Suggests gputools #
+      }
+      if(parallel=='gpu'){   # Suggests gputools #
       if('gputools' %in% (.packages(all.available=TRUE))){
         require(gputools)
-        z <- as.numeric(z)
-        k <- gpuMatMult(z,t(z))
+        Z <- as.numeric(Z1)
+        k <- gpuMatMult(Z1,t(Z1))
       }else{
         stop("Please install package 'gputools' to run matrix multiplication on GPU")
+        }
       }
+      #return kernel object
+      return(new('kernel', type='lin', kernel=k, pathway=pathway))
     }
-    #return kernel object
-    return(new('kernel', type='lin', kernel=k, pathway=pathway))
 })
 
 # create size-adjusted kernel
 setGeneric('sia_kernel', function(GWASdata, ...) standardGeneric('sia_kernel'))
 #' @describeIn calc_kernel
 setMethod('sia_kernel',
-          definition = function(GWASdata, pathway,
+          definition = function(GWASdata, pathway, knots=NULL,
                        parallel = c('none', 'cpu', 'gpu'), ...) {
-    further_args <- list(...)
-    if (!is.null(further_args))
-        stop("handling of '...' not yet implemented")
+
+# <FIXME> add calculations with knots 
     genemat <- function(g, data, anno){
         SNPset <- unique(anno[which(anno[,"gene"]==g),"snp"])
         z <- as(data[,as.character(SNPset)],'matrix')
@@ -202,17 +238,18 @@ setMethod('sia_kernel',
 setGeneric('net_kernel', function(GWASdata, ...) standardGeneric('net_kernel'))
 #' @describeIn calc_kernel
 setMethod('net_kernel',
-          definition = function(GWASdata, pathway,
+          definition = function(GWASdata, pathway, knots=NULL,
                        parallel = c('none', 'cpu', 'gpu'), ...) {
-    further_args <- list(...)
+    ## check if knots are specified
+    lowrank <- !is.null(knots)
     #genotype matrix Z, which SNPs are in specified pathway
     SNPset <- unique(GWASdata@anno$snp[which(GWASdata@anno$pathway==pathway@id)])
     #subset genotype data for specified SNP set
     Z1 <- Z2 <- as(GWASdata@geno[,as.character(SNPset)],'matrix')
     if (any(is.na(Z1)))
         stop("genotype information contains missing values")
-    ## check if knots are specified
-    if (!is.null(further_args) && "knots" %in% names(further_args)) {
+    ## if knots are specified
+    if (lowrank) {
         Z2 <- further_args$knots@geno
         Z2 <- as(Z2[,as.character(SNPset)],'matrix')
     }
@@ -220,7 +257,11 @@ setMethod('net_kernel',
     ANA <- get_ana(GWASdata@anno, SNPset, pathway)
     K <- Z1 %*% ANA %*% t(Z2)
     #return kernel object
-    return(kernel(type='network',kernel=K,pathway=pathway))
+    if (lowrank) {
+       return(lowrank_kernel(type='network',kernel=K,pathway=pathway))
+    } else {
+       return(kernel(type='network',kernel=K,pathway=pathway))
+    }
 })
 
 ################################## helper function #############################
@@ -324,20 +365,20 @@ get_ana <- function(anno, SNPset, pathway){
 
 #' Adjust network matrix to be positive semi-definite
 #'
-#' @export
-#' @author Juliane Manitz, Saskia Freytag, Stefanie Friedrichs
-#'
-#' @param N A kernelmatrix.
+#' @param N a kernelmatrix.
+#' @param eps numeric, tolance for smallest eigenvalue adjustment
 #' @return The matrix N, if it is positive definite and the closest positive semi-definite matrix if N is not positive semi-definite.
-#' For more details check the references.
+#' 
+#' @details <FIXME> Add formula. For more details check the references.
+#'
 #' @references
 #' \itemize{
 #'  \item Freytag S, Manitz J, Schlather M, Kneib T, Amos CI, Risch A, Chang-Claude J, Heinrich J, Bickeboeller H: A network-based kernel machine test for the identification of risk pathways in genome-wide association studies. Hum Hered. 2013, 76(2):64-75.
 #' }
 #'
-make_psd <- function(N) {
-
-## <FIXME>Perhaps we should use an option for the tolerance?</FIXME>
+#' @export
+#' @author Juliane Manitz, Saskia Freytag, Stefanie Friedrichs
+make_psd <- function(N, eps = sqrt(.Machine$double.eps)) {
 
     lambda <- min(eigen(N, only.values = TRUE, symmetric = TRUE)$values)
     ## use some additional tolerance to ensure semipositive definite matrices
