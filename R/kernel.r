@@ -21,9 +21,14 @@
 kernel <- setClass('kernel',
                    slots=c(type='character', kernel='matrix', pathway='pathway'))
 
-setValidity('kernel', function(object){
+setValidity('kernel', function(object, ...){
     msg  <- NULL
     valid <- TRUE
+    ## if knots are specified, skip validy check
+    further_args <- list(...)
+    if (!is.null(further_args) && "knots" %in% names(further_args)) {
+  	return(TRUE)
+    }
     # kernel matrix quadratic
     if(nrow(object@kernel)!=ncol(object@kernel)){
         valid <- FALSE
@@ -41,7 +46,7 @@ setValidity('kernel', function(object){
     }
     # pos semi def?
     lambda <- min(eigen(object@kernel, only.values=TRUE, symmetric=TRUE)$values)
-    if(lambda< -1e-6){ # smallest eigenvalue negative = not semipositive definite
+    if(lambda < -1e-10){ # smallest eigenvalue negative = not semipositive definite
         valid <- FALSE
         msg <- c(msg, "kernel matrix has to be positive semi-definite")
     }
