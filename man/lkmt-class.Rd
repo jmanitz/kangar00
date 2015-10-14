@@ -11,6 +11,8 @@
 \usage{
 lkmt(formula, kernel, GWASdata, method = c("satt", "davies"), ...)
 
+lkmt(formula, kernel, GWASdata, method = c("satt", "davies"), ...)
+
 \S4method{show}{lkmt}(object)
 
 \S4method{summary}{lkmt}(object)
@@ -34,6 +36,10 @@ An S4 class to represent the variance component test.
 
 \code{summary} Summarizes information on \code{lkmt} object
 }
+\section{Functions}{
+\itemize{
+\item \code{lkmt}: 
+}}
 \section{Slots}{
 
 \describe{
@@ -52,7 +58,9 @@ ttest statistic.}
 \item{\code{statistic}}{A \code{vector} giving the number of degrees of freedom.}
 
 \item{\code{statistic}}{A \code{vector} giving the p-value calculated for the pathway
-in the variance component test.}
+in the variance component test.
+
+For details on the variance component test see the references.}
 }}
 \author{
 Juliane Manitz, Stefanie Friedrichs
@@ -60,5 +68,10 @@ Juliane Manitz, Stefanie Friedrichs
 Juliane Manitz
 
 Juliane Manitz
+}
+\references{
+\itemize{
+ \item Wu MC, Kraft P, Epstein MP, Taylor DM, Chanock SJ, Hunter DJ, Lin X: Powerful SNP-Set Analysis for Case-Control Genome-Wide Association Studies. Am J Hum Genet 2010, 86:929-42
+}
 }
 

@@ -6,7 +6,6 @@
 \alias{kernel-class}
 \alias{plot,kernel,ANY-method}
 \alias{plot,kernel,missing-method}
-\alias{show,kernel,ANY-method}
 \alias{show,kernel-method}
 \alias{summary,kernel,ANY-method}
 \alias{summary,kernel-method}
@@ -42,10 +41,12 @@ An S4 class to represent a kernel for a SNPset
 
 \item{\code{kernel}}{kernel matrix of dimension equal to individuals}
 
-\item{\code{GWASdata}}{GWASdata object}
-
 \item{\code{pathway}}{pathway object}
 }}
+\examples{
+#data(gwas) <FIXME> define example with new structure
+#show(gwas)
+}
 \author{
 Juliane Manitz
 }

@@ -2,7 +2,7 @@
 % Please edit documentation in R/lkmt.r
 \name{davies_test}
 \alias{davies_test}
-\title{Calculates the p-value for a kernelmatrix using davies method}
+\title{Calculates the p-value for a kernel matrix using davies method}
 \usage{
 davies_test(K, nullmodel)
 }

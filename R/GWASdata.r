@@ -6,7 +6,7 @@
 
 #' An S4 class defining an object to represent a Genome-wide Assocaition Study.
 #'
-#' @slot geno An \code{big.matrix} object including genotype information.
+#' @slot geno an \code{big.matrix} object including genotype information.
 #' @slot anno A \code{data.frame} mapping SNPs to genes and genes to
 #' pathways. Needs to include the columns 'pathway' (pathway ID, e.g. hsa
 #' number from KEGG database), 'gene' (gene name (hgnc_symbol)), 'chr'
@@ -14,17 +14,18 @@
 #' @slot pheno A \code{data.frame} specifying individual IDs, phenotypes and
 #' covariates to be included in the regression model e.g. ID, pheno, sex,
 #' pack.years. Note: IDs have to be in the first column!
-#' @slot desc A \code{character} giving the GWAS description, e.g. name of study
+#' @slot desc A \code{character} giving the GWAS description, e.g. name of study.  Default is ''.
 #' @examples
 #' data(pheno)
 #' data(geno)
 #' #gwas <- new('GWASdata', pheno=pheno, geno=geno, desc="some study") ### ERROR
 #' @author Juliane Manitz, Stefanie Friedrichs
-#' @exportClass GWASdata
 #' @export GWASdata
 #' @import methods
-GWASdata <- setClass('GWASdata', slots=c(geno="big.matrix", anno = "data.frame",
-	                                 pheno='data.frame', desc='character'))
+#' @rdname GWASdata-class
+GWASdata <- setClass('GWASdata', 
+                     representation(geno ="big.matrix", anno="data.frame",  
+                                    pheno='data.frame', desc='character'))
     ## validy checks
     setValidity('GWASdata', function(object){
     msg   <- NULL
@@ -76,30 +77,18 @@ GWASdata <- setClass('GWASdata', slots=c(geno="big.matrix", anno = "data.frame",
     if(valid) TRUE else msg
 })
 
+# GWASdata object constructor
+setGeneric('GWASdata', function(object, ...) standardGeneric('GWASdata'))
 #' \code{'GWASdata'} is a GWASdata object constructor
 #'
-#' @param geno an \code{ff} data frame including genotype information.
-#' @param anno a \code{data.frame} mapping SNPs to genes and genes to
-#' pathways. Needs to include the columns 'pathway' (pathway ID, e.g. hsa
-#' number from KEGG database), 'gene' (gene name (hgnc_symbol)), 'chr'
-#' (chromosome), 'snp' (rsnumber) and 'position' (base pair position of SNP).
-#' @param pheno A \code{data.frame} specifying individual IDs, phenotypes and
-#' covariates to be included in the regression model e.g. ID, pheno, sex,
-#' pack.years. Note: IDs have to be in the first column. Default is \code{NULL}.
-#' @param desc A \code{character} giving the GWAS description, e.g. name of study. Defaul is ''.
-#'
-#' #@author Juliane Manitz
 #' @export
-#' @rdname GWASdata
-#' @aliases show,GWASdata,ANY-method
+#' @rdname GWASdata-class
 setMethod('GWASdata',
        definition = function(geno, anno, pheno = NULL, desc = ''){
        ## create GWASdata object
        new('GWASdata', geno = geno, anno = anno, pheno = as.data.frame(pheno),
            desc = desc)
 })
-# GWASdata object constructor
-setGeneric('GWASdata')#, function(object, ...) standardGeneric('GWASdata'))
 
 # read genotype data from file
 setGeneric('read_geno', function(x, ...) standardGeneric('read_geno'))
@@ -141,19 +130,11 @@ setMethod('read_geno', signature='character',
            return(df)
 })
 
-#' \code{show} Shows basic information on \code{GWASdata} object
-#'
+#' \code{show} displays basic information on \code{GWASdata} object
 #' @param object A \code{GWASdata} object.
-#' @return \code{show} This function shows the phenotype information and the object description included in a \code{\link{GWASdata}} object.
-#'
-#' @examples
-#' #data(gwas) <FIXME> define example with new structure
-#' #show(gwas)
-#'
 #' #@author Juliane Manitz
 #' @export
 #' @rdname GWASdata-class
-#' @aliases show,GWASdata,ANY-method
 setMethod('show', signature='GWASdata',
           definition = function(object){
               cat('An object of class ', class(object),
@@ -173,19 +154,14 @@ setMethod('show', signature='GWASdata',
 ## summary
 setGeneric('summary', function(object, ...) standardGeneric('summary'))
 
-#' \code{summary} Summarizes the content of a \code{GWASdata} object
-#'
-#' @param object A \code{GWASdata} object.
-#' @return \code{summary} This function gives an overview about the information included in a \code{\link{GWASdata}} object. Summary statistics for phenotype and genotype data are calculated.
+#' \code{summary} summarizes the content of a \code{GWASdata} object and gives an overview about the information included in a \code{\link{GWASdata}} object. Summary statistics for phenotype and genotype data are calculated.
 #'
 #' @examples
 #' #data(gwas)   <FIXME> define example with new structure
 #' #summary(gwas)
 #'
-#' #@author Juliane Manitz
 #' @export
 #' @rdname GWASdata-class
-#' @aliases summary,GWASdata,ANY-method
 setMethod('summary', signature='GWASdata',
           definition = function(object){
               cat('An object of class ', class(object), ' from ',object@desc,'\n\n',sep='')
@@ -207,19 +183,14 @@ setMethod('summary', signature='GWASdata',
 ## GeneSNPsize
 setGeneric('GeneSNPsize', function(object, ...) standardGeneric('GeneSNPsize'))
 
-#' \code{GeneSNPsize} Counts the number of Genes and SPNs in each pathway
-#'
-#' @param object A \code{GWASdata} object.
-#' @return \code{GeneSNPsize} Creates a list of pathway names with numbers of snps and genes in the pathway.
+#' \code{GeneSNPsize} creates a \code{data.frame} of pathway names with numbers of snps and genes in each pathway.
 #'
 #' @examples
 #' #data(gwas) <FIXME> define example with new structure
 #' #GeneSNPsize(gwas)
 #'
-#' #@author Juliane Manitz
 #' @export
 #' @rdname GWASdata-class
-#' @aliases GeneSNPsize,GWASdata,ANY-method
 setMethod('GeneSNPsize', signature='GWASdata',
           definition <- function(object){
               nrsnps <- table(unique(object@anno[,c('pathway','gene','snp')])$pathway)

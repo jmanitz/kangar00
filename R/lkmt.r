@@ -20,6 +20,12 @@
 #' @slot statistic A \code{vector} giving the p-value calculated for the pathway 
 #' in the variance component test.
 #'
+#' For details on the variance component test see the references.
+#' @references
+#' \itemize{
+#'  \item Wu MC, Kraft P, Epstein MP, Taylor DM, Chanock SJ, Hunter DJ, Lin X: Powerful SNP-Set Analysis for Case-Control Genome-Wide Association Studies. Am J Hum Genet 2010, 86:929-42
+#' }
+#'
 #' @author Juliane Manitz, Stefanie Friedrichs
 #' @export lkmt
 #' @import methods
@@ -35,25 +41,7 @@ setValidity('lkmt', function(object){  # to be defined !!
 })
 
 
-#' Function to start the logistic kernel machine test. 
-#' 
-#' @param formula A formular for the regression nullmodel that will be used in
-#' the variance component test. 
-#' @param kernel An object of class \code{\link{kernel}} representing the similarity
-#' matrix of the individuals based on which the pathways influence is evaluated.
-#' @param GWASdata An object of class \code{\link{GWASdata}} representing the data on 
-#' which the test is conducted. 
-#' @param method A \code{character} specifying how p-values should be calculated.
-#' For Satterthwaite approximation use 'satt', for Davies method use 'davies'.
-#' @param ... additional arguments can be added.
-#' @return An \code{\link{lkmt}} object with the test results. 
-#' @author Juliane Manitz, Stefanie Friedrichs
-#'
-#' For details on the variance component test see the references.
-#' @references
-#' \itemize{
-#'  \item Wu MC, Kraft P, Epstein MP, Taylor DM, Chanock SJ, Hunter DJ, Lin X: Powerful SNP-Set Analysis for Case-Control Genome-Wide Association Studies. Am J Hum Genet 2010, 86:929-42
-#' }
+#' @describeIn lkmt-class
 lkmt <- function(formula, kernel, GWASdata, method=c('satt','davies'), ...){
 
    if(length(GWASdata@pheno) == 0) stop("Please specify phenotypes.")

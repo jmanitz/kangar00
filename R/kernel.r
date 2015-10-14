@@ -4,6 +4,9 @@
 #
 #################################################
 
+#' @include GWASdata.r pathway.r
+NULL
+
 #################################### kernel class definition #################
 #' An S4 class to represent a kernel for a SNPset
 #'
@@ -18,8 +21,8 @@
 #' @export
 #' @import methods
 kernel <- setClass('kernel',
-                   slots=c(type='character', kernel='matrix', pathway='pathway'))
-
+                   representation(type='character', kernel='matrix', 
+                                  pathway='pathway'))
 setValidity('kernel', function(object){
     msg  <- NULL
     valid <- TRUE
@@ -112,7 +115,7 @@ setGeneric('calc_kernel', function(object, ...) standardGeneric('calc_kernel'))
 #' @rdname calc_kernel
 #' @export
 #' @seealso \code{\link{kernel-class}}, \code{\link{GWASdata-class}}, \code{\link{pathway-class}}
-setMethod('calc_kernel', signature = 'GWASdata',
+setMethod('calc_kernel', signature(object = 'GWASdata'),
        definition = function(object, pathway, knots = NULL, 
 			     type = c('lin', 'sia', 'net'),
                              parallel = c('none', 'cpu', 'gpu'), ...) {
@@ -130,7 +133,7 @@ setMethod('calc_kernel', signature = 'GWASdata',
 	   }
 	   # transfer to specific kernel function
            k <- eval(parse(text=paste(type, "_kernel(
-                           GWASdata = object, pathway = pathway, 
+                           object = object, pathway = pathway, 
                            knots = knots, parallel = parallel, ...)",sep='')))
            return(k)
 })
@@ -139,7 +142,8 @@ setMethod('calc_kernel', signature = 'GWASdata',
 # calculate linear kernel
 setGeneric('lin_kernel', function(object, ...) standardGeneric('lin_kernel'))
 #' @describeIn calc_kernel
-setMethod('lin_kernel', signature = 'GWASdata',
+#' @export
+setMethod('lin_kernel', signature(object = 'GWASdata'),
           definition = function(object, pathway, knots=NULL,
                        parallel = c('none', 'cpu', 'gpu'), ...) {
     lowrank <- !is.null(knots)
@@ -182,7 +186,8 @@ setMethod('lin_kernel', signature = 'GWASdata',
 # create size-adjusted kernel
 setGeneric('sia_kernel', function(object, ...) standardGeneric('sia_kernel'))
 #' @describeIn calc_kernel
-setMethod('sia_kernel', signature = 'GWASdata',
+#' @export
+setMethod('sia_kernel', signature(object = 'GWASdata'),
           definition = function(object, pathway, knots=NULL,
                        parallel = c('none', 'cpu', 'gpu'), ...) {
 
@@ -228,7 +233,8 @@ setMethod('sia_kernel', signature = 'GWASdata',
 # calculate network-based kernel
 setGeneric('net_kernel', function(object, ...) standardGeneric('net_kernel'))
 #' @describeIn calc_kernel
-setMethod('net_kernel', signature = 'GWASdata',
+#' @export
+setMethod('net_kernel', signature(object = 'GWASdata'),
           definition = function(object, pathway, knots=NULL,
                        parallel = c('none', 'cpu', 'gpu'), ...) {
     ## check if knots are specified
@@ -394,10 +400,14 @@ setMethod('make_psd', signature = 'matrix',
 # show method
 #' \code{show} displays the kernel object briefly
 #' @param object kernel object
+#'
+#' @examples
+#' #data(gwas) <FIXME> define example with new structure
+#' #show(gwas)
+#'
 #' @export
 #' @rdname kernel-class
-#' @aliases show,kernel,ANY-method
-setMethod('show', signature='kernel',
+setMethod('show', signature('kernel'),
           definition = function(object){
               cat('An object of class ', class(object), ' of type ', object@type,' for pathway ', object@pathway@id, '\n\n',sep='')
               print(object@kernel)
