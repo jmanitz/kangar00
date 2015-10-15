@@ -107,27 +107,86 @@ setGeneric('read_geno', function(x, ...) standardGeneric('read_geno'))
 #' @import bigmemory
 #' @export
 setMethod('read_geno', signature='character',
-       definition = function(x, save.path = NULL, sep = " ",
-                             header = TRUE, ...) {
-       cat("Loading data. This might take a while, depending on the size of the data set.\n")
+          definition = function(file.path, save.path = NULL, sep = " ",
+                                header = TRUE, use.fread = TRUE, ...) {
             
-       ## backing file path
-       if(is.null(save.path))
-          save.path <- paste0(x, '.bin')
-
-       ## read data frame
-       options(bigmemory.allow.dimnames=TRUE)
-
-## <FIXME>:
-## we should explain better what is expected (i.e., what data files can be
-## imported) and show all possible options (type, sep, header, ... to the user)
-## and not only implicitely via ... .
-           df <- read.big.matrix(x, type='char',
-                                 backingfile = save.path,
-                                 descriptorfile = paste0(save.path, '.desc'),
-                                 sep = sep, header = header, ...)
-           rownames(df) <- paste0("ind", 1:nrow(df))
-           return(df)
+            # Step 1: Check if file meets requirements
+            # Step 1.1: Check if file exists
+            if(!file.exists(file.path)){
+              stop(paste("File", file.path, "does not exist!", sep=" "))
+            }
+            
+            # Step 1.2: Check for right input file format
+            fileFormat <- unlist(strsplit(file.path, "[.]"))
+            fileFormat <- fileFormat[length(fileFormat)]
+            
+            acceptedFormats <- c("txt", "impute2", "gz", "mldose")
+            if(!is.element(fileFormat, acceptedFormats)){
+              stop(paste(fileFormat, "as file format is not accepted!", sep=" "))
+            }
+            
+            ## Step 1.3: Check for backing file path otherwise use default
+            if(is.null(save.path)){
+              save.path <- paste0(file.path, ".bin")
+              warning(paste("Default save.path", save.path, "was created!", sep=" "))
+            }
+            
+            # Step 2: Read in file according to format
+            cat("Loading data. This might take a while depending on the size of the 
+                data set.")
+            
+            if (fileFormat == "gz"){
+              car("Reading in huge beagle files may fail due to memory limits. 
+                  If this is the case convert your beagle file in a .txt-file and try again.")
+              if(use.fread){
+                car("Loading data via fread. If this leads to problems set use.fread = FALSE.")
+                gwasGeno <- fread(file.path, header = TRUE)
+                gwasGeno <- as.big.matrix(gwasGeno)
+                
+              } else{
+                gwasGeno <- read.table(file.path, header=TRUE)
+                gwasGeno <- as.big.matrix(gwasGeno)
+              }
+            } else if (fileFormat = "mldose"){
+              car("Reading in huge MACH files may fail due to memory limits. 
+                  If this is the case convert your MACH file in a .txt-file and try again.")
+              if(use.fread){
+                car("Loading data via fread. If this leads to problems set use.fread = FALSE")
+                gwasGeno <- fread(file.path, header = TRUE)
+                gwasGeno <- as.big.matrix(gwasGeno)
+                
+              } else{
+                gwasGeno <- read.table(file.path, header=TRUE)
+                gwasGeno <- as.big.matrix(gwasGeno)
+              }
+            } else if (fileFormat = "impute2"){
+              car("Reading in huge IMPUTE2 files may fail due to memory limits. 
+                  If this is the case convert your IMPUTE2 file in a .txt-file and try again.")
+              if(use.fread){
+                car("Loading data via fread. If this leads to problems set use.fread = FALSE")
+                gwasGeno <- fread(file.path, header = TRUE)
+                gwasGeno <- as.big.matrix(gwasGeno)
+                
+              } else{
+                gwasGeno <- read.table(file.path, header=TRUE)
+                gwasGeno <- as.big.matrix(gwasGeno)
+              }
+            } else if (fileFormat = "txt"){
+              options(bigmemory.allow.dimnames=TRUE)
+              gwasGeno <- read.big.matrix(file.path, type='char',
+                                          backingfile = save.path,
+                                          descriptorfile = paste0(save.path, '.desc'),
+                                          sep = sep, header = header, ...)
+            } else{
+              stop("Unknown file format. Please only use 
+                   .txt-Files or output from MACH, Impute or Beagle!")
+            }
+            
+            # Step 4: Check if output has right format
+            # Step 4.1 All values must be between 0 and 2 
+            
+            # Step 5: Change geno object to big.matrix.object
+            return(gwasGeno)
 })
 
 #' \code{show} displays basic information on \code{GWASdata} object
