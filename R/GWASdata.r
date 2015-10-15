@@ -138,21 +138,28 @@ setMethod('read_geno', signature='character',
             if (fileFormat == "gz"){
               # Step 2.1 
               car("Reading in huge beagle files may fail due to memory limits. 
-                  If this is the case convert your beagle file in a .txt-file and try again.")
+                  If this is the case convert your beagle file in a .txt-file and try again. \n")
               if(use.fread){
                 car("Loading data via fread. If this leads to problems set the function will try
-                    automatically to load file via read.table.")
+                    automatically to load file via read.table. \n")
                 tryCatch({
                   gwasGeno <- fread(file.path, header = TRUE)
                 }, warning = function(wr){
-                  cat("fread caused a warning. Pleas make sure your file has been read in correctly")
+                  cat("fread caused a warning. Please make sure your file has been read in correctly! \n")
                   print(wr)
                 }, error = function(er){
-                  cat("fread hat stopped due to an error.")
+                  cat("fread has stopped due to an error. \n")
                   print(er)
-                  cat("Try reading in file with read.table. Attention: This function is very slow!")
+                  cat("Try reading in file with read.table. Attention: This function is very slow! \n")
                   tryCatch({
                     gwasGeno <- read.table(file.path, header = TRUE)
+                  }, warning = function(w){
+                    cat("read.table caused a warning, Please make sure your file has been read in correctly! \n")
+                    print(w)
+                  }, error = function(e){
+                    cat("Also read.table has stopped due to an error. Try to convert your file in a .txt-file
+                        and try again. \n")
+                    print(e)
                   }
                     )
                 }
