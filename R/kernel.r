@@ -342,7 +342,7 @@ setMethod('get_ana', signature = 'data.frame',
     net_genes <- get_genes(pathway)
     # genes in annotation -> genes with SNPs in GWASdata
     anno_sub <- x[x$pathway==pathway@id,]
-    anno_genes <- unique(x_sub$gene)
+    anno_genes <- unique(anno_sub$gene)
     # pathway genes that are not in annotation
     remov <- which(! net_genes %in% anno_genes)
     # rewire network -> separate function
