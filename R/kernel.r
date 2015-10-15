@@ -359,7 +359,7 @@ setMethod('get_ana', signature = 'data.frame',
     A <- Amat[SNPset,rownames(N)]    #A is colnames(Z) x rownames(N)
 
     #A*: size-adjustement for no of SNPs in each gene
-    A.star <- A/colSums(A)
+    A.star <- t(A/sqrt(colSums(A)))
 
     return(A.star %*% N %*% t(A.star))
 })
