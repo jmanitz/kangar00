@@ -157,7 +157,7 @@ setMethod('lin_kernel', signature(object = 'GWASdata'),
     if(any(is.na(Z1)))
         stop("genotype information contains missing values")
     if(lowrank){
-        Z2 <- further_args$knots@geno
+        Z2 <- knots@geno
         Z2 <- as(Z2[,as.character(SNPset)],'matrix')
         k <- Z1 %*% t(Z2)
         return(new('lowrank_kernel', type='lin', kernel=k, pathway=pathway))
@@ -251,7 +251,7 @@ setMethod('net_kernel', signature(object = 'GWASdata'),
     ANA <- get_ana(object@anno, SNPset, pathway)
     ## if knots are specified
     if (lowrank) {
-        Z2 <- further_args$knots@geno
+        Z2 <- knots@geno
         Z2 <- as(Z2[,as.character(SNPset)],'matrix')
         K <- Z1 %*% ANA %*% t(Z2)
         return(lowrank_kernel(type='network', kernel=K, pathway=pathway))
@@ -359,7 +359,7 @@ setMethod('get_ana', signature = 'data.frame',
     A <- Amat[SNPset,rownames(N)]    #A is colnames(Z) x rownames(N)
 
     #A*: size-adjustement for no of SNPs in each gene
-    A.star <- t(t(A) / sqrt(colSums(A))) 
+    A.star <- t(t(A) / sqrt(colSums(A)))
 
     return(A.star %*% N %*% t(A.star))
 })
