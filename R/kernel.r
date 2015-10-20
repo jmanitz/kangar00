@@ -48,7 +48,7 @@ setValidity('kernel', function(object){
     }
     # pos semi def?
     lambda <- min(eigen(object@kernel, only.values=TRUE, symmetric=TRUE)$values)
-    if(lambda < -1e-10){ # smallest eigenvalue negative = not semipositive definite
+    if(lambda < -1e-6){ # smallest eigenvalue negative = not semipositive definite
         valid <- FALSE
         msg <- c(msg, "kernel matrix has to be positive semi-definite")
     }
