@@ -5,19 +5,19 @@
 #################################################
 
 
-#' An S4 class to represent the variance component test. 
-#' 
+#' An S4 class to represent the variance component test.
+#'
 #' @rdname lkmt-class
-#' @slot formula A formular stating the regression nullmodel that will be used in
-#' the variance component test. 
+#' @slot formula A formula stating the regression nullmodel that will be used in
+#' the variance component test.
 #' @slot kernel An object of class \code{\link{kernel}} representing the similarity
 #' matrix of the individuals based on which the pathways influence is evaluated.
-#' @slot GWASdata An object of class \code{\link{GWASdata}} stating the data on 
-#' which the test is conducted. 
-#' @slot statistic A \code{vector} giving the value of the variance component 
-#' ttest statistic.
-#' @slot statistic A \code{vector} giving the number of degrees of freedom. 
-#' @slot statistic A \code{vector} giving the p-value calculated for the pathway 
+#' @slot GWASdata An object of class \code{\link{GWASdata}} stating the data on
+#' which the test is conducted.
+#' @slot statistic A \code{vector} giving the value of the variance component
+#' t-test statistic.
+#' @slot df A \code{vector} giving the number of degrees of freedom.
+#' @slot p.value A \code{vector} giving the p-value calculated for the pathway
 #' in the variance component test.
 #'
 #' For details on the variance component test see the references.
@@ -36,7 +36,7 @@ lkmt <- setClass('lkmt',
 setValidity('lkmt', function(object){  # to be defined !!
 	msg  <- NULL
 	valid <- TRUE
-	print('create validity function!')
+	message('Create validity function!\n')
 	if(valid) TRUE else msg
 })
 
@@ -44,25 +44,23 @@ setValidity('lkmt', function(object){  # to be defined !!
 #' @describeIn lkmt-class
 lkmt <- function(formula, kernel, GWASdata, method=c('satt','davies'), ...){
 
-   if(length(GWASdata@pheno) == 0) stop("Please specify phenotypes.")
-   
-   if ( !(method%in%c('satt','davies')) ){
-   stop("p-value calculation method needs to be 'satt' or 'davies'")
-   }
-   nullmodel <- glm(formula, data=GWASdata@pheno, family=binomial, x=TRUE)
-   if(method=='satt'){
-   model <- score_test(kernel@kernel, nullmodel, pd.check=FALSE)[[1]]
-   }
-   if(method=='davies'){
-   model <- davies_test(kernel@kernel, nullmodel)
-   } 
-   ret <- new('lkmt', formula=formula, kernel=kernel, GWASdata=GWASdata,
-          statistic=model$statistic, df=model$parameter, p.value=model$p.value)
-   return(ret)
+    if(length(GWASdata@pheno) == 0) stop("Please specify phenotypes.")
+
+    method <- match.arg(method)
+    nullmodel <- glm(formula, data=GWASdata@pheno, family=binomial, x=TRUE)
+    if(method == 'satt'){
+        model <- score_test(kernel@kernel, nullmodel, pd.check=FALSE)[[1]]
+    }
+    if(method == 'davies'){
+        model <- davies_test(kernel@kernel, nullmodel)
+    }
+    ret <- new('lkmt', formula=formula, kernel=kernel, GWASdata=GWASdata,
+               statistic=model$statistic, df=model$parameter, p.value=model$p.value)
+    return(ret)
 }
 
 #' \code{show} Shows basic information on \code{lkmt} object
-#' 
+#'
 #' @param object An object of class \code{\link{lkmt}}.
 #' @return \code{show} Basic information on \code{lkmt} object.
 #' #@author Juliane Manitz
@@ -83,7 +81,7 @@ setMethod('show', signature='lkmt',
 setGeneric('summary', function(object, ...) standardGeneric('summary'))
 
 #' \code{summary} Summarizes information on \code{lkmt} object
-#' 
+#'
 #' @param object An object of class \code{\link{lkmt}}.
 #' @return \code{summary} Summarized information on \code{lkmt} object.
 #' #@author Juliane Manitz
@@ -104,19 +102,19 @@ setMethod('summary', signature='lkmt',
 
 
 
-# <FIXME> Please incorporate in OOP 
-#' Calculates the p-value for a kernelmatrix using Satterthwaite approximation 
+# <FIXME> Please incorporate in OOP
+#' Calculates the p-value for a kernelmatrix using Satterthwaite approximation
 #'
 #' This function evaluates a pathways influence on an individuals probability
-#' of beeing a case using the logistic kernel machine test. P-values are 
-#' determined using a Sattherthwaite Approximation as described by Dan Schaid. 
+#' of beeing a case using the logistic kernel machine test. P-values are
+#' determined using a Sattherthwaite Approximation as described by Dan Schaid.
 #'
-#' @param kernels A \code{\link{matrix}} which is the 
-#' similarity matrix calculated for the pathway to be tested. 
-#' @param nullmodel A \code{glm} object of the nullmodel with fixed effects 
-#' covariates included, but no genetic random effects. 
+#' @param kernels A \code{\link{matrix}} which is the
+#' similarity matrix calculated for the pathway to be tested.
+#' @param nullmodel A \code{glm} object of the nullmodel with fixed effects
+#' covariates included, but no genetic random effects.
 #' @param  pd.check boolean, whether to check for positive definiteness.
-#' @return A \code{list} including the test results of the pathway.   
+#' @return A \code{list} including the test results of the pathway.
 #' @author Stefanie Friedrichs, Saskia Freytag, Ngoc-Thuy Ha
 #'
 #' For details on the p-value approximation see
@@ -124,8 +122,8 @@ setMethod('summary', signature='lkmt',
 #' \item Schaid DJ: Genomic Similarity and Kernel Methods I: Advancements by Building on Mathematical and Statistical Foundations. Hum Hered 2010, 70:109-31
 #' }
 
-score_test <- function(kernels, nullmodel, pd.check=TRUE){ 
-                                                          
+score_test <- function(kernels, nullmodel, pd.check=TRUE){
+
         if(is.matrix(kernels)){
                 kernels <- list(pathway1=kernels)
         }else if(!is.list(kernels)){
@@ -133,7 +131,7 @@ score_test <- function(kernels, nullmodel, pd.check=TRUE){
         }
         if(sum(is(nullmodel) %in% c("glm","lm")) == 0 ){
                 stop("nullmodel should be a glm- or lm-object!")
-        }       
+        }
         if(is.null(nullmodel$x)){
                 stop("The glm-object should have a design-matrix x!")
         }
@@ -144,19 +142,19 @@ score_test <- function(kernels, nullmodel, pd.check=TRUE){
         mui <-  nullmodel$fitted.values
         #W <- Diagonal(length(mui),mui*(1-mui))  , library(Matrix)
         W <- (mui*(1-mui)) * diag(length(mui))
-        #P <- W-W%*%X%*%solve(t(X)%*%W%*%X)%*%t(X)%*%W 
+        #P <- W-W%*%X%*%solve(t(X)%*%W%*%X)%*%t(X)%*%W
         WX <- W%*%X
-        P  <- W-WX%*%solve(t(X)%*% WX, t(X)%*%W) 
+        P  <- W-WX%*%solve(t(X)%*% WX, t(X)%*%W)
         all_mod <- list()
         for(k in pathwaynames){
                 K <- kernels[[k]]
                 K <- as.matrix(K)
                 if(!is.null(nas)){
                    K <- K[-nas,-nas]
-                }                                          
+                }
                 TT <- 1/2*t(Y-mui)%*%K%*%(Y-mui)
                 PK <- P%*%K
-                A  <- W%*% PK %*%P%*%W  
+                A  <- W%*% PK %*%P%*%W
                 VarT <- 1/2*sum(diag((PK%*%PK)))+
                         1/4*sum(diag(A)^2*mui*(1-mui)*(1+6*mui^2-6*mui))
                 ExpT <- 1/2*sum(diag((PK)))
@@ -164,37 +162,37 @@ score_test <- function(kernels, nullmodel, pd.check=TRUE){
                 a <- VarT/(2*ExpT)
                 d <- (2*ExpT^2)/VarT
                 p.value <- pchisq(TT/a, d, lower.tail=FALSE)
-        
+
                 mod <- list(p.value=p.value,     # p-value of test
                         statistic=TT/a,          # the test staistic value
                         parameter=d,             # the degree of freedom
                         method="Dan Schaid Score Test") # name of test
                 names(mod$statistic) <- "Chi Squared Test Statictic Value"
-                names(mod$parameter) <- "Degree of Freedom"        
+                names(mod$parameter) <- "Degree of Freedom"
                 all_mod[[as.character(k)]] <- mod
         } # end of for pathwaynames
         return(all_mod)
 }
 
-# <FIXME> Please incorporate in OOP 
-#' Calculates the p-value for a kernel matrix using davies method 
+# <FIXME> Please incorporate in OOP
+#' Calculates the p-value for a kernel matrix using davies method
 #'
 #' This function evaluates a pathways influence on an individuals probability
-#' of beeing a case using the logistic kernel machine test. P-values are 
-#' determined using the method described by Davies as implemented in the 
-#'  function \code{davies()} from package \code{CompQuadForm}. 
+#' of beeing a case using the logistic kernel machine test. P-values are
+#' determined using the method described by Davies as implemented in the
+#'  function \code{davies()} from package \code{CompQuadForm}.
 #'
-#' @param kernels A \code{\link{matrix}} which is the 
-#' similarity matrix calculated for the pathway to be tested. 
-#' @param nullmodel A \code{glm} object of the nullmodel with fixed effects 
-#' covariates included, but no genetic random effects. 
+#' @param kernels A \code{\link{matrix}} which is the
+#' similarity matrix calculated for the pathway to be tested.
+#' @param nullmodel A \code{glm} object of the nullmodel with fixed effects
+#' covariates included, but no genetic random effects.
 #' @param  pd.check boolean, whether to check for positive definiteness.
-#' @return A \code{list} including the test results of the pathway.  
+#' @return A \code{list} including the test results of the pathway.
 #' @author Stefanie Friedrichs
 #'
 #' For details on the p-value calculation see
 #' \itemize{
-#' \item Davies R: Algorithm as 155: the distribution of a linear combination of 
+#' \item Davies R: Algorithm as 155: the distribution of a linear combination of
 #'      chi-2 random variables. J R Stat Soc Ser C 1980, 29:323-333.
 #' }
 #' @import CompQuadForm
@@ -219,7 +217,7 @@ davies_test <- function(K, nullmodel){
         X   <- nullmodel$x
         mui <- nullmodel$fitted.values
 
-        if( min(eigen(K)$values)<0 ){ K <- make_psd(K) }   
+        if( min(eigen(K)$values)<0 ){ K <- make_psd(K) }
 
         Q <- 1/2*t(Y-mui)%*%K%*%(Y-mui)
         P <- diag(nrow(X))-X%*%solve(t(X)%*%X,t(X))#solve(t(X)%*%X)%*%t(X)
@@ -227,8 +225,8 @@ davies_test <- function(K, nullmodel){
         W <- (mui*(1-mui))*diag(length(mui))
         v <- eigen(W)$vectors   #Wsqrt <-  sqrtm(W)  ##needs expm, veeery slow
         Wsqrt <- v %*% diag(sqrt(eigen(W)$values)) %*% t(v)
-        WP     <- Wsqrt%*%P         
-     
+        WP     <- Wsqrt%*%P
+
         lambda <- eigen(0.5*WP%*%K%*%t(WP))$values
         #delta <- rep(0, length(lambda))
         #sigma <- 0

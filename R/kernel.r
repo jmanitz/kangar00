@@ -21,7 +21,7 @@ NULL
 #' @export
 #' @import methods
 kernel <- setClass('kernel',
-                   representation(type='character', kernel='matrix', 
+                   representation(type='character', kernel='matrix',
                                   pathway='pathway'))
 setValidity('kernel', function(object){
     msg  <- NULL
@@ -48,7 +48,7 @@ setValidity('kernel', function(object){
     }
     # pos semi def?
     lambda <- min(eigen(object@kernel, only.values=TRUE, symmetric=TRUE)$values)
-    if(lambda < -1e-10){ # smallest eigenvalue negative = not semipositive definite
+    if(lambda < -1e-6){ # smallest eigenvalue negative = not semipositive definite
         valid <- FALSE
         msg <- c(msg, "kernel matrix has to be positive semi-definite")
     }
@@ -116,7 +116,7 @@ setGeneric('calc_kernel', function(object, ...) standardGeneric('calc_kernel'))
 #' @export
 #' @seealso \code{\link{kernel-class}}, \code{\link{GWASdata-class}}, \code{\link{pathway-class}}
 setMethod('calc_kernel', signature(object = 'GWASdata'),
-       definition = function(object, pathway, knots = NULL, 
+       definition = function(object, pathway, knots = NULL,
 			     type = c('lin', 'sia', 'net'),
                              parallel = c('none', 'cpu', 'gpu'), ...) {
            # user inputs
@@ -133,7 +133,7 @@ setMethod('calc_kernel', signature(object = 'GWASdata'),
 	   }
 	   # transfer to specific kernel function
            k <- eval(parse(text=paste(type, "_kernel(
-                           object = object, pathway = pathway, 
+                           object = object, pathway = pathway,
                            knots = knots, parallel = parallel, ...)",sep='')))
            return(k)
 })
@@ -153,14 +153,14 @@ setMethod('lin_kernel', signature(object = 'GWASdata'),
     ## which SNPs are in specified pathway
     SNPset <- unique(object@anno$snp[which(object@anno$pathway == pathway@id)])
     ## subset genotype data for specified SNP set
-    Z1 <- Z2 <- as(object@geno[,as.character(SNPset)],'matrix')
+    Z1 <- as(object@geno[,as.character(SNPset)],'matrix')
     if(any(is.na(Z1)))
         stop("genotype information contains missing values")
     if(lowrank){
-        Z2 <- further_args$knots@geno
+        Z2 <- knots@geno
         Z2 <- as(Z2[,as.character(SNPset)],'matrix')
         k <- Z1 %*% t(Z2)
-      return(new('lowrank_kernel', type='lin', kernel=k, pathway=pathway))
+        return(new('lowrank_kernel', type='lin', kernel=k, pathway=pathway))
     }else{
       # K=ZZ' kernel matrix = genetic similarity
       if(parallel=='none'){
@@ -191,7 +191,9 @@ setMethod('sia_kernel', signature(object = 'GWASdata'),
           definition = function(object, pathway, knots=NULL,
                        parallel = c('none', 'cpu', 'gpu'), ...) {
 
-# <FIXME> add calculations with knots 
+    if (!is.null(knots))
+        stop("knots are not yet implemented for SIA kernel")
+# <FIXME> add calculations with knots
     genemat <- function(g, data, anno){
         SNPset <- unique(anno[which(anno[,"gene"]==g),"snp"])
         z <- as(data[,as.character(SNPset)],'matrix')
@@ -242,23 +244,21 @@ setMethod('net_kernel', signature(object = 'GWASdata'),
     #genotype matrix Z, which SNPs are in specified pathway
     SNPset <- unique(object@anno$snp[which(object@anno$pathway==pathway@id)])
     #subset genotype data for specified SNP set
-    Z1 <- Z2 <- as(object@geno[,as.character(SNPset)],'matrix')
+    Z1 <- as(object@geno[,as.character(SNPset)],'matrix')
     if (any(is.na(Z1)))
         stop("genotype information contains missing values")
-    ## if knots are specified
-    if (lowrank) {
-        Z2 <- further_args$knots@geno
-        Z2 <- as(Z2[,as.character(SNPset)],'matrix')
-    }
     # compute kernel
     ANA <- get_ana(object@anno, SNPset, pathway)
-    K <- Z1 %*% ANA %*% t(Z2)
-    #return kernel object
+    ## if knots are specified
     if (lowrank) {
-       return(lowrank_kernel(type='network',kernel=K,pathway=pathway))
-    }else{
-       return(kernel(type='network',kernel=K,pathway=pathway))
+        Z2 <- knots@geno
+        Z2 <- as(Z2[,as.character(SNPset)],'matrix')
+        K <- Z1 %*% ANA %*% t(Z2)
+        return(lowrank_kernel(type='network', kernel=K, pathway=pathway))
     }
+    K <- Z1 %*% ANA %*% t(Z1)
+    #return kernel object
+    return(kernel(type='network',kernel=K,pathway=pathway))
 })
 
 ################################## helper function #############################
@@ -342,7 +342,7 @@ setMethod('get_ana', signature = 'data.frame',
     net_genes <- get_genes(pathway)
     # genes in annotation -> genes with SNPs in GWASdata
     anno_sub <- x[x$pathway==pathway@id,]
-    anno_genes <- unique(x_sub$gene)
+    anno_genes <- unique(anno_sub$gene)
     # pathway genes that are not in annotation
     remov <- which(! net_genes %in% anno_genes)
     # rewire network -> separate function
@@ -359,7 +359,7 @@ setMethod('get_ana', signature = 'data.frame',
     A <- Amat[SNPset,rownames(N)]    #A is colnames(Z) x rownames(N)
 
     #A*: size-adjustement for no of SNPs in each gene
-    A.star <- A/colSums(A)
+    A.star <- t(t(A) / sqrt(colSums(A)))
 
     return(A.star %*% N %*% t(A.star))
 })
@@ -370,7 +370,7 @@ setGeneric('make_psd', function(x, ...) standardGeneric('make_psd'))
 #' @param x matrix specifying the network adjacency matrix.
 #' @param eps numeric, tolance for smallest eigenvalue adjustment
 #' @return The matrix x, if it is positive definite and the closest positive semi-definite matrix if x is not positive semi-definite.
-#' 
+#'
 #' @details <FIXME> Add formula. For more details check the references.
 #'
 #' @references
