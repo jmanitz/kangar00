@@ -91,7 +91,7 @@ setMethod('GWASdata',
 })
 
 # read genotype data from file
-setGeneric('read_geno', function(x, ...) standardGeneric('read_geno'))
+setGeneric('read_geno', function(file.path, ...) standardGeneric('read_geno'))
 #' read genotype data from file to bigmemory object, which can be passed to a  GWASdata object
 #'
 #' @param file.path character, which contains the path to the data file to be read
@@ -106,7 +106,8 @@ setGeneric('read_geno', function(x, ...) standardGeneric('read_geno'))
 #' @seealso \code{\link{GWASdata-class}}
 #' @import bigmemory
 #' @export
-setMethod('read_geno', signature='character',
+setMethod("read_geno", 
+          signature="character", 
           definition = function(file.path, save.path = NULL, sep = " ",
                                 header = TRUE, use.fread = TRUE, ...) {
             
@@ -126,9 +127,19 @@ setMethod('read_geno', signature='character',
             }
             
             ## Step 1.3: Check for backing file path otherwise use default
+            file.name <- tail(unlist(strsplit(file.path, "/")), 1)
+            file.name <- unlist(strsplit(file.name, "[.]"))
+            file.name <- paste(file.name[-length(file.name)], collapse=".")
             if(is.null(save.path)){
-              save.path <- paste0(file.path, ".bin")
+              save.path <- unlist(strsplit(file.path, "/"))
+              save.path <- save.path[-length(save.path)]
+              save.path <- paste(save.path, collapse="/")
+              save.path <- paste(save.path, "/", sep="")
+              save.file <- paste(file.name, ".bin", sep="")
+              #save.file <- paste0(save.path, file.name, ".bin", sep="")
               warning(paste("Default save.path", save.path, "was created!", sep=" "))
+            }else{
+              save.file <- paste0(save.path, "/", file.name, ".bin", sep="")
             }
             
             # Step 2: Read in file according to format
@@ -169,11 +180,11 @@ setMethod('read_geno', signature='character',
                 gwasGeno <- read.table(file.path, header=TRUE)
                 gwasGeno <- as.big.matrix(gwasGeno)
               }
-            } else if (fileFormat = "mldose"){
-              car("Reading in huge MACH files may fail due to memory limits. 
+            } else if (fileFormat == "mldose"){
+              cat("Reading in huge MACH files may fail due to memory limits. 
                   If this is the case convert your MACH file in a .txt-file and try again.")
               if(use.fread){
-                car("Loading data via fread. If this leads to problems set use.fread = FALSE")
+                cat("Loading data via fread. If this leads to problems set use.fread = FALSE")
                 gwasGeno <- fread(file.path, header = TRUE)
                 gwasGeno <- as.big.matrix(gwasGeno)
                 
@@ -181,11 +192,11 @@ setMethod('read_geno', signature='character',
                 gwasGeno <- read.table(file.path, header=TRUE)
                 gwasGeno <- as.big.matrix(gwasGeno)
               }
-            } else if (fileFormat = "impute2"){
-              car("Reading in huge IMPUTE2 files may fail due to memory limits. 
+            } else if (fileFormat == "impute2"){
+              cat("Reading in huge IMPUTE2 files may fail due to memory limits. 
                   If this is the case convert your IMPUTE2 file in a .txt-file and try again.")
               if(use.fread){
-                car("Loading data via fread. If this leads to problems set use.fread = FALSE")
+                cat("Loading data via fread. If this leads to problems set use.fread = FALSE")
                 gwasGeno <- fread(file.path, header = TRUE)
                 gwasGeno <- as.big.matrix(gwasGeno)
                 
@@ -193,20 +204,40 @@ setMethod('read_geno', signature='character',
                 gwasGeno <- read.table(file.path, header=TRUE)
                 gwasGeno <- as.big.matrix(gwasGeno)
               }
-            } else if (fileFormat = "txt"){
+            } else if (fileFormat == "txt"){
               options(bigmemory.allow.dimnames=TRUE)
-              gwasGeno <- read.big.matrix(file.path, type='char',
-                                          backingfile = save.path,
-                                          descriptorfile = paste0(save.path, '.desc'),
-                                          sep = sep, header = header, ...)
+              tryCatch({
+                gwasGeno <- read.big.matrix(file.path, type='char',
+                                            backingfile = save.file,
+                                            backingpath = save.path,
+                                            descriptorfile = paste0(file.name, ".desc", sep=""),
+                                            sep = sep, header = header, ...)
+              }, warning = function(w){
+                cat("read.big.matrix caused a warning!")
+                print(w)
+              }, error = function(e){
+                cat("read.big.matrix has stopped due to an error!")
+                print(e)
+              }
+                )
+              
             } else{
               stop("Unknown file format. Please only use 
                    .txt-Files or output from MACH, Impute or Beagle!")
             }
             
             # Step 4: Check if output has right format
-            # Step 4.1 All values must be between 0 and 2 
+            # Step 4.1 Check if first column contains ID numbers
+            firstRow <- gwasGeno[ , 1]
+            if(!is.character(na.omit(firstRow)) || sum(firstRow > 2) == 0){
+              stop("Your geno file doesn't seem to contain ID numbers. Please make sure that
+                   the first row of your data contains ID numbers according to your phenotype file!")
+            }
             
+            # Step 4.2 Check if the rest of the data is okay
+            if(sum(na.omit(gwasGeno[ , -1]) > 2) > 0){
+              warning("Your geno data seems to contain values bigger than 2.")
+            }
             # Step 5: Change geno object to big.matrix.object
             return(gwasGeno)
 })
