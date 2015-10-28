@@ -26,12 +26,14 @@ setValidity('pathway', function(object){
 	# adjacency includes only 1 and 0
 	if(!all( object@adj %in% c(0,1))){
 	  valid=FALSE
-	  msg <- c(msg, "the adjacency matrix is not allowed to include other values that zero and one")
+	  msg <- c(msg, "the adjacency matrix is not allowed to include other values 
+           that zero and one")
 	}
 	# length(sign) = number of links
 	if(length(object@sign)!=sum(object@adj!=0)){
 	  valid <- FALSE
-          msg <- c(msg, "the length of the sign vector does not correspond to the number of links")
+          msg <- c(msg, "the length of the sign vector does not correspond to 
+                 the number of links")
         }
 	# quadratic?
 	if(nrow(object@adj)!=ncol(object@adj)){
@@ -312,7 +314,8 @@ setGeneric('sample_genes', function(object, ...) standardGeneric('sample_genes')
 setMethod('sample_genes', signature='pathway',
           definition = function(object, no=3){
             g <- pathway2igraph(object)
-            if(vcount(g) < no) stop('number of sampled genes should be smaller than the total number in the pathway')
+            if(vcount(g) < no) stop('number of sampled genes should be smaller 
+                               than the total number in the pathway')
 
             # sample a gene with high betweennes centrality
             sel1 <- sample(V(g), size=1, prob=betweenness(g))
@@ -337,10 +340,10 @@ setGeneric('gene_name_number', function(x, ...) standardGeneric('gene_name_numbe
 #' @return A \code{data.frame} listing the genes included in the pathway with 
 #' their names as well as numbers used in KEGG database.
 #' @examples
-#' #pathway_info("hsa04710") #### DOES NOT WORK ###
+#' gene_name_number("hsa04022")
 #' 
 #' @author Stefanie Friedrichs
-setMethod('gene_name_number', signature='character', #<FIXME> check signiture
+setMethod('gene_name_number', signature='character', 
           definition = function(x){
     info <- scan(url(paste("http://togows.dbcls.jp/entry/pathway/",
                            x,"/genes",sep="")), what="character")   
@@ -364,6 +367,7 @@ setMethod('gene_name_number', signature='character', #<FIXME> check signiture
     return(liste)
 })
 
+
 setGeneric('pathway_info', function(x, ...) standardGeneric('pathway_info'))
 #' Get information on genes in a pathway
 #'
@@ -377,33 +381,26 @@ setGeneric('pathway_info', function(x, ...) standardGeneric('pathway_info'))
 #' pathway. for each gene its name, the start and end point and the chromosome 
 #' it lies on are given.
 #' @examples
-#' # pathway_info('hsa04710') ### ERROR
+#' pathway_info("hsa04022") 
 #'
 #' @author Stefanie Friedrichs
 #' @import biomaRt  
-setMethod('pathway_info', signature='character', #<FIXME> check signiture
-          definition = function(x){              #<FIXME> ... removed
-    ##get genes from kegg
-    #input <- scan(url(paste("http://togows.dbcls.jp/entry/pathway/"
-    #              ,id,"/genes",sep="")), what="character")
-    ##get gene names only
-    #g <- lapply(input, function(x) if(substr(x,nchar(x),nchar(x))==";")
-    #            {substr(x,1,nchar(x)-1)})
-    #g[sapply(g, is.null)] <- NULL  
-    g       <- gene_name_number(id)[,1] 
+setMethod('pathway_info', signature='character', 
+          definition = function(x){              
+    g       <- gene_name_number(x)[,2] 
     ensembl <- useMart("ensembl", dataset="hsapiens_gene_ensembl")
     info    <- getBM(attributes=c("start_position","end_position",
                "chromosome_name","hgnc_symbol"), filters=c("hgnc_symbol"),
                values=g, mart=ensembl)
     info$chromosome_name   <- as.numeric(as.character(info$chromosome_name))
     info                   <- na.omit(info)
-    pathway_info           <- cbind(rep(paste(id,sep=""),length(info[,1])),info)
+    pathway_info           <- cbind(rep(paste(x,sep=""),length(info[,1])),info)
     colnames(pathway_info) <- c("pathway","gene_start","gene_end","chr","gene")             
     return(pathway_info)
 })
 
+
 setGeneric('set_one', function(x, ...) standardGeneric('set_one'))
- 
 #' Helper function to set matrix entries to 0/1/-1 only 
 #'
 #' This function sets all entries in a matrix bigger than 1 to 1 and all entries 
@@ -415,19 +412,19 @@ setGeneric('set_one', function(x, ...) standardGeneric('set_one'))
 #' with entries equal to 1, -1 or 0.
 #'
 #' @author Stefanie Friedrichs
-setMethod('set_one', signature='numeric', #<FIXME> check signiture
-          definition = function(x){       #<FIXME> more elegance possible ?
+setMethod('set_one', signature='matrix', 
+          definition = function(x){       
   if(length(x[x>1])>0){ 
-     print(paste("Edges value > 1 set to 1!",sep=""))
-     x[x>1] <- 1 }
+     print("Edge values greater than 1 set to 1!")
+     x[x>1] <- 1}
   if(length(x[x < (-1)])>0){
-     print(paste(x, ": Edges value < -1 set to -1!",sep=""))
-     x[x < (-1)] <- -1 }
+     print("Edge values smaller than -1 set to -1!")
+     x[x<(-1)] <- -1}
   return(x)
 })
 
-setGeneric('set_names', function(x, ...) standardGeneric('set_names'))
 
+setGeneric('set_names', function(x, ...) standardGeneric('set_names'))
 #' Helper function to translate gene numbers to names  
 #'
 #' This function exchanges the numbers used for genes in KEGG download KGML files
@@ -443,7 +440,7 @@ setGeneric('set_names', function(x, ...) standardGeneric('set_names'))
 #' with gene names as rownames and columnnames. 
 #'
 #' @author Stefanie Friedrichs
-setMethod('set_names', signature='numeric', #<FIXME> check signiture
+setMethod('set_names', signature='matrix', 
           definition = function(x, nodes, my_list){
     name <- substr(nodes,5,nchar(nodes)) 
     for(i in 1:length(name)){ 
@@ -453,8 +450,8 @@ setMethod('set_names', signature='numeric', #<FIXME> check signiture
     return(x)
 })
  
+ 
 setGeneric('get_network_matrix', function(x, ...) standardGeneric('get_network_matrix'))
-
 #' Function to calculate the network matrix
 #'
 #' This function creates the networkmatrix representing the gene-gene interaction 
@@ -466,19 +463,19 @@ setGeneric('get_network_matrix', function(x, ...) standardGeneric('get_network_m
 #' should be returned directed (\code{TRUE}) or undirected (\code{FALSE}).
 #' @return A \code{matrix} representing the interaction network in the pathway.
 #' @examples
-#' # get_network_matrix("hsa04710", TRUE) ### DOES NOT WORK
+#' get_network_matrix("hsa04022", TRUE)
 #'
 #' @author Stefanie Friedrichs
 #' @import KEGGgraph 
 #' @import biomaRt    
-setMethod('get_network_matrix', signature='character', #<FIXME> check signiture
-          definition = function(x, directed){    # ... removed
+setMethod('get_network_matrix', signature='character', 
+          definition = function(x, directed){    
     retrieveKGML(substr(x,4,nchar(x)), organism="hsa",
                  destfile=paste(x,".xml",sep=""), method="internal")
     filename  <- paste(x,".xml",sep="")
     liste     <- gene_name_number(x)
     pathgraph <- parseKGML2Graph(filename, expandGenes=TRUE)
-    nodes     <- nodes(pathgraph)  #Vektor mit Nummern der Gene (format: "hsa:226")
+    nodes     <- nodes(pathgraph) #vector with gene numbers (format: "hsa:226")
     edgelist  <- parseKGML2DataFrame(filename)
     edgelist  <- edgelist[!is.na(edgelist[,3]),] #delete NA-types            
 
@@ -491,8 +488,7 @@ setMethod('get_network_matrix', signature='character', #<FIXME> check signiture
        next}               
     #set up empty matrix:
     N <- matrix(rep(0, (length(nodes)^2)),nrow=length(nodes))
-    colnames(N) <- nodes
-    rownames(N) <- nodes   
+    colnames(N) <- rownames(N) <- nodes 
     verb.a <- edgelist[edgelist[,3]=="activation",] 
     verb.i <- edgelist[edgelist[,3]=="inhibition",]
     verb.s <- edgelist[edgelist[,3]!="inhibition"&edgelist[,3]!="activation",] 
@@ -501,8 +497,8 @@ setMethod('get_network_matrix', signature='character', #<FIXME> check signiture
     if( (length(verb.a[,1])+length(verb.i[,1]))>0 ){
       if(length(verb.s[,1])==0){ print(paste(x,": Activation/Inhibition only: 
                                  Signed graph!",sep="")) }
-      if(length(verb.s[,1])>0){ print(paste(x," has both: A/I edges and edges 
-                                without type!",sep=""))}
+      if(length(verb.s[,1])>0){ print(paste(x," has both: Activation/Inhibition  
+                                edges and edges without type!",sep=""))}
      # -- Directed --- 
      #           to 
      # from  (        )
