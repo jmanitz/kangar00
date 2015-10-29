@@ -104,12 +104,15 @@ setGeneric('read_geno', function(file.path, ...) standardGeneric('read_geno'))
 #'
 #' @rdname read_geno
 #' @seealso \code{\link{GWASdata-class}}
-#' @import bigmemory
+#' @import bigmemory, tools
 #' @export
 setMethod("read_geno", 
           signature="character", 
+                     #save.path="character", sep="character",
+                     #header="logical", use.fread="logical"),
           definition = function(file.path, save.path = NULL, sep = " ",
-                                header = TRUE, use.fread = TRUE, ...) {
+                                header = TRUE, use.fread = TRUE,
+                                row.names = TRUE, ...) {
             
             # Step 1: Check if file meets requirements
             # Step 1.1: Check if file exists
@@ -131,12 +134,8 @@ setMethod("read_geno",
             file.name <- unlist(strsplit(file.name, "[.]"))
             file.name <- paste(file.name[-length(file.name)], collapse=".")
             if(is.null(save.path)){
-              save.path <- unlist(strsplit(file.path, "/"))
-              save.path <- save.path[-length(save.path)]
-              save.path <- paste(save.path, collapse="/")
-              save.path <- paste(save.path, "/", sep="")
+              save.path <- normalizePath(dirname(file.path))
               save.file <- paste(file.name, ".bin", sep="")
-              #save.file <- paste0(save.path, file.name, ".bin", sep="")
               warning(paste("Default save.path", save.path, "was created!", sep=" "))
             }else{
               save.file <- paste0(save.path, "/", file.name, ".bin", sep="")
@@ -207,11 +206,24 @@ setMethod("read_geno",
             } else if (fileFormat == "txt"){
               options(bigmemory.allow.dimnames=TRUE)
               tryCatch({
-                gwasGeno <- read.big.matrix(file.path, type='char',
-                                            backingfile = save.file,
-                                            backingpath = save.path,
-                                            descriptorfile = paste0(file.name, ".desc", sep=""),
-                                            sep = sep, header = header, ...)
+                print(save.file)
+                print(save.path)
+                if(row.names){
+                  gwasGeno <- read.big.matrix(file.path, type='char',
+                                              backingfile = save.file,
+                                              backingpath = save.path,
+                                              descriptorfile = paste0(file.name, ".desc", sep=""),
+                                              sep = sep, header = header,
+                                              has.row.names = TRUE,...)
+                } else {
+                  gwasGeno <- read.big.matrix(file.path, type='char',
+                                              backingfile = save.file,
+                                              backingpath = save.path,
+                                              descriptorfile = paste0(file.name, ".desc", sep=""),
+                                              sep = sep, header = header,
+                                              has.row.names = FALSE,...)
+                }
+             
               }, warning = function(w){
                 cat("read.big.matrix caused a warning!")
                 print(w)
@@ -227,17 +239,33 @@ setMethod("read_geno",
             }
             
             # Step 4: Check if output has right format
-            # Step 4.1 Check if first column contains ID numbers
-            firstRow <- gwasGeno[ , 1]
-            if(!is.character(na.omit(firstRow)) || sum(firstRow > 2) == 0){
-              stop("Your geno file doesn't seem to contain ID numbers. Please make sure that
+            # Step 4.1 Check if dataset contains data as expected
+            # Step 4.1.1. Check if file has no row.names
+            if(!row.names){
+              firstRow <- gwasGeno[ , 1]
+              if(!is.character(na.omit(firstRow)) || sum(firstRow > 2) == 0){
+                warning("Your geno file doesn't seem to contain ID numbers. Please make sure that
                    the first row of your data contains ID numbers according to your phenotype file!")
+              }
+              
+              # Step 4.1.2 Check if the rest of the data is okay
+              if(sum(na.omit(gwasGeno[ , -1]) > 2) > 0){
+                warning("Your geno data seems to contain values bigger than 2.")
+              }
+            } else{ # Step 4.2.1 Check if file has row.names
+              possIDs <- rownames(gwasGeno)
+              if(!is.character(na.omit(possIDs)) || sum(possIDs > 2) == 0){
+                warning("Your geno file doesn't seem to contain ID numbers. Please make sure that
+                   the first row of your data contains ID numbers according to your phenotype file!")
+              }
+              
+              # Step 4.2.2 Check if rest of the data is okay
+              if(sum(na.omit(as.matrix(gwasGeno)) > 2) > 0){
+                warning("Your geno data seems to contain values bigger than 2.")
+              }
+              
             }
             
-            # Step 4.2 Check if the rest of the data is okay
-            if(sum(na.omit(gwasGeno[ , -1]) > 2) > 0){
-              warning("Your geno data seems to contain values bigger than 2.")
-            }
             # Step 5: Change geno object to big.matrix.object
             return(gwasGeno)
 })
