@@ -260,7 +260,7 @@ setMethod("read_geno",
               }
               
               # Step 4.2.2 Check if rest of the data is okay
-              if(sum(na.omit(as.matrix(gwasGeno)) > 2) > 0){
+              if(sum(na.omit(gwasGeno[,]) > 2) > 0){
                 warning("Your geno data seems to contain values bigger than 2.")
               }
               
