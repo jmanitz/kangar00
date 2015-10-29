@@ -31,8 +31,8 @@ Imports:
     CompQuadForm,
     bigmemory,
     lattice
-#Suggests: gputools
 LazyData: true
+#Suggests: gputools
 Suggests:
     knitr
 VignetteBuilder: knitr

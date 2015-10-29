@@ -170,8 +170,7 @@ setMethod('lin_kernel', signature(object = 'GWASdata'),
         stop('sorry, not yet defined')
       }
       if(parallel=='gpu'){   # Suggests gputools #
-      if('gputools' %in% (.packages(all.available=TRUE))){
-        require(gputools)
+      if(require(gputools)){
         Z <- as.numeric(Z1)
         k <- gpuMatMult(Z1,t(Z1))
       }else{
