@@ -104,15 +104,24 @@ setGeneric('read_geno', function(file.path, ...) standardGeneric('read_geno'))
 #'
 #' @rdname read_geno
 #' @seealso \code{\link{GWASdata-class}}
-#' @import bigmemory, tools
+#' @import bigmemory, tools, data.table
 #' @export
 setMethod("read_geno", 
           signature="character", 
-                     #save.path="character", sep="character",
-                     #header="logical", use.fread="logical"),
           definition = function(file.path, save.path = NULL, sep = " ",
-                                header = TRUE, use.fread = TRUE,
+                                header = TRUE, use.fread = FALSE,
                                 row.names = TRUE, ...) {
+            
+            # Step 0: Set warning and error messages
+            fread.warn <- "fread caused a warning. Please make sure your file has been read in correctly! \n"
+            fread.erro <- "fread has stopped due to an error! \n"
+            fread.load <- "Loading data via fread. If this leads to problems the function will try automatically to load file another method. \n"
+            read.table.warn <- "read.table caused a warning. Please make sure your file has been read in correctly! \n"
+            read.table.erro <- "read.table has stopped due to an error! Try to convert your file in a .txt-file and try again. \n"
+            read.table.load <- "Try reading in file with read.table. Attention: This function is very slow! \n"
+            read.big.warn <- "read.big.matrix caused a warning. Please make sure your file has been read in correctly! \n"
+            read.big.erro <- "read.big.matrix has stopped due to an error! \n"
+            read.big.load <- "Try loading data via read.big.matrix! \n"
             
             # Step 1: Check if file meets requirements
             # Step 1.1: Check if file exists
@@ -129,7 +138,7 @@ setMethod("read_geno",
               stop(paste(fileFormat, "as file format is not accepted!", sep=" "))
             }
             
-            ## Step 1.3: Check for backing file path otherwise use default
+            ## Step 1.3: Check for backing file path otherwise use/create default path
             file.name <- tail(unlist(strsplit(file.path, "/")), 1)
             file.name <- unlist(strsplit(file.name, "[.]"))
             file.name <- paste(file.name[-length(file.name)], collapse=".")
@@ -141,61 +150,107 @@ setMethod("read_geno",
               save.file <- paste0(save.path, "/", file.name, ".bin", sep="")
             }
             
-            # Step 2: Read in file according to format
-            cat("Loading data. This might take a while depending on the size of the 
-                data set.")
+            # Step 2: Read in file according to input format
+            cat("Loading data. This might take a while depending on the size of the data set. \n")
             
             if (fileFormat == "gz"){
-              # Step 2.1 
-              car("Reading in huge beagle files may fail due to memory limits. 
-                  If this is the case convert your beagle file in a .txt-file and try again. \n")
+             
+              # Step 2.1 Reading in for beagle files
+              cat("Reading in huge beagle files may fail due to memory limits. If this is the case convert your beagle file in a .txt-file and try again. \n")
+             
+              # Step 2.1.1 Reading in if use.fread = TRUE 
               if(use.fread){
-                car("Loading data via fread. If this leads to problems set the function will try
-                    automatically to load file via read.table. \n")
+                cat(fread.load)
                 tryCatch({
                   gwasGeno <- fread(file.path, header = TRUE)
-                }, warning = function(wr){
-                  cat("fread caused a warning. Please make sure your file has been read in correctly! \n")
-                  print(wr)
-                }, error = function(er){
-                  cat("fread has stopped due to an error. \n")
-                  print(er)
-                  cat("Try reading in file with read.table. Attention: This function is very slow! \n")
+                  gwasGeno <- as.big.matrix(gwasGeno)
+                }, warning = function(w){
+                  print(fread.warn)
+                  print(w)
+                }, error = function(e){
+                  print(fread.erro)
+                  print(e)
+                  # Step 2.1.1.1 If fread fails try read.table
+                  cat(read.table.load)
                   tryCatch({
                     gwasGeno <- read.table(file.path, header = TRUE)
+                    gwasGeno <- as.big.matrix(gwasGeno)
                   }, warning = function(w){
-                    cat("read.table caused a warning, Please make sure your file has been read in correctly! \n")
+                    cat(read.table.warn)
                     print(w)
                   }, error = function(e){
-                    cat("Also read.table has stopped due to an error. Try to convert your file in a .txt-file
-                        and try again. \n")
+                    cat(read.table.erro)
                     print(e)
                   }
                     )
                 }
                   )
-                gwasGeno <- as.big.matrix(gwasGeno)
               } else{
-                gwasGeno <- read.table(file.path, header=TRUE)
-                gwasGeno <- as.big.matrix(gwasGeno)
+                
+                # Step 2.1.2 Reading in if use.fread = FALSE 
+                cat(read.table.load)
+                tryCatch({
+                  gwasGeno <- read.table(file.path, header=TRUE)
+                  gwasGeno <- as.big.matrix(gwasGeno)
+                }, warning = function(w){
+                  cat(read.table.warn)
+                }, error = function(e){
+                  cat(read.table.erro)
+                }
+                  )
               }
             } else if (fileFormat == "mldose"){
-              cat("Reading in huge MACH files may fail due to memory limits. 
-                  If this is the case convert your MACH file in a .txt-file and try again.")
+              
+              # Step 2.2 Reading in MACH files
+              cat("Reading in huge MACH files may fail due to memory limits. If this is the case convert your MACH file in a .txt-file and try again. \n") 
+              
+              # Step 2.2.1 Reading in if use.fread = TRUE 
               if(use.fread){
-                cat("Loading data via fread. If this leads to problems set use.fread = FALSE")
-                gwasGeno <- fread(file.path, header = TRUE)
-                gwasGeno <- as.big.matrix(gwasGeno)
+                cat(fread.load)
+                tryCatch({
+                  gwasGeno <- fread(file.path, header = TRUE)
+                  gwasGeno <- as.big.matrix(gwasGeno)
+                }, warning = function(w){
+                  print(fread.warn)
+                  print(w)
+                }, error = function(e){
+                  print(fread.erro)
+                  print(e)
                 
+                  # Step 2.2.1.1 If fread fails try read.table
+                  cat(read.table.load)
+                  tryCatch({
+                    gwasGeno <- read.table(file.path, header = TRUE)
+                    gwasGeno <- as.big.matrix(gwasGeno)
+                  }, warning = function(w){
+                    cat(read.table.warn)
+                    print(w)
+                  }, error = function(e){
+                    cat(read.table.erro)
+                    print(e)
+                    next
+                  }
+                  )
+                }
+                )
               } else{
-                gwasGeno <- read.table(file.path, header=TRUE)
-                gwasGeno <- as.big.matrix(gwasGeno)
+                
+                # Step 2.2.2 Reading in if use.fread = FALSE 
+                cat(read.table.load)
+                tryCatch({
+                  gwasGeno <- read.table(file.path, header=TRUE)
+                  gwasGeno <- as.big.matrix(gwasGeno)
+                }, warning = function(w){
+                  cat(read.table.warn)
+                }, error = function(e){
+                  cat(read.table.erro)
+                }
+                )
               }
             } else if (fileFormat == "impute2"){
-              cat("Reading in huge IMPUTE2 files may fail due to memory limits. 
-                  If this is the case convert your IMPUTE2 file in a .txt-file and try again.")
+              cat("Reading in huge IMPUTE2 files may fail due to memory limits. If this is the case convert your IMPUTE2 file in a .txt-file and try again. \n")
               if(use.fread){
-                cat("Loading data via fread. If this leads to problems set use.fread = FALSE")
+                cat(fread.load)
                 gwasGeno <- fread(file.path, header = TRUE)
                 gwasGeno <- as.big.matrix(gwasGeno)
                 
@@ -203,70 +258,108 @@ setMethod("read_geno",
                 gwasGeno <- read.table(file.path, header=TRUE)
                 gwasGeno <- as.big.matrix(gwasGeno)
               }
-            } else if (fileFormat == "txt"){
-              options(bigmemory.allow.dimnames=TRUE)
-              tryCatch({
-                print(save.file)
-                print(save.path)
-                if(row.names){
-                  gwasGeno <- read.big.matrix(file.path, type='char',
-                                              backingfile = save.file,
-                                              backingpath = save.path,
-                                              descriptorfile = paste0(file.name, ".desc", sep=""),
-                                              sep = sep, header = header,
-                                              has.row.names = TRUE,...)
-                } else {
-                  gwasGeno <- read.big.matrix(file.path, type='char',
-                                              backingfile = save.file,
-                                              backingpath = save.path,
-                                              descriptorfile = paste0(file.name, ".desc", sep=""),
-                                              sep = sep, header = header,
-                                              has.row.names = FALSE,...)
+            } else if (fileFormat == "txt"){ 
+              
+              # Step 2.x Reading in for .txt-files
+              # Step 2.x.1 Reading in if use.fread = TRUE 
+              if(use.fread){
+                # Step 2.x.2 Try load via fread
+                cat(fread.load)
+                gwasGeno <- try(fread(file.path, header = TRUE), silent = TRUE)
+                
+                if(class(gwasGeno) == "try-error"){
+                  cat(fread.erro)
+                  tryCatch({
+                    cat(read.big.load)
+                    print(row.names)
+                    if(row.names){
+                      gwasGeno <- read.big.matrix(file.path, type='char',
+                                                  backingfile = save.file,
+                                                  backingpath = save.path,
+                                                  descriptorfile = paste0(file.name, ".desc", sep=""),
+                                                  sep = sep, header = header,
+                                                  has.row.names = TRUE,...)
+                    } else {
+                      gwasGeno <- read.big.matrix(file.path, type='char',
+                                                  backingfile = save.file,
+                                                  backingpath = save.path,
+                                                  descriptorfile = paste0(file.name, ".desc", sep=""),
+                                                  sep = sep, header = header,
+                                                  has.row.names = FALSE,...)
+                    }
+                  }, warning = function(w){
+                    cat(read.big.warn)
+                    print(w)
+                  }, error = function(e){
+                    cat(read.big.erro)
+                    print(e)
+                  }
+                  )
                 }
-             
-              }, warning = function(w){
-                cat("read.big.matrix caused a warning!")
-                print(w)
-              }, error = function(e){
-                cat("read.big.matrix has stopped due to an error!")
-                print(e)
+                } else{
+                # Step 2.x.2 Reading in if use.fread = FALSE
+                options(bigmemory.allow.dimnames=TRUE)
+                tryCatch({
+                  # Step 2.x.2.1 Reading in for files with row.names
+                  if(row.names){
+                    gwasGeno <- read.big.matrix(file.path, type='char',
+                                                backingfile = save.file,
+                                                backingpath = save.path,
+                                                descriptorfile = paste0(file.name, ".desc", sep=""),
+                                                sep = sep, header = header,
+                                                has.row.names = TRUE,...)
+                  } else {
+                    # Step 2.x.2.2 Reading in for files without row.names
+                    gwasGeno <- read.big.matrix(file.path, type='char',
+                                                backingfile = save.file,
+                                                backingpath = save.path,
+                                                descriptorfile = paste0(file.name, ".desc", sep=""),
+                                                sep = sep, header = header,
+                                                has.row.names = FALSE,...)
+                  }
+                }, warning = function(w){
+                  cat(read.big.warn)
+                  cat(w)
+                }, error = function(e){
+                  cat(read.big.erro)
+                  cat(e)
+                }
+                  )
               }
-                )
               
             } else{
-              stop("Unknown file format. Please only use 
-                   .txt-Files or output from MACH, Impute or Beagle!")
+              stop("Unknown file format. Please only use .txt-Files or output from MACH, Impute or Beagle! \n")
             }
             
-            # Step 4: Check if output has right format
-            # Step 4.1 Check if dataset contains data as expected
-            # Step 4.1.1. Check if file has no row.names
-            if(!row.names){
-              firstRow <- gwasGeno[ , 1]
+            
+            # Step 3: Check if geno data is as expected
+            if(!row.names){ # Step 3.1 Check if file has no row.names
+              # Step 3.1.1. Check if file has ID numbers
+              firstRow <- gwasGeno[ , 1]       
               if(!is.character(na.omit(firstRow)) || sum(firstRow > 2) == 0){
                 warning("Your geno file doesn't seem to contain ID numbers. Please make sure that
-                   the first row of your data contains ID numbers according to your phenotype file!")
+                   the first row of your data contains ID numbers according to your phenotype file! \n")
               }
               
-              # Step 4.1.2 Check if the rest of the data is okay
+              # Step 3.1.2 Check if the rest of the data is okay
               if(sum(na.omit(gwasGeno[ , -1]) > 2) > 0){
-                warning("Your geno data seems to contain values bigger than 2.")
+                warning("Your geno data seems to contain values bigger than 2. \n")
               }
-            } else{ # Step 4.2.1 Check if file has row.names
+            } else{ # Step 3.2 Check if file has row.names
+              # Step 3.2.1 Check if file has ID numbers
               possIDs <- rownames(gwasGeno)
               if(!is.character(na.omit(possIDs)) || sum(possIDs > 2) == 0){
                 warning("Your geno file doesn't seem to contain ID numbers. Please make sure that
-                   the first row of your data contains ID numbers according to your phenotype file!")
+                   the first row of your data contains ID numbers according to your phenotype file! \n")
               }
               
-              # Step 4.2.2 Check if rest of the data is okay
+              # Step 3.2.2 Check if rest of the data is okay
               if(sum(na.omit(gwasGeno[,]) > 2) > 0){
-                warning("Your geno data seems to contain values bigger than 2.")
+                warning("Your geno data seems to contain values bigger than 2. \n")
               }
               
             }
             
-            # Step 5: Change geno object to big.matrix.object
             return(gwasGeno)
 })
 
