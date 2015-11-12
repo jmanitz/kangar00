@@ -1,27 +1,50 @@
-source("GWASdata.r")
+#source("GWASdata.r")
 library("testthat")
-
-
-fread.warn <- "fread caused a warning. Please make sure your file has been read in correctly! \n"
-fread.erro <- "fread has stopped due to an error! \n"
-fread.load <- "Loading data via fread. If this leads to problems the function will try automatically to load file another method. \n"
-read.table.warn <- "read.table caused a warning. Please make sure your file has been read in correctly! \n"
-read.table.erro <- "read.table has stopped due to an error! Try to convert your file in a .txt-file and try again. \n"
-read.table.load <- "Try reading in file with read.table. Attention: This function is very slow! \n"
-read.big.warn <- "read.big.matrix caused a warning. Please make sure your file has been read in correctly! \n"
-read.big.erro <- "read.big.matrix has stopped due to an error! \n"
-read.big.load <- "Try loading data via read.big.matrix! \n"
+library("data.table")
 
 context("Test functionality of read_geno:")
 
-test_that("Test for .txt-files without header:", {
+test_that("Test for general errors in read_geno:", {
   
-  expect_is(read_geno, "big.matrix" )
+  file.dir.1 <- system.file(package = "kangar00")
+  file.dir.2 <- "/inst/data/"
+  file.dir   <- paste(file.dir.1, file.dir.2, sep = "")
   
-  expect_warning
+  setwd(file.dir)
   
-  expect_error
+  file.name <- "no_file.txt"
+  file.path <- paste(file.dir, file.name, sep="")
+  file.error <- paste("File", file.path, "does not exist!", sep=" ")
   
+  expect_error(read_geno(file.path), file.error)
   
+  file.name <- "wrong_format.csv"
+  file.path <- paste(file.dir, file.name, sep="")
+  file.error <- paste("csv as file format is not accepted!")
+  
+  expect_error(read_geno(file.path), file.error)
+  
+})
+
+test_that("Test for .txt-files using fread without header and row.names:", {
+  
+  file.dir.1 <- system.file(package = "kangar00")
+  file.dir.2 <- "/inst/data/"
+  file.dir   <- paste(file.dir.1, file.dir.2, sep = "")
+  
+  file.name <- "test_geno_no_header.txt"
+  file.path <- paste(file.dir, file.name, sep="")
+  
+  expect_is(read_geno(file, header = FALSE, row.names = FALSE, use.fread = TRUE), "big.matrix" )
+  
+  data.vec <- c(0, 1, 0, 2, 1, 0, 1, 2, 0, 1, 1, 0, 2, 2, 1, 2, 2, 1, 0, 1, 1, 0, 2, 0)
+  data.ma  <- matrix(data.vec, nrow = 6, ncol = 4)
+  data.bma <- as.big.matrix(data.ma)
+  
+  expec_equal(read_geno(file, header = FALSE, row.names = FALSE, use.fread), data.bma)
+  
+  msg_warning_ID <- "Your geno file doesn't seem to contain ID numbers. Please make sure that
+                   the first row of your data contains ID numbers according to your phenotype file! \n"
+  expect_warning(read_geno(file, header = FALSE, row.names = FALSE), msg_warning_ID)
   
 })

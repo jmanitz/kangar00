@@ -115,7 +115,7 @@ setMethod("read_geno",
             # Step 0: Set warning and error messages
             fread.warn <- "fread caused a warning. Please make sure your file has been read in correctly! \n"
             fread.erro <- "fread has stopped due to an error! \n"
-            fread.load <- "Loading data via fread. If this leads to problems the function will try automatically to load file another method. \n"
+            fread.load <- "Loading data via fread. If this leads to problems the function will try automatically to load file via another method. \n"
             read.table.warn <- "read.table caused a warning. Please make sure your file has been read in correctly! \n"
             read.table.erro <- "read.table has stopped due to an error! Try to convert your file in a .txt-file and try again. \n"
             read.table.load <- "Try reading in file with read.table. Attention: This function is very slow! \n"
@@ -265,13 +265,19 @@ setMethod("read_geno",
               if(use.fread){
                 # Step 2.x.1.1 Try load via fread
                 cat(fread.load)
-                gwasGeno <- try(fread(file.path, header = TRUE), silent = TRUE)
+                if(header) {
+                  cat("First row is treated as header. If it contains data use header = FALSE. \n")
+                  gwasGeno <- try(fread(file.path, header = TRUE), silent = TRUE)
+                } else {
+                  cat("First row is treated as data. If it contains column names use header = TRUE. \n")
+                  gwasGeno <- try(fread(file.path, header = FALSE), silent = TRUE)
+                }
+                
                 # Step 2.x.1.2 If fread fails use read.big.matrix
                 if(class(gwasGeno) == "try-error"){
                   cat(fread.erro)
                   tryCatch({
                     cat(read.big.load)
-                    print(row.names)
                     if(row.names){
                       gwasGeno <- read.big.matrix(file.path, type='char',
                                                   backingfile = save.file,
@@ -338,7 +344,7 @@ setMethod("read_geno",
               # Step 3.1.1. Check if file has ID numbers
               firstRow <- gwasGeno[ , 1]       
               if(!is.character(na.omit(firstRow)) || sum(firstRow > 2) == 0){
-                warning("Your geno file doesn't seem to contain ID numbers. Please make sure that
+                warning("Your geno file seems not to contain ID numbers. Please make sure that
                    the first row of your data contains ID numbers according to your phenotype file! \n")
               }
               
@@ -350,7 +356,7 @@ setMethod("read_geno",
               # Step 3.2.1 Check if file has ID numbers
               possIDs <- rownames(gwasGeno)
               if(!is.character(na.omit(possIDs)) || sum(possIDs > 2) == 0){
-                warning("Your geno file doesn't seem to contain ID numbers. Please make sure that
+                warning("Your geno file seems not to contain ID numbers. Please make sure that
                    the first row of your data contains ID numbers according to your phenotype file! \n")
               }
               
