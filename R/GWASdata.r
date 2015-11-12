@@ -251,7 +251,7 @@ setMethod("read_geno",
               cat("Reading in huge IMPUTE2 files may fail due to memory limits. If this is the case convert your IMPUTE2 file in a .txt-file and try again. \n")
               if(use.fread){
                 cat(fread.load)
-                gwasGeno <- fread(file.path, header = TRUE)
+                gwasGeno <- try(fread(file.path, header = TRUE), silent = TRUE)
                 gwasGeno <- as.big.matrix(gwasGeno)
                 
               } else{
@@ -263,10 +263,10 @@ setMethod("read_geno",
               # Step 2.x Reading in for .txt-files
               # Step 2.x.1 Reading in if use.fread = TRUE 
               if(use.fread){
-                # Step 2.x.2 Try load via fread
+                # Step 2.x.1.1 Try load via fread
                 cat(fread.load)
                 gwasGeno <- try(fread(file.path, header = TRUE), silent = TRUE)
-                
+                # Step 2.x.1.2 If fread fails use read.big.matrix
                 if(class(gwasGeno) == "try-error"){
                   cat(fread.erro)
                   tryCatch({
@@ -296,6 +296,7 @@ setMethod("read_geno",
                   }
                   )
                 }
+                gwasGeno <- as.big.matrix(gwasGeno)
                 } else{
                 # Step 2.x.2 Reading in if use.fread = FALSE
                 options(bigmemory.allow.dimnames=TRUE)
@@ -319,10 +320,10 @@ setMethod("read_geno",
                   }
                 }, warning = function(w){
                   cat(read.big.warn)
-                  cat(w)
+                  print(w)
                 }, error = function(e){
                   cat(read.big.erro)
-                  cat(e)
+                  print(e)
                 }
                   )
               }
