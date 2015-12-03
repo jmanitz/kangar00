@@ -269,7 +269,7 @@ setGeneric('rewire_network', function(x, ...) standardGeneric('rewire_network'))
 #' @author Juliane Manitz
 #'
 #' @param x adjacency matrix
-#' @param remov indication which genes should be removed
+#' @param remov indication which genes should be removed <FIXME> what does this mean? TRUE/FALSE vector, gene names, or vector
 #' @return An adjacency matrix containing rewired network
 #'
 #' @references TODO Newman?

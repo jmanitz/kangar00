@@ -105,7 +105,6 @@ setGeneric('pathway2igraph', function(object, ...) standardGeneric('pathway2igra
 #' @aliases pathway2igraph,pathway,ANY-method
 #' 
 #' @examples
-#'
 #' # convert to igraph object
 #' str(hsa04710)
 #' g <- pathway2igraph(hsa04710)
@@ -123,10 +122,11 @@ setMethod('pathway2igraph', signature='pathway',
     g <- graph_from_adjacency_matrix(net, mode='undirected', 
                                      weighted=TRUE, diag=FALSE)
 
-    # specify interaction type 
-    E(g)$sign <- E(g)$weight 
-    E(g)$weight <- 1
-
+    if(ecount(g)>0){
+      # specify interaction type 
+      E(g)$sign <- E(g)$weight 
+      E(g)$weight <- 1
+    }
     return(g)
 })
 
