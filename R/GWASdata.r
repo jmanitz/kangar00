@@ -23,8 +23,8 @@
 #' @export GWASdata
 #' @import methods
 #' @rdname GWASdata-class
-GWASdata <- setClass('GWASdata', 
-                     representation(geno ="big.matrix", anno="data.frame",  
+GWASdata <- setClass('GWASdata',
+                     representation(geno ="ANY", anno="data.frame",
                                     pheno='data.frame', desc='character'))
     ## validy checks
     setValidity('GWASdata', function(object){
@@ -106,29 +106,29 @@ setGeneric('read_geno', function(file.path, ...) standardGeneric('read_geno'))
 #' @seealso \code{\link{GWASdata-class}}
 #' @import bigmemory, tools
 #' @export
-setMethod("read_geno", 
-          signature="character", 
+setMethod("read_geno",
+          signature="character",
                      #save.path="character", sep="character",
                      #header="logical", use.fread="logical"),
           definition = function(file.path, save.path = NULL, sep = " ",
                                 header = TRUE, use.fread = TRUE,
                                 row.names = TRUE, ...) {
-            
+
             # Step 1: Check if file meets requirements
             # Step 1.1: Check if file exists
             if(!file.exists(file.path)){
               stop(paste("File", file.path, "does not exist!", sep=" "))
             }
-            
+
             # Step 1.2: Check for right input file format
             fileFormat <- unlist(strsplit(file.path, "[.]"))
             fileFormat <- fileFormat[length(fileFormat)]
-            
+
             acceptedFormats <- c("txt", "impute2", "gz", "mldose")
             if(!is.element(fileFormat, acceptedFormats)){
               stop(paste(fileFormat, "as file format is not accepted!", sep=" "))
             }
-            
+
             ## Step 1.3: Check for backing file path otherwise use default
             file.name <- tail(unlist(strsplit(file.path, "/")), 1)
             file.name <- unlist(strsplit(file.name, "[.]"))
@@ -140,14 +140,14 @@ setMethod("read_geno",
             }else{
               save.file <- paste0(save.path, "/", file.name, ".bin", sep="")
             }
-            
+
             # Step 2: Read in file according to format
-            cat("Loading data. This might take a while depending on the size of the 
+            cat("Loading data. This might take a while depending on the size of the
                 data set.")
-            
+
             if (fileFormat == "gz"){
-              # Step 2.1 
-              car("Reading in huge beagle files may fail due to memory limits. 
+              # Step 2.1
+              car("Reading in huge beagle files may fail due to memory limits.
                   If this is the case convert your beagle file in a .txt-file and try again. \n")
               if(use.fread){
                 car("Loading data via fread. If this leads to problems set the function will try
@@ -180,25 +180,25 @@ setMethod("read_geno",
                 gwasGeno <- as.big.matrix(gwasGeno)
               }
             } else if (fileFormat == "mldose"){
-              cat("Reading in huge MACH files may fail due to memory limits. 
+              cat("Reading in huge MACH files may fail due to memory limits.
                   If this is the case convert your MACH file in a .txt-file and try again.")
               if(use.fread){
                 cat("Loading data via fread. If this leads to problems set use.fread = FALSE")
                 gwasGeno <- fread(file.path, header = TRUE)
                 gwasGeno <- as.big.matrix(gwasGeno)
-                
+
               } else{
                 gwasGeno <- read.table(file.path, header=TRUE)
                 gwasGeno <- as.big.matrix(gwasGeno)
               }
             } else if (fileFormat == "impute2"){
-              cat("Reading in huge IMPUTE2 files may fail due to memory limits. 
+              cat("Reading in huge IMPUTE2 files may fail due to memory limits.
                   If this is the case convert your IMPUTE2 file in a .txt-file and try again.")
               if(use.fread){
                 cat("Loading data via fread. If this leads to problems set use.fread = FALSE")
                 gwasGeno <- fread(file.path, header = TRUE)
                 gwasGeno <- as.big.matrix(gwasGeno)
-                
+
               } else{
                 gwasGeno <- read.table(file.path, header=TRUE)
                 gwasGeno <- as.big.matrix(gwasGeno)
@@ -223,7 +223,7 @@ setMethod("read_geno",
                                               sep = sep, header = header,
                                               has.row.names = FALSE,...)
                 }
-             
+
               }, warning = function(w){
                 cat("read.big.matrix caused a warning!")
                 print(w)
@@ -232,12 +232,12 @@ setMethod("read_geno",
                 print(e)
               }
                 )
-              
+
             } else{
-              stop("Unknown file format. Please only use 
+              stop("Unknown file format. Please only use
                    .txt-Files or output from MACH, Impute or Beagle!")
             }
-            
+
             # Step 4: Check if output has right format
             # Step 4.1 Check if dataset contains data as expected
             # Step 4.1.1. Check if file has no row.names
@@ -247,7 +247,7 @@ setMethod("read_geno",
                 warning("Your geno file doesn't seem to contain ID numbers. Please make sure that
                    the first row of your data contains ID numbers according to your phenotype file!")
               }
-              
+
               # Step 4.1.2 Check if the rest of the data is okay
               if(sum(na.omit(gwasGeno[ , -1]) > 2) > 0){
                 warning("Your geno data seems to contain values bigger than 2.")
@@ -258,14 +258,14 @@ setMethod("read_geno",
                 warning("Your geno file doesn't seem to contain ID numbers. Please make sure that
                    the first row of your data contains ID numbers according to your phenotype file!")
               }
-              
+
               # Step 4.2.2 Check if rest of the data is okay
               if(sum(na.omit(gwasGeno[,]) > 2) > 0){
                 warning("Your geno data seems to contain values bigger than 2.")
               }
-              
+
             }
-            
+
             # Step 5: Change geno object to big.matrix.object
             return(gwasGeno)
 })
