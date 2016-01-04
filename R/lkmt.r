@@ -33,11 +33,29 @@ lkmt <- setClass('lkmt',
                  slots=c(formula='formula', kernel='kernel', GWASdata='GWASdata',
                          statistic='vector',df='vector',p.value='vector'))
 
-setValidity('lkmt', function(object){  # to be defined !!
-	msg  <- NULL
+setValidity('lkmt', function(object){ 
+ 	msg  <- NULL
 	valid <- TRUE
-	message('Create validity function!\n')
-	if(valid) TRUE else msg
+  if(!(class(object@GWASdata)=="GWASdata")){
+	  valid=FALSE
+	  msg <- c(msg, "no GWASdata object!")
+	}
+ 	if(!is.matrix(object@kernel)){
+	  valid=FALSE
+	  msg <- c(msg, "kernel matrix is missing!")
+	}
+  if(!is.numeric(object@statistic)){
+	  valid=FALSE
+	  msg <- c(msg, "test statistic value must be numeric!")
+	}
+  if(!is.numeric(object@df)){
+	  valid=FALSE
+	  msg <- c(msg, "degrees of freedom must be given!")
+	}
+  if(!is.numeric(object@p.value)){
+	  valid=FALSE
+	  msg <- c(msg, "p-value needs to be numeric!")
+	}
 })
 
 
@@ -55,7 +73,6 @@ lkmt <- function(formula, kernel, GWASdata, method=c('satt','davies'), ...){
         model <- davies_test(kernel@kernel, nullmodel)
     }
     ret <- new('lkmt', formula=formula, kernel=kernel, GWASdata=GWASdata,
-               #statistic=model@statistic, df=model@parameter, p.value=model@p.value)
                statistic=model$statistic, df=model$parameter, p.value=model$p.value)
     return(ret)
 }
