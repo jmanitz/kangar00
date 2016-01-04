@@ -341,34 +341,94 @@ setMethod('GeneSNPsize', signature='GWASdata',
           })
 
 
-# <FIXME> create object snp_info and corresponding constructor <FIXME>
-setGeneric('snp_info', function(x, ...) standardGeneric('snp_info'))
-#' Get SNP positions
+#' An S4 class for an object assigning SNP positions to rs-numbers (for internal use) 
 #'
-#' This function gives for a vector of SNPs the position of each SNP as
-#' extracted from the Ensemble database. The database is accessed via the
+#' @rdname snp_info-class
+#' @slot snp_info A \code{data.frame} including information on SNP positions
+#'
+#' @author Stefanie Friedrichs
+#' @export snp_info
+#' @import methods
+snp_info <- setClass('snp_info', slots=c(positions='data.frame'))
+
+setValidity('snp_info', function(object){  
+	msg  <- NULL
+	valid <- TRUE
+ 	if(!is.data.frame(object@positions)){
+	  valid=FALSE
+	  msg <- c(msg, "the SNP_info object must include a data.frame")
+	}
+	if(!all.equal(colnames(object@positions),c("chr","position","rsnumber"))){
+	  valid=FALSE
+	  msg <- c(msg, "the included data.frame needs columns 'chr', 'position' 
+    and 'rsnumber'")
+	}
+})
+
+#' This function gives for a vector of SNP identifiers the position of each SNP 
+#' as extracted from the Ensemble database. The database is accessed via the
 #' R-package \code{biomaRt}.
 #'
-#' @param x a vector of SNP rsnumbers for which positions will be extracted. <FIXME> what type of vector? specify signature
+#' @param x a character vector of SNP rsnumbers for which positions will be extracted.
 #' @param ... further arguments can be added.
 #' @return a \code{data.frame} including the SNP positions with columns
 #' chromosome, position and rsnumber. SNPs not found in the Ensemble database
-#' not be listed in the returned \code{data.frame}, SNPs with multiple positions
-#' will appear several times.
+#' will not be listed in the returned \code{snp_info} object, SNPs with multiple
+#' positions  will appear several times.
 #' @examples
-#' # snp_info("rs234") <FIXME>
+#' snp_info(c("rs234"))
 #'
 #' @author Stefanie Friedrichs
 #' @import biomaRt
-setMethod('snp_info', signature='character',
-          definition <- function(x, ...) {
+#' @rdname snp_info-class 
+snp_info <- function(x, ...){          
   #set database; Homo sapiens Short Variation (SNPs and indels):
-  snp <- useMart("snp", dataset="hsapiens_snp")
-  snp_info <- getBM(attributes=c("chr_name","chrom_start","refsnp_id"),
-              filters=c("snp_filter"),values=x, mart=snp)
-  colnames(snp_info) <- c("chr","position","rsnumber")
-  return(snp_info)
-})
+  #snp <- useMart("snp", dataset="hsapiens_snp") ##server unavailable!
+  #listMarts(host = "jul2015.archive.ensembl.org")
+  ensembl <- useMart(biomart="ENSEMBL_MART_SNP",dataset="hsapiens_snp", 
+                     host = "jul2015.archive.ensembl.org")                         
+  info <- getBM(attributes=c("chr_name","chrom_start","refsnp_id"),
+                filters=c("snp_filter"),values=x, mart=ensembl)
+  colnames(info) <- c("chr","position","rsnumber")
+  ret <- new('snp_info', positions=info)
+  return(ret)
+}
+#' \code{show} Shows basic information on \code{snp_info} object
+#'
+#' @param object An object of class \code{\link{snp_info}}.
+#' @return \code{show} Basic information on \code{snp_info} object.
+#' #@author Stefanie Friedrichs
+#' @export
+#' @rdname snp_info-class
+setMethod('show', signature='snp_info',
+          definition = function(object){
+            cat('An object of class ', class(object), '\n', sep='')
+            cat('Number of SNPs:', nrow(object@positions),'\n')
+            if(nrow(object@positions)>=6){
+            print('First six rows:', object@positions[1:6,],'\n')}  
+          })
+
+## summary
+setGeneric('summary', function(object, ...) standardGeneric('summary'))
+#' \code{summary} Summarizes information on \code{snp_info} object
+#'
+#' @param object An object of class \code{\link{snp_info}}.
+#' @return \code{summary} Summarized information on \code{snp_info} object.
+#' #@author Stefanie Friedrichs
+#' @export
+#' @rdname snp_info-class
+setMethod('summary', signature='snp_info',
+          definition = function(object){
+            cat('An object of class ', class(object), '\n', sep='')
+            cat('Number of SNPs:', nrow(object@positions),'\n')
+            if(nrow(object@positions)>=6){
+            print('First six rows:', object@positions[1:6,],'\n')}  
+          })
+
+
+
+
+
 
 setGeneric('get_anno', function(obecjt, ...) standardGeneric('get_anno'))
 #' Create annotation for GWASdata object
