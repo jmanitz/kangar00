@@ -368,6 +368,31 @@ setMethod('gene_name_number', signature='character',
 })
 
 
+#' An S4 class for an object assigning genes to pathways
+#'
+#' @rdname spathway_info-class
+#' @slot info A \code{data.frame} including information on genes contained in 
+#' pathways
+#'
+#' @author Stefanie Friedrichs
+#' @export pathway_info
+#' @import methods
+pathway_info <- setClass('pathway_info', slots=c(info='data.frame'))
+
+setValidity('pathway_info', function(object){  
+	msg  <- NULL
+	valid <- TRUE
+ 	if(!is.data.frame(object@info)){
+	  valid=FALSE
+	  msg <- c(msg, "the pathway_info object must include a data.frame")
+	}
+	if(!all.equal(colnames(object@info),c("pathway","gene_start","gene_end","chr","gene") )){
+	  valid=FALSE
+	  msg <- c(msg, "the included data.frame needs columns 'pathway',
+           'gene_start', 'gene_end', 'chr' and 'gene'.")
+	}
+})
+
 setGeneric('pathway_info', function(x, ...) standardGeneric('pathway_info'))
 #' Get information on genes in a pathway
 #'
@@ -386,18 +411,53 @@ setGeneric('pathway_info', function(x, ...) standardGeneric('pathway_info'))
 #' @author Stefanie Friedrichs
 #' @import biomaRt  
 setMethod('pathway_info', signature='character', 
-          definition = function(x){              
-    g       <- gene_name_number(x)[,2] 
-    ensembl <- useMart("ensembl", dataset="hsapiens_gene_ensembl")
-    info    <- getBM(attributes=c("start_position","end_position",
-               "chromosome_name","hgnc_symbol"), filters=c("hgnc_symbol"),
-               values=g, mart=ensembl)
-    info$chromosome_name   <- as.numeric(as.character(info$chromosome_name))
-    info                   <- na.omit(info)
-    pathway_info           <- cbind(rep(paste(x,sep=""),length(info[,1])),info)
-    colnames(pathway_info) <- c("pathway","gene_start","gene_end","chr","gene")             
-    return(pathway_info)
+         definition = function(x){              
+   g       <- gene_name_number(x)[,2] 
+   #ensembl <- useMart("ensembl", dataset="hsapiens_gene_ensembl")  
+   ensembl <- useMart(biomart="ENSEMBL_MART_ENSEMBL",
+              dataset="hsapiens_gene_ensembl",host = "jul2015.archive.ensembl.org") 
+   info    <- getBM(attributes=c("start_position","end_position",
+              "chromosome_name","hgnc_symbol"), filters=c("hgnc_symbol"),
+              values=g, mart=ensembl)
+   info$chromosome_name <- as.numeric(as.character(info$chromosome_name))
+   info                 <- na.omit(info)
+   pathways             <- cbind(rep(paste(x,sep=""),length(info[,1])),info)
+   colnames(pathways)   <- c("pathway","gene_start","gene_end","chr","gene") 
+   ret <- new('pathway_info', info=pathways)
+   return(ret)
 })
+#' \code{show} Shows basic information on \code{pathway_info} object
+#'
+#' @param object An object of class \code{\link{pathway_info}}.
+#' @return \code{show} Basic information on \code{pathway_info} object.
+#' @author Stefanie Friedrichs
+#' @export
+#' @rdname pathway_info-class
+setMethod('show', signature='pathway_info',
+          definition = function(object){
+            cat('An object of class ', class(object), '\n', sep='')
+            cat('Number of pathways:', length(unique(object@info$pathway)),'\n')
+            cat('Number of genes:', length(unique(object@info$gene)),'\n')
+            if(nrow(object@info)>6){ cat('First six rows: \n')
+            print(object@info[1:6,])}else{print(object@info)}   
+          })
+
+setGeneric('summary', function(object, ...) standardGeneric('summary'))
+#' \code{summary} Summarizes information on \code{pathway_info} object
+#'
+#' @param object An object of class \code{\link{pathway_info}}.
+#' @return \code{summary} Summarized information on \code{pathway_info} object.
+#' @author Stefanie Friedrichs
+#' @export
+#' @rdname pathway_info-class
+setMethod('summary', signature='pathway_info',
+          definition = function(object){
+            cat('An object of class ', class(object), '\n', sep='')
+            cat('Number of pathways:', length(unique(object@info$pathway)),'\n')
+            cat('Number of genes:', length(unique(object@info$gene)),'\n')
+            if(nrow(object@info)>6){ cat('First six rows: \n')
+            print(object@info[1:6,])}else{print(object@info)}   
+          })
 
 
 setGeneric('set_one', function(x, ...) standardGeneric('set_one'))

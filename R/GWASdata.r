@@ -18,7 +18,8 @@
 #' @examples
 #' data(pheno)
 #' data(geno)
-#' #gwas <- new('GWASdata', pheno=pheno, geno=geno, desc="some study") ### ERROR
+#' data(anno)
+#' gwas <- new('GWASdata', pheno=pheno, geno=geno, anno=anno, desc="some study") 
 #' @author Juliane Manitz, Stefanie Friedrichs
 #' @export GWASdata
 #' @import methods
@@ -344,27 +345,28 @@ setMethod('GeneSNPsize', signature='GWASdata',
 #' An S4 class for an object assigning SNP positions to rs-numbers (for internal use) 
 #'
 #' @rdname snp_info-class
-#' @slot snp_info A \code{data.frame} including information on SNP positions
+#' @slot info A \code{data.frame} including information on SNP positions
 #'
 #' @author Stefanie Friedrichs
 #' @export snp_info
 #' @import methods
-snp_info <- setClass('snp_info', slots=c(positions='data.frame'))
+snp_info <- setClass('snp_info', slots=c(info='data.frame'))
 
 setValidity('snp_info', function(object){  
 	msg  <- NULL
 	valid <- TRUE
- 	if(!is.data.frame(object@positions)){
+ 	if(!is.data.frame(object@info)){
 	  valid=FALSE
 	  msg <- c(msg, "the SNP_info object must include a data.frame")
 	}
-	if(!all.equal(colnames(object@positions),c("chr","position","rsnumber"))){
+	if(!all.equal(colnames(object@info),c("chr","position","rsnumber"))){
 	  valid=FALSE
 	  msg <- c(msg, "the included data.frame needs columns 'chr', 'position' 
     and 'rsnumber'")
 	}
 })
 
+setGeneric('snp_info', function(x, ...) standardGeneric('snp_info'))
 #' This function gives for a vector of SNP identifiers the position of each SNP 
 #' as extracted from the Ensemble database. The database is accessed via the
 #' R-package \code{biomaRt}.
@@ -381,108 +383,110 @@ setValidity('snp_info', function(object){
 #' @author Stefanie Friedrichs
 #' @import biomaRt
 #' @rdname snp_info-class 
-snp_info <- function(x, ...){          
+setMethod('snp_info', signature='character', 
+          definition = function(x){        
   #set database; Homo sapiens Short Variation (SNPs and indels):
-  #snp <- useMart("snp", dataset="hsapiens_snp") ##server unavailable!
+  # snp <- useMart("snp", dataset="hsapiens_snp") ##server unavailable!
   #listMarts(host = "jul2015.archive.ensembl.org")
   ensembl <- useMart(biomart="ENSEMBL_MART_SNP",dataset="hsapiens_snp", 
                      host = "jul2015.archive.ensembl.org")                         
   info <- getBM(attributes=c("chr_name","chrom_start","refsnp_id"),
                 filters=c("snp_filter"),values=x, mart=ensembl)
   colnames(info) <- c("chr","position","rsnumber")
-  ret <- new('snp_info', positions=info)
+  ret <- new('snp_info', info=info)
   return(ret)
-}
+})
+
 #' \code{show} Shows basic information on \code{snp_info} object
 #'
 #' @param object An object of class \code{\link{snp_info}}.
 #' @return \code{show} Basic information on \code{snp_info} object.
-#' #@author Stefanie Friedrichs
+#' @author Stefanie Friedrichs
 #' @export
 #' @rdname snp_info-class
 setMethod('show', signature='snp_info',
           definition = function(object){
             cat('An object of class ', class(object), '\n', sep='')
-            cat('Number of SNPs:', nrow(object@positions),'\n')
-            if(nrow(object@positions)>=6){
-            print('First six rows:', object@positions[1:6,],'\n')}  
-          })
+            cat('Number of SNPs:', nrow(object@info),'\n')
+            if(nrow(object@info)>6){ cat('First six rows: \n')
+            print(object@info[1:6,])}else{print(object@info)}  
+})
 
-## summary
 setGeneric('summary', function(object, ...) standardGeneric('summary'))
 #' \code{summary} Summarizes information on \code{snp_info} object
 #'
 #' @param object An object of class \code{\link{snp_info}}.
 #' @return \code{summary} Summarized information on \code{snp_info} object.
-#' #@author Stefanie Friedrichs
+#' @author Stefanie Friedrichs
 #' @export
 #' @rdname snp_info-class
 setMethod('summary', signature='snp_info',
           definition = function(object){
             cat('An object of class ', class(object), '\n', sep='')
-            cat('Number of SNPs:', nrow(object@positions),'\n')
-            if(nrow(object@positions)>=6){
-            print('First six rows:', object@positions[1:6,],'\n')}  
-          })
+            cat('Number of SNPs:', nrow(object@info),'\n')
+            if(nrow(object@info)>6){ cat('First six rows: \n')
+            print(object@info[1:6,])}else{print(object@info)}
+               
+})
 
-
-
-
-
-
-setGeneric('get_anno', function(obecjt, ...) standardGeneric('get_anno'))
-#' Create annotation for GWASdata object
+setGeneric('get_anno', function(object1, object2, ...) standardGeneric('get_anno'))
+#' A function to create the annotation for a GWASdata object, in which 
+#' SNPs are assigned to pathways via gene membership. 
 #'
-#' This function gives for a vector of SNPs the position of each SNP as
-#' extracted from the Ensemble database. The database is accessed via the
-#' R-package \code{biomaRt}.
+#' This function combines a \code{snp_info} and a \code{pathway_info} object 
+#' into an annotation \code{data.frame} used for pathway analysis on GWAS.
 #'
-#' @param snp_info A \code{data frame} with SNP information as returned by
-#' \code{\link{snp_info}}. The \code{data frame} has to contain columns "chr",
-#' "position" and "rsnumber".
-#' @param pathway_info A \code{data frame} with information on the genes forming
-#' the pathway. Output from \code{\link{pathway_info}}.
+#' @param snp_info A \code{snp_info} object with SNP information as returned by
+#' the \code{\link{snp_info}} function. The included \code{data frame} contains
+#' the columns "chr", "position" and "rsnumber".
+#' @param pathway_info A \code{pathway_info} object with information on genes
+#' contained in pathways. It is created by the \code{\link{pathway_info}} 
+#' function and contains a \code{data frame} with columns 
+#' the columns "pathway", "gene_start", gene_end", "chr", "gene".
 #' @param ... further arguments can be added.
-#' @return A \code{data.frame} mapping SNPs to genes and genes to pathways. Includes
-#' the columns "pathway", "gene", "chr", "snp" and "position".
+#' @return A \code{data.frame} including mapping SNPs to genes and genes to
+#' pathways. It includes the columns "pathway", "gene", "chr", "snp" and 
+#' "position".
+#' 
 #' @examples
-#' #### missing example #### <FIXME>
+#' pathwaygenes <- pathway_info("hsa00030")
+#' snp <- snp_info("rs2071390")
+#' get_anno(snp, pathwaygenes)
 #'
 #' @author Stefanie Friedrichs, Saskia Freytag, Ngoc-Thuy Ha
 #' @import sqldf
-#setMethod('get_anno', signature='snp_info',
-#          definition <- function(object, ...) {
-get_anno <- function(snp_info, pathway_info, ...){
-  if (!inherits(snp_info, "data.frame"))
-      stop("SNP object is not a data frame")
-  if (!inherits(pathway_info, "data.frame"))
-      stop("pathway gene information object is not a data frame")
-  if ( !(columns(snp_info)%in% c("chr", "position", "rsnumber")) )
-      stop("SNP data frame needs columns for chromosome, positon and rsnumber")
-  if ( !(columns(pathway_info)%in% c("pathway","gene_start",
-                                    "gene_end","chr","gene")) )
-      stop("pathway information data frame needs columns for pathway,
-            gene_start, gene_end, chr and gene")
-  pathwayanno$Chr <- as.factor(pathway_info$chr)
-  snp_info$chr <- as.factor(snp_info$chr)
-  pathway_info <- split(pathway_info, pathway_info$chr)
-  snp_info <- split(snp_info, snp_info$chr)
-
+setMethod('get_anno', signature=c('snp_info','pathway_info'),
+          definition <- function(object1, object2, ...) {
+          
+  if (!inherits(object1, "snp_info"))
+      stop("SNP information is not a snp_info object!")
+  if (!inherits(object2, "pathway_info"))  
+      stop("pathway gene information is not a pathway_info object!")
+  if (!(all.equal(colnames(object1@info),c("chr", "position", "rsnumber"))))
+      stop("snp_info object must contain a data frame with columns for 
+            'chr', 'positon' and 'rsnumber'!")
+  if (!(all.equal(colnames(object2@info),c("pathway","gene_start",
+      "gene_end","chr","gene"))))
+      stop("pathway_info object must contain a data frame with columns for 
+            'pathway', 'gene_start', 'gene_end', 'chr' and 'gene'!")  
+                              
+  object1@info$chr <- as.factor(object1@info$chr)
+  object2@info$chr <- as.factor(object2@info$chr)  
+  snp_info     <- split(object1@info, object1@info$chr)
+  pathway_info <- split(object2@info, object2@info$chr) 
+  
   list_out <- list()
   for(i in 1:length(names(pathway_info))){
-    x <- pathway_info[[i]]
+    x <- pathway_info[[i]] 
     y <- try(snp_info[[which(names(snp_info)==names(pathway_info)[i])]], silent=T)
     if(is.null(dim(y))) next
     list_out[[i]] <- sqldf("select x.pathway, x.gene,
                                    y.chr ,y.rsnumber, y.position
                                    from x x, y y
-                                   where x.gene_start>=y.position AND
-                                   x.gene_end<=y.position")
+                                   where x.gene_start<=y.position AND
+                                   x.gene_end>=y.position")
     remove(x,y)
-  }
-  anno <- lapply(list_out,"names<-",
-          value=c("pathway", "gene", "chr","snp", "position"))
-  anno <- do.call("rbind", lapply(anno, data.frame, stringsAsFactors = FALSE))
+  }      
+  anno <- do.call("rbind", lapply(list_out, data.frame, stringsAsFactors=FALSE))
   return(anno)
-}
-
+})
