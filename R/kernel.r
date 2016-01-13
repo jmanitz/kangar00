@@ -131,6 +131,13 @@ setMethod('calc_kernel', signature(object = 'GWASdata'),
 	   if(!is.null(knots) && !inherits(knots, "GWASdata")){
 	       stop("knots must inherit from class 'GWASdata'")
 	   }
+     
+	   pwIdTest <- try(unique(object@anno$snp[which(object@anno$pathway == pathway@id)]))
+     if(class(pwIdTest) == "try-error"){
+       print(setdiff(pathway@id, object@anno$pathway))
+       stop("The above-mentioned pathways cannot be found in the annotation file. \n")
+     }
+     
 	   # transfer to specific kernel function
            k <- eval(parse(text=paste(type, "_kernel(
                            object = object, pathway = pathway,
