@@ -159,13 +159,15 @@ setMethod('lin_kernel', signature(object = 'GWASdata'),
 #        stop("handling of '...' not yet implemented")
     ## which SNPs are in specified pathway
     SNPset <- unique(object@anno$snp[which(object@anno$pathway == pathway@id)])
-    ## subset genotype data for specified SNP set
-    Z1 <- as(object@geno[,as.character(SNPset)],'matrix')
+    #subset of individuals that have phenotypes
+    inds <- object@pheno[,1]
+    #subset genotype data for specified SNP set
+    Z1 <- as(object@geno[as.character(inds),as.character(SNPset)],'matrix')
     if(any(is.na(Z1)))
         stop("genotype information contains missing values")
     if(lowrank){
         Z2 <- knots@geno
-        Z2 <- as(Z2[,as.character(SNPset)],'matrix')
+        Z2 <- as(Z2[as.character(inds),as.character(SNPset)],'matrix')
         k <- Z1 %*% t(Z2)
         return(new('lowrank_kernel', type='lin', kernel=k, pathway=pathway))
     }else{
@@ -200,9 +202,12 @@ setMethod('sia_kernel', signature(object = 'GWASdata'),
     if (!is.null(knots))
         stop("knots are not yet implemented for SIA kernel")
 # <FIXME> add calculations with knots
-    genemat <- function(g, data, anno){
-        SNPset <- unique(anno[which(anno[,"gene"]==g),"snp"])
-        z <- as(data[,as.character(SNPset)],'matrix')
+    genemat <- function(g, data, object@anno){
+        SNPset <- unique(object@anno$snp[which(object@anno$pathway==pathway@id)])
+        #subset of individuals that have phenotypes
+        inds <- object@pheno[,1]
+        #subset genotype data for specified SNP set
+        z <- as(object@geno[as.character(inds),as.character(SNPset)],'matrix')
         if(any(is.na(z)))
             stop("genotype information contains missing values")
         z <- z[, apply(z,2,sum)/(2*nrow(z)) >= 0.001 ] #only snps maf >= 0.1%
@@ -213,7 +218,7 @@ setMethod('sia_kernel', signature(object = 'GWASdata'),
         distances <- round(distances, digits=3)
         return( list(distances, (nn*(1-(nn-1)*var(e.val)/(nn^2))), ncol(z)) )
     }
-                  #matrix,         eff.length.gene,           length.gene
+        #matrix,         eff.length.gene,           length.gene
 
     genemat2 <- function(l, max.eff){
         delta <- sqrt(l[[2]]/max.eff) #delta <- sqrt(eff.length.gene/max.eff)
@@ -249,8 +254,10 @@ setMethod('net_kernel', signature(object = 'GWASdata'),
     lowrank <- !is.null(knots)
     #genotype matrix Z, which SNPs are in specified pathway
     SNPset <- unique(object@anno$snp[which(object@anno$pathway==pathway@id)])
+    #subset of individuals that have phenotypes
+    inds <- object@pheno[,1]
     #subset genotype data for specified SNP set
-    Z1 <- as(object@geno[,as.character(SNPset)],'matrix')
+    Z1 <- as(object@geno[as.character(inds),as.character(SNPset)],'matrix')
     if (any(is.na(Z1)))
         stop("genotype information contains missing values")
     # compute kernel
@@ -258,7 +265,7 @@ setMethod('net_kernel', signature(object = 'GWASdata'),
     ## if knots are specified
     if (lowrank) {
         Z2 <- knots@geno
-        Z2 <- as(Z2[,as.character(SNPset)],'matrix')
+        Z2 <- as(Z2[as.character(inds),as.character(SNPset)],'matrix')
         K <- Z1 %*% ANA %*% t(Z2)
         return(lowrank_kernel(type='network', kernel=K, pathway=pathway))
     }

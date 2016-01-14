@@ -50,12 +50,12 @@ GWASdata <- setClass('GWASdata',
         msg <- c(msg,
                  "phenotypes exist for more individuals than have genotypes!")
       }
-      ## check order of individuals in genotypes and phenotypes
-      if(!all.equal(as.character(object@pheno[,1]),row.names(object@geno))){
+      ## check order of individuals in genotypes and phenotypes 
+      if(!all(as.character(object@pheno[,1]) %in% row.names(object@geno))){
         valid <- FALSE
         msg <- c(msg,
                  "order of individuals differs in genotype and phenotype file!")
-      }
+      }   
     }else{
       message("Note that phenotypes are not specified.")
     }
@@ -64,11 +64,6 @@ GWASdata <- setClass('GWASdata',
     if(!all(anno_names %in% colnames(object@anno))){
         valid <- FALSE
         msg   <- c(msg, paste("anno variable names do not match:",anno_names))
-    }
-    ## more snps in annotation, than genotyped: <FIXME> Why do we needthis? <FIXME>
-    if(length(unique(object@anno$snp)) > ncol(object@geno)){
-        valid <- FALSE
-        msg <- c(msg, "annotation includes more SNPs than genotyped!")
     }
     ## SNPs in annotation file, that are not in genotype file (too big?)
     if(!all(unique(object@anno$snp) %in% colnames(object@geno))){
