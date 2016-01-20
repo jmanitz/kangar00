@@ -156,8 +156,8 @@ setMethod('score_test', signature(x = 'matrix'),
         P  <- W-WX%*%solve(t(X)%*% WX, t(X)%*%W)
         if(!is.null(nas)){ x <- x[-nas,-nas] }
         
-        TT <- 1/2*t(Y-mui)%*%K%*%(Y-mui)
-        PK <- P%*%K
+        TT <- 1/2*t(Y-mui)%*%x%*%(Y-mui)
+        PK <- P%*%x
         A  <- W%*% PK %*%P%*%W
         VarT <- 1/2*sum(diag((PK%*%PK)))+
                 1/4*sum(diag(A)^2*mui*(1-mui)*(1+6*mui^2-6*mui))

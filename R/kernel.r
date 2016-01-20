@@ -210,7 +210,7 @@ setMethod('sia_kernel', signature(object = 'GWASdata'),
         z <- as(object@geno[as.character(inds),as.character(SNPset)],'matrix')
         if(any(is.na(z)))
             stop("genotype information contains missing values")
-        z <- z[, apply(z,2,sum)/(2*nrow(z)) >= 0.001 ] #only snps maf >= 0.1%
+        z <- z[, apply(z,2,sum)/(2*nrow(z)) >= 0.001 &  apply(z,2,sum)/(2*nrow(z)) < 1] #only snps maf >= 0.1%
         e.val <- eigen(cor(z), symmetric=TRUE, only.values=TRUE)$values
         nn    <- length(e.val)
         a <- matrix( rep(rowSums(z*z),nrow(z)),nrow=nrow(z))
