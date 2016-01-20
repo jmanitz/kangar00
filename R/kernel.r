@@ -194,7 +194,7 @@ setMethod('lin_kernel', signature(object = 'GWASdata'),
 # create size-adjusted kernel
 setGeneric('sia_kernel', function(object, ...) standardGeneric('sia_kernel'))
 #' @describeIn calc_kernel
-#' @export
+#' @export 
 setMethod('sia_kernel', signature(object = 'GWASdata'),
           definition = function(object, pathway, knots=NULL,
                        parallel = c('none', 'cpu', 'gpu'), ...) {
@@ -202,7 +202,7 @@ setMethod('sia_kernel', signature(object = 'GWASdata'),
     if (!is.null(knots))
         stop("knots are not yet implemented for SIA kernel")
 # <FIXME> add calculations with knots
-    genemat <- function(g, data, object@anno){
+    genemat <- function(g, object){
         SNPset <- unique(object@anno$snp[which(object@anno$pathway==pathway@id)])
         #subset of individuals that have phenotypes
         inds <- object@pheno[,1]
@@ -218,24 +218,23 @@ setMethod('sia_kernel', signature(object = 'GWASdata'),
         distances <- round(distances, digits=3)
         return( list(distances, (nn*(1-(nn-1)*var(e.val)/(nn^2))), ncol(z)) )
     }
-        #matrix,         eff.length.gene,           length.gene
-
+        #matrix, eff.length.gene, length.gene
     genemat2 <- function(l, max.eff){
         delta <- sqrt(l[[2]]/max.eff) #delta <- sqrt(eff.length.gene/max.eff)
         roh   <- (mean(c(l[[1]])))^(-delta)*(l[[2]]/l[[3]])^(-delta)
         return(-roh*(l[[1]]/l[[3]])^(delta))
     }
 
-    anno <- object@anno[object@anno[,"pathway"]==pathway@id, c("gene","snp")] #anno subset for pathway
+    anno <- object@anno[object@anno[,"pathway"]==pathway@id, c("gene","snp")] 
     gene.counts <- table(anno[,"gene"]) #counts number of different SNPs per gene
     g.10 <- names(gene.counts[gene.counts >= 2]) #genes with >= 2 snps
 
     #[[1]]:genematrix, [[2]]:eff.length.gene, [[3]]:length.gene
-    liste <- lapply(g.10, genemat, object@geno, anno)
+    liste <- lapply(g.10, genemat, object)
     get2    <- function(l){ return(l[[2]]) }
     max.eff <- max( unlist( lapply(liste, get2) ) )
 
-    kerneltimes <- matrix( rep(0,(nrow(object@geno))^2), nrow=nrow(object@geno))
+    kerneltimes <- matrix( rep(0,(dim(object@pheno)[1])^2), nrow=dim(object@pheno)[1])
     kerneltimes <- Reduce('+', lapply(liste,genemat2,max.eff))
     k <- exp( sqrt(1/(length(unique(anno[,"gene"])))) * kerneltimes )
     #return kernel object
