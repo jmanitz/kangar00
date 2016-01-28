@@ -64,7 +64,8 @@ setValidity('kernel', function(object){
 #' @slot kernel kernel matrix of dimension equal to individuals
 #' @slot pathway pathway object
 #'
-#' @details This kernel is used for predictions. If observations and knots are equal, better construct a full-rank kernel of class \code{\link{kernel}}.
+#' @details This kernel is used for predictions. If observations and knots are 
+#' equal, better construct a full-rank kernel of class \code{\link{kernel}}.
 #'
 #' @author Juliane Manitz
 #' @export
@@ -86,15 +87,23 @@ setGeneric('calc_kernel', function(object, ...) standardGeneric('calc_kernel'))
 #' calculates the kernel-matrix of a pathway which can by evaluated in the 
 #' logistic kernel machine test.
 #'
-#' @param object \code{GWASdata} object containing the genotypes of the individuals for which a kernel will be calculated.
-#' @param pathway object of the class \code{pathway} specifying the SNP set for which a kernel will be calculated.
-#' @param type character, kernel type: Use \code{"lin"} for linear kernels, \code{"sia"} for size-adjusted or \code{"net"} for network-based kernels.
-#' @param knots \code{GWASdata} object, if specified a low-rank kernel will be computed
-#' @param parallel character specifying if the kernel matrix is computed in parallel: Use \code{"none"} for non-parallel calculation on CPU. (other options not yet implemented)
+#' @param object \code{GWASdata} object containing the genotypes of the 
+#' individuals for which a kernel will be calculated.
+#' @param pathway object of the class \code{pathway} specifying the SNP set 
+#' for which a kernel will be calculated.
+#' @param type character, kernel type: Use \code{"lin"} for linear kernels, 
+#' \code{"sia"} for size-adjusted or \code{"net"} for network-based kernels.
+#' @param knots \code{GWASdata} object, if specified a low-rank kernel will be 
+#' computed
+#' @param parallel character specifying if the kernel matrix is computed in 
+#' parallel: Use \code{"none"} for non-parallel calculation on CPU. (other 
+#' options not yet implemented)
 #' @param ... further arguments to be passed to the kernel computations
 #'
-#' @return Returns an object of class \code{kernel}, including the similarity matrix of the  pathway for the considered individuals (\code{kernel}). 
-#' If \code{knots} are specified low-rank kernel of class \code{lowrank_kernel} will be returned, which is not necessarily quadratic and symmetric.
+#' @return Returns an object of class \code{kernel}, including the similarity 
+#' matrix of the  pathway for the considered individuals (\code{kernel}). 
+#' If \code{knots} are specified low-rank kernel of class \code{lowrank_kernel} 
+#' will be returned, which is not necessarily quadratic and symmetric.
 #' @details
 #' Different types of kernels can be constructed:
 #' \itemize{
@@ -211,7 +220,8 @@ setMethod('sia_kernel', signature(object = 'GWASdata'),
         z <- as(object@geno[,as.character(SNPset)],'matrix')
         if(any(is.na(z)))
             stop("genotype information contains missing values")
-        z <- z[, apply(z,2,sum)/(2*nrow(z)) >= 0.001 &  apply(z,2,sum)/(2*nrow(z)) < 1] #only snps maf >= 0.1%
+        z <- z[, apply(z,2,sum)/(2*nrow(z)) >= 0.001 &  apply(z,2,sum)/(2*nrow(z)) < 1] 
+        #only snps maf >= 0.1%
         e.val <- eigen(cor(z), symmetric=TRUE, only.values=TRUE)$values
         nn    <- length(e.val)
         a <- matrix( rep(rowSums(z*z),nrow(z)),nrow=nrow(z))
@@ -275,7 +285,8 @@ setMethod('net_kernel', signature(object = 'GWASdata'),
 ################################## helper function #############################
 
 setGeneric('rewire_network', function(x, ...) standardGeneric('rewire_network'))
-#' Apply two-step network to rewire network genes if it contains no SNPs in GWASdata (for internal use)
+#' Apply two-step network to rewire network genes if it contains no SNPs in 
+#' GWASdata (for internal use)
 #'
 #' @export
 #' @author Juliane Manitz
@@ -381,7 +392,8 @@ setGeneric('make_psd', function(x, ...) standardGeneric('make_psd'))
 #'
 #' @param x matrix specifying the network adjacency matrix.
 #' @param eps numeric, tolance for smallest eigenvalue adjustment
-#' @return The matrix x, if it is positive definite and the closest positive semi-definite matrix if x is not positive semi-definite.
+#' @return The matrix x, if it is positive definite and the closest positive 
+#' semi-definite matrix if x is not positive semi-definite.
 #'
 #' @details <FIXME> Add formula. For more details check the references.
 #'
@@ -463,4 +475,3 @@ setMethod('plot', signature(x='kernel',y='missing'),
               }
               invisible(NULL)
           })
-
