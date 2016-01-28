@@ -159,15 +159,13 @@ setMethod('lin_kernel', signature(object = 'GWASdata'),
 #        stop("handling of '...' not yet implemented")
     ## which SNPs are in specified pathway
     SNPset <- unique(object@anno$snp[which(object@anno$pathway == pathway@id)])
-    #subset of individuals that have phenotypes
-    inds <- object@pheno[,1]
     #subset genotype data for specified SNP set
-    Z1 <- as(object@geno[as.character(inds),as.character(SNPset)],'matrix')
+    Z1 <- as(object@geno[,as.character(SNPset)],'matrix')
     if(any(is.na(Z1)))
         stop("genotype information contains missing values")
     if(lowrank){
         Z2 <- knots@geno
-        Z2 <- as(Z2[as.character(inds),as.character(SNPset)],'matrix')
+        Z2 <- as(Z2[,as.character(SNPset)],'matrix')
         k <- Z1 %*% t(Z2)
         return(new('lowrank_kernel', type='lin', kernel=k, pathway=pathway))
     }else{
@@ -204,10 +202,8 @@ setMethod('sia_kernel', signature(object = 'GWASdata'),
 # <FIXME> add calculations with knots
     genemat <- function(g, object){
         SNPset <- unique(object@anno$snp[which(object@anno$pathway==pathway@id)])
-        #subset of individuals that have phenotypes
-        inds <- object@pheno[,1]
         #subset genotype data for specified SNP set
-        z <- as(object@geno[as.character(inds),as.character(SNPset)],'matrix')
+        z <- as(object@geno[,as.character(SNPset)],'matrix')
         if(any(is.na(z)))
             stop("genotype information contains missing values")
         z <- z[, apply(z,2,sum)/(2*nrow(z)) >= 0.001 &  apply(z,2,sum)/(2*nrow(z)) < 1] #only snps maf >= 0.1%
@@ -253,10 +249,8 @@ setMethod('net_kernel', signature(object = 'GWASdata'),
     lowrank <- !is.null(knots)
     #genotype matrix Z, which SNPs are in specified pathway
     SNPset <- unique(object@anno$snp[which(object@anno$pathway==pathway@id)])
-    #subset of individuals that have phenotypes
-    inds <- object@pheno[,1]
     #subset genotype data for specified SNP set
-    Z1 <- as(object@geno[as.character(inds),as.character(SNPset)],'matrix')
+    Z1 <- as(object@geno[,as.character(SNPset)],'matrix')
     if (any(is.na(Z1)))
         stop("genotype information contains missing values")
     # compute kernel
@@ -264,7 +258,7 @@ setMethod('net_kernel', signature(object = 'GWASdata'),
     ## if knots are specified
     if (lowrank) {
         Z2 <- knots@geno
-        Z2 <- as(Z2[as.character(inds),as.character(SNPset)],'matrix')
+        Z2 <- as(Z2[,as.character(SNPset)],'matrix')
         K <- Z1 %*% ANA %*% t(Z2)
         return(lowrank_kernel(type='network', kernel=K, pathway=pathway))
     }
@@ -414,8 +408,8 @@ setMethod('make_psd', signature = 'matrix',
 #' @param object kernel object
 #'
 #' @examples
-#' #data(gwas) <FIXME> define example with new structure
-#' #show(gwas)
+#' data(gwas)
+#' show(gwas)
 #'
 #' @export
 #' @rdname kernel-class
