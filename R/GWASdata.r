@@ -6,7 +6,10 @@
 
 #' An S4 class defining an object to represent a Genome-wide Assocaition Study.
 #'
-#' @slot geno an \code{big.matrix} object including genotype information.
+#' @slot geno an object of any type, including genotype information. The format
+#' needs to be one line per individual and on colum per SNP in minor-allele 
+#' coding (0,1,2). Other values between 0 and 2, as from impute dosages, are 
+#' allowed. Missing values must be imputed prior to creation of a GWAS object. 
 #' @slot anno A \code{data.frame} mapping SNPs to genes and genes to
 #' pathways. Needs to include the columns 'pathway' (pathway ID, e.g. hsa
 #' number from KEGG database), 'gene' (gene name (hgnc_symbol)), 'chr'
@@ -51,7 +54,7 @@ GWASdata <- setClass('GWASdata',
                  "phenotypes exist for more individuals than have genotypes!")
       }
       ## check order of individuals in genotypes and phenotypes 
-      if(!all(as.character(object@pheno[,1]) %in% row.names(object@geno))){
+      if(!all(as.character(rownames(object@pheno)) %in% row.names(object@geno))){
         valid <- FALSE
         msg <- c(msg,
                  "order of individuals differs in genotype and phenotype file!")
@@ -88,7 +91,7 @@ setMethod('GWASdata',
 
 # read genotype data from file
 setGeneric('read_geno', function(file.path, ...) standardGeneric('read_geno'))
-#' read genotype data from file to bigmemory object, which can be passed to a  GWASdata object
+#' read genotype data from file to bigmemory object, which can be passed to a GWASdata object \code{\link{GWASdata-class}}
 #'
 #' @param file.path character, which contains the path to the data file to be read
 #' @param save.path character, which contains the path for the backingfile
@@ -100,8 +103,12 @@ setGeneric('read_geno', function(file.path, ...) standardGeneric('read_geno'))
 #'
 #' @rdname read_geno
 #' @seealso \code{\link{GWASdata-class}}
-#' @import bigmemory, tools
+#' @import tools
 #' @export
+
+# <ADD> example
+# @suggest bigmemory  how to incorporate suggestions? 
+
 setMethod("read_geno",
           signature="character",
                      #save.path="character", sep="character",
@@ -268,7 +275,10 @@ setMethod("read_geno",
 
 #' \code{show} displays basic information on \code{GWASdata} object
 #' @param object A \code{GWASdata} object.
-#' #@author Juliane Manitz
+#' @examples
+#' data(gwas) 
+#' gwas
+#' @author Juliane Manitz
 #' @export
 #' @rdname GWASdata-class
 setMethod('show', signature='GWASdata',
@@ -293,8 +303,8 @@ setGeneric('summary', function(object, ...) standardGeneric('summary'))
 #' \code{summary} summarizes the content of a \code{GWASdata} object and gives an overview about the information included in a \code{\link{GWASdata}} object. Summary statistics for phenotype and genotype data are calculated.
 #'
 #' @examples
-#' #data(gwas)   <FIXME> define example with new structure
-#' #summary(gwas)
+#' data(gwas) 
+#' summary(gwas)
 #'
 #' @export
 #' @rdname GWASdata-class
@@ -322,8 +332,8 @@ setGeneric('GeneSNPsize', function(object, ...) standardGeneric('GeneSNPsize'))
 #' \code{GeneSNPsize} creates a \code{data.frame} of pathway names with numbers of snps and genes in each pathway.
 #'
 #' @examples
-#' #data(gwas) <FIXME> define example with new structure
-#' #GeneSNPsize(gwas)
+#' data(gwas) 
+#' GeneSNPsize(gwas)
 #'
 #' @export
 #' @rdname GWASdata-class
@@ -343,6 +353,8 @@ setMethod('GeneSNPsize', signature='GWASdata',
 #' @slot info A \code{data.frame} including information on SNP positions
 #'
 #' @author Stefanie Friedrichs
+#' @examples
+#' data(rs10243170_info) 
 #' @export snp_info
 #' @import methods
 snp_info <- setClass('snp_info', slots=c(info='data.frame'))
@@ -396,6 +408,9 @@ setMethod('snp_info', signature='character',
 #'
 #' @param object An object of class \code{\link{snp_info}}.
 #' @return \code{show} Basic information on \code{snp_info} object.
+#' @examples
+#' data(rs10243170_info)
+#' rs10243170_info
 #' @author Stefanie Friedrichs
 #' @export
 #' @rdname snp_info-class
@@ -412,6 +427,9 @@ setGeneric('summary', function(object, ...) standardGeneric('summary'))
 #'
 #' @param object An object of class \code{\link{snp_info}}.
 #' @return \code{summary} Summarized information on \code{snp_info} object.
+#' @examples 
+#' data(rs10243170_info)
+#' summary(rs10243170_info)
 #' @author Stefanie Friedrichs
 #' @export
 #' @rdname snp_info-class
@@ -431,10 +449,10 @@ setGeneric('get_anno', function(object1, object2, ...) standardGeneric('get_anno
 #' This function combines a \code{snp_info} and a \code{pathway_info} object 
 #' into an annotation \code{data.frame} used for pathway analysis on GWAS.
 #'
-#' @param snp_info A \code{snp_info} object with SNP information as returned by
+#' @param object1 A \code{snp_info} object with SNP information as returned by
 #' the \code{\link{snp_info}} function. The included \code{data frame} contains
 #' the columns "chr", "position" and "rsnumber".
-#' @param pathway_info A \code{pathway_info} object with information on genes
+#' @param object2 A \code{pathway_info} object with information on genes
 #' contained in pathways. It is created by the \code{\link{pathway_info}} 
 #' function and contains a \code{data frame} with columns 
 #' the columns "pathway", "gene_start", gene_end", "chr", "gene".
@@ -444,11 +462,12 @@ setGeneric('get_anno', function(object1, object2, ...) standardGeneric('get_anno
 #' "position".
 #' 
 #' @examples
-#' pathwaygenes <- pathway_info("hsa00030")
-#' snp <- snp_info("rs2071390")
-#' get_anno(snp, pathwaygenes)
+#' data(hsa04022_info)
+#' data(rs10243170_info)
+##get_anno(rs10243170_info, hsa04022_info)
 #'
 #' @author Stefanie Friedrichs, Saskia Freytag, Ngoc-Thuy Ha
+#' @seealso \code{\link{snp_info}}, \code{\link{pathway_info}}
 #' @import sqldf
 setMethod('get_anno', signature=c('snp_info','pathway_info'),
           definition <- function(object1, object2, ...) {
@@ -485,3 +504,16 @@ setMethod('get_anno', signature=c('snp_info','pathway_info'),
   anno <- do.call("rbind", lapply(list_out, data.frame, stringsAsFactors=FALSE))
   return(anno)
 })
+
+
+##<TODO> add dataset descriptions
+# This is data to be included in my package
+#
+# @name data-name
+# @docType data
+# @author My Name \email{blahblah@@roxygen.org}
+# @references \url{data_blah.com}
+# @keywords data
+#NULL
+
+

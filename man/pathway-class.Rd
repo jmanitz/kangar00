@@ -5,6 +5,7 @@
 \alias{analyze,pathway,ANY-method}
 \alias{analyze,pathway-method}
 \alias{get_genes,pathway,ANY-method}
+\alias{get_genes,pathway-method}
 \alias{pathway}
 \alias{pathway-class}
 \alias{pathway2igraph,pathway,ANY-method}
@@ -25,6 +26,8 @@
 \S4method{pathway2igraph}{pathway}(object)
 
 \S4method{analyze}{pathway}(object, ...)
+
+\S4method{get_genes}{pathway}(object)
 
 \S4method{plot}{pathway,missing}(x, y = NA, highlight.genes = NULL,
   gene.names = c("legend", "nodes", NA), main = NULL, asp = 0.95,
@@ -61,6 +64,8 @@
 \item{edge.color}{a character or numeric constant specifying the edge color, default is 'olivedrab4'}
 
 \item{no}{a numeric constant specifying the number of genes to be sampled, default is 3}
+
+\item{object}{A pathway object}
 }
 \value{
 \code{analyze} returns a \code{data.frame} consisting of
@@ -88,6 +93,8 @@ An S4 class to represent a gene-gene interaction network
 
 analyze pathway network properties
 
+\code{get_genes} is a helper function that extracts the gene names in a pathway and returns a vector of character containing gene names
+
 \code{plot} plots pathway as igraph object
 
 \code{sample_genes} function randomly selects effect genes in pathway and returns a vector of length \code{no} with vertex id's of sampled genes
@@ -102,25 +109,29 @@ analyze pathway network properties
 \item{\code{sign}}{a numeric vector indicating the interaction type for each link (1 activation, -1 inhibition). Represents the interaction network within the pathway.}
 }}
 \examples{
-data(hsa04710)
-hsa04710
-summary(hsa04710)
+data(hsa04020)
+hsa04020
+data(hsa04020)
+summary(hsa04020)
 # convert to igraph object
-str(hsa04710)
-g <- pathway2igraph(hsa04710)
+data(hsa04020)
+str(hsa04020)
+g <- pathway2igraph(hsa04020)
 str(g)
-data(hsa04710)
-summary(hsa04710)
-analyze(hsa04710)
+data(hsa04020)
+summary(hsa04020)
+analyze(hsa04020)
+# extract gene names from pathway
+get_genes(hsa04020)
 # plot pathway as igraph object
-plot(hsa04710)
-sample3 <- sample_genes(hsa04710, no = 3)
-plot(hsa04710, highlight.genes = sample3)
+plot(hsa04020)
+sample3 <- sample_genes(hsa04020, no = 3)
+plot(hsa04020, highlight.genes = sample3)
 # sample effect genes
-sample3 <- sample_genes(hsa04710, no = 3)
-plot(hsa04710, highlight.genes = sample3)
-sample5 <- sample_genes(hsa04710, no = 5)
-plot(hsa04710, highlight.genes = sample5)
+sample3 <- sample_genes(hsa04020, no = 3)
+plot(hsa04020, highlight.genes = sample3)
+sample5 <- sample_genes(hsa04020, no = 5)
+plot(hsa04020, highlight.genes = sample5)
 }
 \author{
 Juliane Manitz

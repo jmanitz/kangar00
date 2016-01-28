@@ -29,7 +29,7 @@
 
 \item{type}{character, kernel type: Use \code{"lin"} for linear kernels, \code{"sia"} for size-adjusted or \code{"net"} for network-based kernels.}
 
-\item{parallel}{character specifying if the kernel matrix is computed in parallel: Use \code{"none"} for ... <FIXME>}
+\item{parallel}{character specifying if the kernel matrix is computed in parallel: Use \code{"none"} for non-parallel calculation on CPU. (other options not yet implemented)}
 
 \item{...}{further arguments to be passed to the kernel computations}
 }

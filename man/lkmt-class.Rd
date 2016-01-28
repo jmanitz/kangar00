@@ -24,10 +24,8 @@ lkmt(formula, kernel, GWASdata, method = c("satt", "davies"), ...)
 }
 \value{
 \code{show} Basic information on \code{lkmt} object.
-#
 
 \code{summary} Summarized information on \code{lkmt} object.
-#
 }
 \description{
 An S4 class to represent the variance component test.
@@ -43,7 +41,7 @@ An S4 class to represent the variance component test.
 \section{Slots}{
 
 \describe{
-\item{\code{formula}}{A formular stating the regression nullmodel that will be used in
+\item{\code{formula}}{A formula stating the regression nullmodel that will be used in
 the variance component test.}
 
 \item{\code{kernel}}{An object of class \code{\link{kernel}} representing the similarity
@@ -53,11 +51,11 @@ matrix of the individuals based on which the pathways influence is evaluated.}
 which the test is conducted.}
 
 \item{\code{statistic}}{A \code{vector} giving the value of the variance component
-ttest statistic.}
+t-test statistic.}
 
-\item{\code{statistic}}{A \code{vector} giving the number of degrees of freedom.}
+\item{\code{df}}{A \code{vector} giving the number of degrees of freedom.}
 
-\item{\code{statistic}}{A \code{vector} giving the p-value calculated for the pathway
+\item{\code{p.value}}{A \code{vector} giving the p-value calculated for the pathway
 in the variance component test.
 
 For details on the variance component test see the references.}

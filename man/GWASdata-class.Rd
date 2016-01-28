@@ -20,8 +20,7 @@ GWASdata(object, ...)
 \S4method{GeneSNPsize}{GWASdata}(object)
 }
 \arguments{
-\item{object}{A \code{GWASdata} object.
-#}
+\item{object}{A \code{GWASdata} object.}
 }
 \description{
 An S4 class defining an object to represent a Genome-wide Assocaition Study.
@@ -37,7 +36,7 @@ An S4 class defining an object to represent a Genome-wide Assocaition Study.
 \section{Slots}{
 
 \describe{
-\item{\code{geno}}{an \code{big.matrix} object including genotype information.}
+\item{\code{geno}}{an object of any type, including genotype information.}
 
 \item{\code{anno}}{A \code{data.frame} mapping SNPs to genes and genes to
 pathways. Needs to include the columns 'pathway' (pathway ID, e.g. hsa
@@ -53,11 +52,14 @@ pack.years. Note: IDs have to be in the first column!}
 \examples{
 data(pheno)
 data(geno)
-#gwas <- new('GWASdata', pheno=pheno, geno=geno, desc="some study") ### ERROR
-#data(gwas)   <FIXME> define example with new structure
-#summary(gwas)
-#data(gwas) <FIXME> define example with new structure
-#GeneSNPsize(gwas)
+data(anno)
+gwas <- new('GWASdata', pheno=pheno, geno=geno, anno=anno, desc="some study")
+data(gwas)
+gwas
+data(gwas)
+summary(gwas)
+data(gwas)
+GeneSNPsize(gwas)
 }
 \author{
 Juliane Manitz, Stefanie Friedrichs

@@ -3,12 +3,14 @@
 \docType{methods}
 \name{read_geno,character-method}
 \alias{read_geno,character-method}
-\title{read genotype data from file to bigmemory object, which can be passed to a  GWASdata object}
+\title{read genotype data from file to bigmemory object, which can be passed to a GWASdata object \code{\link{GWASdata-class}}}
 \usage{
-\S4method{read_geno}{character}(x, save.path = NULL, sep = " ",
-  header = TRUE, ...)
+\S4method{read_geno}{character}(file.path, save.path = NULL, sep = " ",
+  header = TRUE, use.fread = TRUE, row.names = TRUE, ...)
 }
 \arguments{
+\item{file.path}{character, which contains the path to the data file to be read}
+
 \item{save.path}{character, which contains the path for the backingfile}
 
 \item{sep}{character. A field delimeter. See \code{bigmemory::read.big.matrix} for
@@ -17,11 +19,9 @@ details.}
 \item{header}{logical. Does the data set contain column names?}
 
 \item{...}{further arguments to be passed to \code{bigmemory::read.big.matrix}.}
-
-\item{file.path}{character, which contains the path to the data file to be read}
 }
 \description{
-read genotype data from file to bigmemory object, which can be passed to a  GWASdata object
+read genotype data from file to bigmemory object, which can be passed to a GWASdata object \code{\link{GWASdata-class}}
 }
 \details{
 If the data set contains rownames specified, set option \code{has.row.names = TRUE}.

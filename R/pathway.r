@@ -51,6 +51,9 @@ setValidity('pathway', function(object){
 # show method
 #' \code{show} displays the pathway object briefly
 #' @param object pathway object
+#' @examples
+#' data(hsa04020)
+#' hsa04020
 #' @export
 #' @rdname pathway-class
 #' @aliases show,pathway,ANY-method
@@ -76,9 +79,8 @@ setGeneric('summary', function(object, ...) standardGeneric('summary'))
 #' @aliases summary,pathway,ANY-method
 #'
 #' @examples
-#' data(hsa04710)
-#' hsa04710
-#' summary(hsa04710)
+#' data(hsa04020)
+#' summary(hsa04020)
 setMethod('summary', signature='pathway',
           definition = function(object){
               # define graph and analyze graph
@@ -106,8 +108,9 @@ setGeneric('pathway2igraph', function(object, ...) standardGeneric('pathway2igra
 #' 
 #' @examples
 #' # convert to igraph object
-#' str(hsa04710)
-#' g <- pathway2igraph(hsa04710)
+#' data(hsa04020)
+#' str(hsa04020)
+#' g <- pathway2igraph(hsa04020)
 #' str(g)
 #'
 #' @import igraph
@@ -159,9 +162,9 @@ setGeneric('analyze', function(object, ...) standardGeneric('analyze'))
 #'   \item Kunegis, J., A. Lommatzsch, and C. Bauckhage (2009). The slashdot zoo: Mining a social network with negative egdes. In Proceedings of the 18th international conference on World wide web, pp. 741-750. ACM Press.
 #' }
 #' @examples
-#' data(hsa04710)
-#' summary(hsa04710)
-#' analyze(hsa04710)
+#' data(hsa04020)
+#' summary(hsa04020)
+#' analyze(hsa04020)
 #'
 #' @import igraph
 setMethod('analyze', signature='pathway',
@@ -202,12 +205,12 @@ setGeneric('get_genes', function(object, ...) standardGeneric('get_genes'))
 #' \code{get_genes} is a helper function that extracts the gene names in a pathway and returns a vector of character containing gene names
 #'
 #' @export
-#' @rdname pathway_class 
+#' @rdname pathway-class 
 #' @aliases get_genes,pathway,ANY-method
-#'
+#' @param object A pathway object
 #' @examples
 #' # extract gene names from pathway
-#' get_genes(hsa04710)
+#' get_genes(hsa04020)
 setMethod('get_genes', signature='pathway',
           definition = function(object){
               return(rownames(object@adj))
@@ -237,9 +240,9 @@ if (!isGeneric("plot")) setGeneric('plot')
 #'
 #' @examples
 #' # plot pathway as igraph object
-#' plot(hsa04710)
-#' sample3 <- sample_genes(hsa04710, no = 3)
-#' plot(hsa04710, highlight.genes = sample3)
+#' plot(hsa04020)
+#' sample3 <- sample_genes(hsa04020, no = 3)
+#' plot(hsa04020, highlight.genes = sample3)
 #'
 #' @import igraph
 #' @importFrom graphics plot
@@ -305,10 +308,10 @@ setGeneric('sample_genes', function(object, ...) standardGeneric('sample_genes')
 #' 
 #' @examples
 #' # sample effect genes
-#' sample3 <- sample_genes(hsa04710, no = 3)
-#' plot(hsa04710, highlight.genes = sample3)
-#' sample5 <- sample_genes(hsa04710, no = 5)
-#' plot(hsa04710, highlight.genes = sample5)
+#' sample3 <- sample_genes(hsa04020, no = 3)
+#' plot(hsa04020, highlight.genes = sample3)
+#' sample5 <- sample_genes(hsa04020, no = 5)
+#' plot(hsa04020, highlight.genes = sample5)
 #'
 #' @import igraph
 setMethod('sample_genes', signature='pathway',
@@ -332,16 +335,13 @@ setMethod('sample_genes', signature='pathway',
 setGeneric('gene_name_number', function(x, ...) standardGeneric('gene_name_number'))
 #' Function to get genes names and numbers from kegg (for internal use)
 #'
-#' This function extracts for a particular pathway all included genes and the
-#' numbers they are given within the corresponding KGML pathway file.
+#' This function extracts for a particular pathway all genes and the numbers
+#' they are represented with in the KEGG network from the corresponding KGML pathway file.
 #'
 #' @param x A \code{character} hsa identifier of the pathway for which gene 
 #' infomation should be extracted as used in KEGG database ('hsa00100').    
 #' @return A \code{data.frame} listing the genes included in the pathway with 
 #' their names as well as numbers used in KEGG database.
-#' @examples
-#' gene_name_number("hsa04022")
-#' 
 #' @author Stefanie Friedrichs
 setMethod('gene_name_number', signature='character', 
           definition = function(x){
@@ -373,6 +373,8 @@ setMethod('gene_name_number', signature='character',
 #' @rdname spathway_info-class
 #' @slot info A \code{data.frame} including information on genes contained in 
 #' pathways
+#' @examples
+#' data(hsa04022_info) 
 #'
 #' @author Stefanie Friedrichs
 #' @export pathway_info
@@ -410,6 +412,7 @@ setGeneric('pathway_info', function(x, ...) standardGeneric('pathway_info'))
 #'
 #' @author Stefanie Friedrichs
 #' @import biomaRt  
+#' @export
 setMethod('pathway_info', signature='character', 
          definition = function(x){              
    g       <- gene_name_number(x)[,2] 
@@ -431,6 +434,9 @@ setMethod('pathway_info', signature='character',
 #' @param object An object of class \code{\link{pathway_info}}.
 #' @return \code{show} Basic information on \code{pathway_info} object.
 #' @author Stefanie Friedrichs
+#' @examples
+#' data(hsa04022_info)
+#' hsa04022_info
 #' @export
 #' @rdname pathway_info-class
 setMethod('show', signature='pathway_info',
@@ -448,6 +454,9 @@ setGeneric('summary', function(object, ...) standardGeneric('summary'))
 #' @param object An object of class \code{\link{pathway_info}}.
 #' @return \code{summary} Summarized information on \code{pathway_info} object.
 #' @author Stefanie Friedrichs
+#' @examples
+#' data(hsa04022_info)
+#' summary(hsa04022_info)
 #' @export
 #' @rdname pathway_info-class
 setMethod('summary', signature='pathway_info',
@@ -471,7 +480,8 @@ setGeneric('set_one', function(x, ...) standardGeneric('set_one'))
 #' @return A \code{matrix} representing the interaction network in the pathway
 #' with entries equal to 1, -1 or 0.
 #'
-#' @author Stefanie Friedrichs
+#' @author Stefanie Friedrichs 
+#' @seealso \code{\link{get_network_matrix}}
 setMethod('set_one', signature='matrix', 
           definition = function(x){       
   if(length(x[x>1])>0){ 
@@ -500,6 +510,7 @@ setGeneric('set_names', function(x, ...) standardGeneric('set_names'))
 #' with gene names as rownames and columnnames. 
 #'
 #' @author Stefanie Friedrichs
+#' @seealso \code{\link{get_network_matrix}}
 setMethod('set_names', signature='matrix', 
           definition = function(x, nodes, my_list){
     name <- substr(nodes,5,nchar(nodes)) 
@@ -515,28 +526,34 @@ setGeneric('get_network_matrix', function(x, ...) standardGeneric('get_network_m
 #' Function to calculate the network matrix
 #'
 #' This function creates the networkmatrix representing the gene-gene interaction 
-#' structure within a particular pathway.
+#' structure within a particular pathway. In this process a KEGG kgml file is 
+#' downloaded and saved in the working directory. 
 #'
 #' @param x A \code{character} identifying the pathway for which gene infomation 
 #' should be extracted. Here KEGG IDs ('hsa00100') are used. 
 #' @param directed A \code{logic} argument, stating whether the networkmatrix 
 #' should be returned directed (\code{TRUE}) or undirected (\code{FALSE}).
+#' @param keep.kgml A \code{logic} argument, specifying whether the downloaded 
+#' KEGG kgml file of the pathway should be kept in the working directory. 
+#' For (\code{FALSE}) the file is deleted, for (\code{TRUE}) not.  
+#' after calculation of the network matrix. 
 #' @return A \code{matrix} representing the interaction network in the pathway.
-#' @examples
-#' get_network_matrix("hsa04022", TRUE)
+## @examples
+## get_network_matrix("hsa04022", TRUE)
 #'
 #' @author Stefanie Friedrichs
 #' @import KEGGgraph 
-#' @import biomaRt    
+#' @import biomaRt 
+#' @export   
 setMethod('get_network_matrix', signature='character', 
-          definition = function(x, directed){    
+          definition = function(x, directed, keep.kgml){    
     retrieveKGML(substr(x,4,nchar(x)), organism="hsa",
                  destfile=paste(x,".xml",sep=""), method="internal")
-    filename  <- paste(x,".xml",sep="")
+    #filename  <- paste(x,".xml",sep="")
     liste     <- gene_name_number(x)
-    pathgraph <- parseKGML2Graph(filename, expandGenes=TRUE)
+    pathgraph <- parseKGML2Graph(paste(x,".xml",sep=""), expandGenes=TRUE)
     nodes     <- nodes(pathgraph) #vector with gene numbers (format: "hsa:226")
-    edgelist  <- parseKGML2DataFrame(filename)
+    edgelist  <- parseKGML2DataFrame(paste(x,".xml",sep=""))
     edgelist  <- edgelist[!is.na(edgelist[,3]),] #delete NA-types            
 
   # --- Skip pathway, if no edges or wrong number of genes ---
@@ -557,8 +574,8 @@ setMethod('get_network_matrix', signature='character',
     if( (length(verb.a[,1])+length(verb.i[,1]))>0 ){
       if(length(verb.s[,1])==0){ print(paste(x,": Activation/Inhibition only: 
                                  Signed graph!",sep="")) }
-      if(length(verb.s[,1])>0){ print(paste(x," has both: Activation/Inhibition  
-                                edges and edges without type!",sep=""))}
+      if(length(verb.s[,1])>0){ print(paste(x," has both: Activation/Inhibition   
+                                      edges and edges without type!",sep=""))}
      # -- Directed --- 
      #           to 
      # from  (        )
@@ -600,7 +617,9 @@ setMethod('get_network_matrix', signature='character',
      M <- set_one(M)
      M <- set_names(M,nodes,liste)      
      }
-
+    if(keep.kgml == FALSE){ 
+       rm(paste(x,".xml",sep="")) 
+    }
     if(directed==TRUE){
       return(N)
     }else{

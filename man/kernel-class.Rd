@@ -44,8 +44,8 @@ An S4 class to represent a kernel for a SNPset
 \item{\code{pathway}}{pathway object}
 }}
 \examples{
-#data(gwas) <FIXME> define example with new structure
-#show(gwas)
+data(gwas)
+show(gwas)
 }
 \author{
 Juliane Manitz

@@ -81,7 +81,10 @@ lkmt <- function(formula, kernel, GWASdata, method=c('satt','davies'), ...){
 #'
 #' @param object An object of class \code{\link{lkmt}}.
 #' @return \code{show} Basic information on \code{lkmt} object.
-#' #@author Juliane Manitz
+## @examples
+## data(lkmt)
+## lkmt
+#' @author Juliane Manitz
 #' @export
 #' @rdname lkmt-class
 #' @aliases show,GWASdata,ANY-method
@@ -102,7 +105,10 @@ setGeneric('summary', function(object, ...) standardGeneric('summary'))
 #'
 #' @param object An object of class \code{\link{lkmt}}.
 #' @return \code{summary} Summarized information on \code{lkmt} object.
-#' #@author Juliane Manitz
+## @examples
+## data(lkmt)
+## summary(lkmt)
+#' @author Juliane Manitz
 #' @export
 #' @rdname lkmt-class
 #' @aliases summary,GWASdata,ANY-method
@@ -118,46 +124,43 @@ setMethod('summary', signature='lkmt',
               invisible(NULL)
           })
 
-setGeneric('score_test', function(x, ...) standardGeneric('score_test'))
+setGeneric('score_test', function(x1, x2, ...) standardGeneric('score_test'))
 #' Calculates the p-value for a kernelmatrix using Satterthwaite approximation
 #'
 #' This function evaluates a pathways influence on an individuals probability
 #' of beeing a case using the logistic kernel machine test. P-values are
 #' determined using a Sattherthwaite Approximation as described by Dan Schaid.
 #'
-#' @param kernels A \code{\link{matrix}} which is the
+#' @param x1 A \code{\link{matrix}} which is the
 #' similarity matrix calculated for the pathway to be tested.
-#' @param nullmodel A \code{glm} object of the nullmodel with fixed effects
-#' covariates included, but no genetic random effects.
-#' @param  pd.check boolean, whether to check for positive definiteness.
+#' @param x2 An \code{lm} or \code{glm} object of the nullmodel with fixed 
+#' effects covariates included, but no genetic random effects.
 #' @return A \code{list} including the test results of the pathway.
 #' @author Stefanie Friedrichs, Saskia Freytag, Ngoc-Thuy Ha
-#'
-#' For details on the p-value approximation see
 #' \itemize{
 #' \item Schaid DJ: Genomic Similarity and Kernel Methods I: Advancements by 
 #' Building on Mathematical and Statistical Foundations. Hum Hered 2010, 70:109-31
 #' }
-setMethod('score_test', signature(x = 'matrix'), 
-          definition = function(x, nullmodel){   
-        if(sum(is(nullmodel) %in% c("glm","lm")) == 0 ){
+setMethod('score_test', signature(x1 = 'matrix'), 
+          definition = function(x1, x2){   
+        if(sum(is(x2) %in% c("glm","lm")) == 0 ){
                 stop("nullmodel should be a glm- or lm-object!")
         }
-        if(is.null(nullmodel$x)){
+        if(is.null(x2$x)){
                 stop("The glm-object should have a design-matrix x!")
         }
-        nas <- nullmodel$na.action
-        Y <- nullmodel$y
-        X <- nullmodel$x
-        mui <-  nullmodel$fitted.values
+        nas <- x2$na.action
+        Y   <- x2$y
+        X   <- x2$x
+        mui <- x2$fitted.values
         W <- (mui*(1-mui)) * diag(length(mui))
         #P <- W-W%*%X%*%solve(t(X)%*%W%*%X)%*%t(X)%*%W
         WX <- W%*%X
         P  <- W-WX%*%solve(t(X)%*% WX, t(X)%*%W)
-        if(!is.null(nas)){ x <- x[-nas,-nas] }
+        if(!is.null(nas)){ x1 <- x1[-nas,-nas] }
         
-        TT <- 1/2*t(Y-mui)%*%x%*%(Y-mui)
-        PK <- P%*%x
+        TT <- 1/2*t(Y-mui)%*%x1%*%(Y-mui)
+        PK <- P%*%x1
         A  <- W%*% PK %*%P%*%W
         VarT <- 1/2*sum(diag((PK%*%PK)))+
                 1/4*sum(diag(A)^2*mui*(1-mui)*(1+6*mui^2-6*mui))
@@ -174,7 +177,7 @@ setMethod('score_test', signature(x = 'matrix'),
         return(mod) 
 })
 
-setGeneric('davies_test', function(x, ...) standardGeneric('davies_test'))
+setGeneric('davies_test', function(x1, x2, ...) standardGeneric('davies_test'))
 #' Calculates the p-value for a kernel matrix using davies method
 #'
 #' This function evaluates a pathways influence on an individuals probability
@@ -182,42 +185,41 @@ setGeneric('davies_test', function(x, ...) standardGeneric('davies_test'))
 #' determined using the method described by Davies as implemented in the
 #'  function \code{davies()} from package \code{CompQuadForm}.
 #'
-#' @param kernels A \code{\link{matrix}} which is the
+#' @param x1 A \code{\link{matrix}} which is the
 #' similarity matrix calculated for the pathway to be tested.
-#' @param nullmodel A \code{glm} object of the nullmodel with fixed effects
+#' @param x2 A \code{glm} object of the nullmodel with fixed effects
 #' covariates included, but no genetic random effects.
-#' @param  pd.check boolean, whether to check for positive definiteness.
 #' @return A \code{list} including the test results of the pathway.
 #' @author Stefanie Friedrichs
-#'
+#' @references
 #' For details on the p-value calculation see
 #' \itemize{
 #' \item Davies R: Algorithm as 155: the distribution of a linear combination of
 #'      chi-2 random variables. J R Stat Soc Ser C 1980, 29:323-333.
 #' }
 #' @import CompQuadForm
-setMethod('davies_test', signature(x = 'matrix'), 
-          definition = function(x, nullmodel){
+setMethod('davies_test', signature(x1 = 'matrix'), 
+          definition = function(x1, x2){
           
-        if(sum(is(nullmodel) %in% c("glm","lm")) == 0 ){
+        if(sum(is(x2) %in% c("glm","lm")) == 0 ){
                 stop("nullmodel should be a glm- or lm-object!")
         }
-        if(is.null(nullmodel$x)){
+        if(is.null(x2$x)){
                 stop("The glm-object should have a design-matrix x!")
         }
 
-        nas <- nullmodel$na.action
+        nas <- x2$na.action
         if(!is.null(nas)){
-           x <- x[-nas,-nas]
+           x1 <- x1[-nas,-nas]
         }
 
-        Y   <- nullmodel$y
-        X   <- nullmodel$x                  
-        mui <- nullmodel$fitted.values
+        Y   <- x2$y
+        X   <- x2$x                  
+        mui <- x2$fitted.values
 
-        if( min(eigen(x)$values)<0 ){ x <- make_psd(x) }
+        if( min(eigen(x1)$values)<0 ){ x1 <- make_psd(x1) }
 
-        Q <- 1/2*t(Y-mui)%*%x%*%(Y-mui)
+        Q <- 1/2*t(Y-mui)%*%x1%*%(Y-mui)
         P <- diag(nrow(X))-X%*%solve(t(X)%*%X,t(X))#solve(t(X)%*%X)%*%t(X)
 
         W <- (mui*(1-mui))*diag(length(mui))
@@ -225,7 +227,7 @@ setMethod('davies_test', signature(x = 'matrix'),
         Wsqrt <- v %*% diag(sqrt(eigen(W)$values)) %*% t(v)
         WP    <- Wsqrt%*%P
 
-        lambda <- eigen(0.5*WP%*%x%*%t(WP))$values
+        lambda <- eigen(0.5*WP%*%x1%*%t(WP))$values
         #delta <- rep(0, length(lambda))
         #sigma <- 0
         pval <- davies(Q,lambda, rep(1, length(lambda)), rep(0, length(lambda)),
