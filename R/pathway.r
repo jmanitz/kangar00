@@ -8,9 +8,13 @@
 #'
 #' @rdname pathway-class
 #'
-#' @slot id a character repesenting the pathway id, e.g. hsa00100 as used in the KEGG database.
-#' @slot adj a matrix respresenting the network adjacency matrix  of dimension equaling the number of genes (1 interaction, 0 otherwise)
-#' @slot sign a numeric vector indicating the interaction type for each link (1 activation, -1 inhibition). Represents the interaction network within the pathway.
+#' @slot id a character repesenting the pathway id, e.g. hsa00100 as used in 
+#' the KEGG database.
+#' @slot adj a matrix respresenting the network adjacency matrix  of dimension 
+#' equaling the number of genes (1 interaction, 0 otherwise)
+#' @slot sign a numeric vector indicating the interaction type for each link 
+#' (1 activation, -1 inhibition). Represents the interaction network within the 
+#' pathway.
 #' 
 #' @author Juliane Manitz
 #'
@@ -52,6 +56,7 @@ setValidity('pathway', function(object){
 #' \code{show} displays the pathway object briefly
 #' @param object pathway object
 #' @examples
+#' #show method
 #' data(hsa04020)
 #' hsa04020
 #' @export
@@ -79,8 +84,10 @@ setGeneric('summary', function(object, ...) standardGeneric('summary'))
 #' @aliases summary,pathway,ANY-method
 #'
 #' @examples
+#' #summary method
 #' data(hsa04020)
 #' summary(hsa04020)
+#' @aliases summary,pathway,ANY-method
 setMethod('summary', signature='pathway',
           definition = function(object){
               # define graph and analyze graph
@@ -343,6 +350,7 @@ setGeneric('gene_name_number', function(x, ...) standardGeneric('gene_name_numbe
 #' @return A \code{data.frame} listing the genes included in the pathway with 
 #' their names as well as numbers used in KEGG database.
 #' @author Stefanie Friedrichs
+#' @keywords internal
 setMethod('gene_name_number', signature='character', 
           definition = function(x){
     info <- scan(url(paste("http://togows.dbcls.jp/entry/pathway/",
@@ -378,7 +386,6 @@ setMethod('gene_name_number', signature='character',
 #'
 #' @author Stefanie Friedrichs
 #' @export pathway_info
-#' @import methods
 pathway_info <- setClass('pathway_info', slots=c(info='data.frame'))
 
 setValidity('pathway_info', function(object){  
@@ -413,6 +420,7 @@ setGeneric('pathway_info', function(x, ...) standardGeneric('pathway_info'))
 #' @author Stefanie Friedrichs
 #' @import biomaRt  
 #' @export
+#' @rdname pathway_info-class
 setMethod('pathway_info', signature='character', 
          definition = function(x){              
    g       <- gene_name_number(x)[,2] 
@@ -433,12 +441,14 @@ setMethod('pathway_info', signature='character',
 #'
 #' @param object An object of class \code{\link{pathway_info}}.
 #' @return \code{show} Basic information on \code{pathway_info} object.
-#' @author Stefanie Friedrichs
+## @author Stefanie Friedrichs
 #' @examples
+#' # show method
 #' data(hsa04022_info)
 #' hsa04022_info
 #' @export
 #' @rdname pathway_info-class
+#' @aliases show,pathway_info,ANY-method
 setMethod('show', signature='pathway_info',
           definition = function(object){
             cat('An object of class ', class(object), '\n', sep='')
@@ -453,12 +463,14 @@ setGeneric('summary', function(object, ...) standardGeneric('summary'))
 #'
 #' @param object An object of class \code{\link{pathway_info}}.
 #' @return \code{summary} Summarized information on \code{pathway_info} object.
-#' @author Stefanie Friedrichs
+## @author Stefanie Friedrichs
 #' @examples
+#' # summary method
 #' data(hsa04022_info)
 #' summary(hsa04022_info)
 #' @export
 #' @rdname pathway_info-class
+#' @aliases summary,pathway_info,ANY-method
 setMethod('summary', signature='pathway_info',
           definition = function(object){
             cat('An object of class ', class(object), '\n', sep='')
@@ -482,6 +494,7 @@ setGeneric('set_one', function(x, ...) standardGeneric('set_one'))
 #'
 #' @author Stefanie Friedrichs 
 #' @seealso \code{\link{get_network_matrix}}
+#' @keywords internal
 setMethod('set_one', signature='matrix', 
           definition = function(x){       
   if(length(x[x>1])>0){ 
@@ -511,6 +524,7 @@ setGeneric('set_names', function(x, ...) standardGeneric('set_names'))
 #'
 #' @author Stefanie Friedrichs
 #' @seealso \code{\link{get_network_matrix}}
+#' @keywords internal
 setMethod('set_names', signature='matrix', 
           definition = function(x, nodes, my_list){
     name <- substr(nodes,5,nchar(nodes)) 
@@ -542,8 +556,7 @@ setGeneric('get_network_matrix', function(x, ...) standardGeneric('get_network_m
 ## get_network_matrix("hsa04022", TRUE)
 #'
 #' @author Stefanie Friedrichs
-#' @import KEGGgraph 
-#' @import biomaRt 
+#' @import KEGGgraph, biomaRt 
 #' @export   
 setMethod('get_network_matrix', signature='character', 
           definition = function(x, directed, keep.kgml){    
@@ -594,13 +607,13 @@ setMethod('get_network_matrix', signature='character',
      # -- Undirected --- 
      M <- N + t(N) #contradictory edges will be removed
      M <- set_one(M)    #double edges (2,-2) could be produced
-     M <- set_names(M,nodes,liste)       
+     M <- set_names(M,nodes,liste)           
      }
 
   # --- else, if no edge types specified: Unsigned matrix ---  
     #only use edges without type, if ALL edges are without type
     if(length(verb.s[,1])>0 & (length(verb.a[,1])+length(verb.i[,1]))==0){
-       print(paste(hsa,": No edge-types, unsigned graph only!",sep=""))
+       print(paste(x,": No edge-types, unsigned graph only!",sep=""))
        
     # -- Directed ---
     if(length(verb.s[,1])>0){ 
