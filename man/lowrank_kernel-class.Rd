@@ -9,7 +9,8 @@
 An S4 class to represent a low-rank kernel for a SNPset at specified knots
 }
 \details{
-This kernel is used for predictions. If observations and knots are equal, better construct a full-rank kernel of class \code{\link{kernel}}.
+This kernel is used for predictions. If observations and knots are
+equal, better construct a full-rank kernel of class \code{\link{kernel}}.
 }
 \section{Slots}{
 

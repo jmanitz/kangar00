@@ -31,4 +31,5 @@ Stefanie Friedrichs
 \seealso{
 \code{\link{get_network_matrix}}
 }
+\keyword{internal}
 

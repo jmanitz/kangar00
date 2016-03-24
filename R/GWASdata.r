@@ -4,9 +4,9 @@
 #
 #################################################
 
-#' An S4 class defining an object to represent a Genome-wide Assocaition Study.
+#' S4 class for an object representing a Genome-wide Assocaition Study.
 #'
-#' @slot geno an object of any type, including genotype information. The format
+#' @slot geno An object of any type, including genotype information. The format
 #' needs to be one line per individual and on colum per SNP in minor-allele 
 #' coding (0,1,2). Other values between 0 and 2, as from impute dosages, are 
 #' allowed. Missing values must be imputed prior to creation of a GWAS object. 
@@ -17,7 +17,7 @@
 #' @slot pheno A \code{data.frame} specifying individual IDs, phenotypes and
 #' covariates to be included in the regression model e.g. ID, pheno, sex,
 #' pack.years. Note: IDs have to be in the first column!
-#' @slot desc A \code{character} giving the GWAS description, e.g. name of study.  Default is ''.
+#' @slot desc A \code{character} giving the GWAS description, e.g. name of study.  
 #' @examples
 #' data(pheno)
 #' data(geno)
@@ -91,7 +91,8 @@ setMethod('GWASdata',
 
 # read genotype data from file
 setGeneric('read_geno', function(file.path, ...) standardGeneric('read_geno'))
-#' read genotype data from file to bigmemory object, which can be passed to a GWASdata object \code{\link{GWASdata-class}}
+#' read genotype data from file to one of several available objects, which 
+#' can be passed to a GWASdata object \code{\link{GWASdata-class}}
 #'
 #' @param file.path character, which contains the path to the data file to be read
 #' @param save.path character, which contains the path for the backingfile
@@ -276,9 +277,10 @@ setMethod("read_geno",
 #' \code{show} displays basic information on \code{GWASdata} object
 #' @param object A \code{GWASdata} object.
 #' @examples
+#' # show method
 #' data(gwas) 
 #' gwas
-#' @author Juliane Manitz
+## @author Juliane Manitz
 #' @export
 #' @rdname GWASdata-class
 setMethod('show', signature='GWASdata',
@@ -303,6 +305,7 @@ setGeneric('summary', function(object, ...) standardGeneric('summary'))
 #' \code{summary} summarizes the content of a \code{GWASdata} object and gives an overview about the information included in a \code{\link{GWASdata}} object. Summary statistics for phenotype and genotype data are calculated.
 #'
 #' @examples
+#' # summary method
 #' data(gwas) 
 #' summary(gwas)
 #'
@@ -332,6 +335,7 @@ setGeneric('GeneSNPsize', function(object, ...) standardGeneric('GeneSNPsize'))
 #' \code{GeneSNPsize} creates a \code{data.frame} of pathway names with numbers of snps and genes in each pathway.
 #'
 #' @examples
+#' # SNPs and genes in pathway
 #' data(gwas) 
 #' GeneSNPsize(gwas)
 #'
@@ -354,6 +358,7 @@ setMethod('GeneSNPsize', signature='GWASdata',
 #'
 #' @author Stefanie Friedrichs
 #' @examples
+#' # snp_info
 #' data(rs10243170_info) 
 #' @export snp_info
 #' @import methods
@@ -378,16 +383,16 @@ setGeneric('snp_info', function(x, ...) standardGeneric('snp_info'))
 #' as extracted from the Ensemble database. The database is accessed via the
 #' R-package \code{biomaRt}.
 #'
-#' @param x a character vector of SNP rsnumbers for which positions will be extracted.
+#' @param x A character vector of SNP rsnumbers for which positions will be extracted.
 #' @param ... further arguments can be added.
-#' @return a \code{data.frame} including the SNP positions with columns
-#' chromosome, position and rsnumber. SNPs not found in the Ensemble database
+#' @return A \code{data.frame} including the SNP positions with columns
+#' 'chromosome', #position' and 'rsnumber'. SNPs not found in the Ensemble database
 #' will not be listed in the returned \code{snp_info} object, SNPs with multiple
 #' positions  will appear several times.
 #' @examples
 #' snp_info(c("rs234"))
 #'
-#' @author Stefanie Friedrichs
+## @author Stefanie Friedrichs
 #' @import biomaRt
 #' @rdname snp_info-class 
 setMethod('snp_info', signature='character', 
@@ -406,12 +411,13 @@ setMethod('snp_info', signature='character',
 
 #' \code{show} Shows basic information on \code{snp_info} object
 #'
-#' @param object An object of class \code{\link{snp_info}}.
+## @param object An object of class \code{\link{snp_info}}.
 #' @return \code{show} Basic information on \code{snp_info} object.
 #' @examples
+#' # show
 #' data(rs10243170_info)
 #' rs10243170_info
-#' @author Stefanie Friedrichs
+## @author Stefanie Friedrichs
 #' @export
 #' @rdname snp_info-class
 setMethod('show', signature='snp_info',
@@ -425,12 +431,13 @@ setMethod('show', signature='snp_info',
 setGeneric('summary', function(object, ...) standardGeneric('summary'))
 #' \code{summary} Summarizes information on \code{snp_info} object
 #'
-#' @param object An object of class \code{\link{snp_info}}.
+## @param object An object of class \code{\link{snp_info}}.
 #' @return \code{summary} Summarized information on \code{snp_info} object.
-#' @examples 
+#' @examples
+#' # summary
 #' data(rs10243170_info)
 #' summary(rs10243170_info)
-#' @author Stefanie Friedrichs
+## @author Stefanie Friedrichs
 #' @export
 #' @rdname snp_info-class
 setMethod('summary', signature='snp_info',
@@ -443,11 +450,12 @@ setMethod('summary', signature='snp_info',
 })
 
 setGeneric('get_anno', function(object1, object2, ...) standardGeneric('get_anno'))
-#' A function to create the annotation for a GWASdata object, in which 
-#' SNPs are assigned to pathways via gene membership. 
+#' Annotates SNPs via genes to pathways
 #'
-#' This function combines a \code{snp_info} and a \code{pathway_info} object 
-#' into an annotation \code{data.frame} used for pathway analysis on GWAS.
+#' A function to create the annotation for a GWASdata object. It combines a 
+#' \code{snp_info} and a \code{pathway_info} object into an annotation
+#'  \code{data.frame} used for pathway analysis on GWAS. SNPs are assigned to
+#'  pathways via gene membership.
 #'
 #' @param object1 A \code{snp_info} object with SNP information as returned by
 #' the \code{\link{snp_info}} function. The included \code{data frame} contains
@@ -455,7 +463,7 @@ setGeneric('get_anno', function(object1, object2, ...) standardGeneric('get_anno
 #' @param object2 A \code{pathway_info} object with information on genes
 #' contained in pathways. It is created by the \code{\link{pathway_info}} 
 #' function and contains a \code{data frame} with columns 
-#' the columns "pathway", "gene_start", gene_end", "chr", "gene".
+#' "pathway", "gene_start", gene_end", "chr", "gene".
 #' @param ... further arguments can be added.
 #' @return A \code{data.frame} including mapping SNPs to genes and genes to
 #' pathways. It includes the columns "pathway", "gene", "chr", "snp" and 

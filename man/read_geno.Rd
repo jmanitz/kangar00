@@ -3,7 +3,8 @@
 \docType{methods}
 \name{read_geno,character-method}
 \alias{read_geno,character-method}
-\title{read genotype data from file to bigmemory object, which can be passed to a GWASdata object \code{\link{GWASdata-class}}}
+\title{read genotype data from file to one of several available objects, which
+can be passed to a GWASdata object \code{\link{GWASdata-class}}}
 \usage{
 \S4method{read_geno}{character}(file.path, save.path = NULL, sep = " ",
   header = TRUE, use.fread = TRUE, row.names = TRUE, ...)
@@ -21,7 +22,8 @@ details.}
 \item{...}{further arguments to be passed to \code{bigmemory::read.big.matrix}.}
 }
 \description{
-read genotype data from file to bigmemory object, which can be passed to a GWASdata object \code{\link{GWASdata-class}}
+read genotype data from file to one of several available objects, which
+can be passed to a GWASdata object \code{\link{GWASdata-class}}
 }
 \details{
 If the data set contains rownames specified, set option \code{has.row.names = TRUE}.

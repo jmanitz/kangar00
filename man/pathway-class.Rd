@@ -102,15 +102,20 @@ analyze pathway network properties
 \section{Slots}{
 
 \describe{
-\item{\code{id}}{a character repesenting the pathway id, e.g. hsa00100 as used in the KEGG database.}
+\item{\code{id}}{A character repesenting the pathway id, e.g. hsa00100 as used in
+the KEGG database.}
 
-\item{\code{adj}}{a matrix respresenting the network adjacency matrix  of dimension equaling the number of genes (1 interaction, 0 otherwise)}
+\item{\code{adj}}{A matrix respresenting the network adjacency matrix  of dimension
+equaling the number of genes (1 interaction, 0 otherwise)}
 
-\item{\code{sign}}{a numeric vector indicating the interaction type for each link (1 activation, -1 inhibition). Represents the interaction network within the pathway.}
+\item{\code{sign}}{A numeric vector indicating the interaction type for each link
+(1 activation, -1 inhibition) in the interaction network for the pathway.}
 }}
 \examples{
+#show method
 data(hsa04020)
 hsa04020
+#summary method
 data(hsa04020)
 summary(hsa04020)
 # convert to igraph object

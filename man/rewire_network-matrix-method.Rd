@@ -3,25 +3,25 @@
 \docType{methods}
 \name{rewire_network,matrix-method}
 \alias{rewire_network,matrix-method}
-\title{Apply two-step network to rewire network genes if it contains no SNPs in GWASdata (for internal use)}
+\title{Rewires interactions in a pathway, which go through a gene not represented
+by any SNPs in the considered \code{GWASdata} object. (for internal use)}
 \usage{
 \S4method{rewire_network}{matrix}(x, remov)
 }
 \arguments{
-\item{x}{adjacency matrix}
+\item{x}{Adjacency \code{matrix}}
 
-\item{remov}{indication which genes should be removed <FIXME> what does this mean? TRUE/FALSE vector, gene names, or vector}
+\item{remov}{A \code{vector} of gene names, indicating which genes are not
+represented by SNPs in the considered \code{GWASdata} and will be removed}
 }
 \value{
-An adjacency matrix containing rewired network
+An adjacency \code{matrix} containing the rewired network
 }
 \description{
-Apply two-step network to rewire network genes if it contains no SNPs in GWASdata (for internal use)
+Rewires interactions in a pathway, which go through a gene not represented
+by any SNPs in the considered \code{GWASdata} object. (for internal use)
 }
 \author{
 Juliane Manitz
-}
-\references{
-TODO Newman?
 }
 

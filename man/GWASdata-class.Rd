@@ -7,7 +7,7 @@
 \alias{GeneSNPsize,GWASdata-method}
 \alias{show,GWASdata-method}
 \alias{summary,GWASdata-method}
-\title{An S4 class defining an object to represent a Genome-wide Assocaition Study.}
+\title{S4 class for an object representing a Genome-wide Assocaition Study.}
 \usage{
 GWASdata(object, ...)
 
@@ -23,7 +23,7 @@ GWASdata(object, ...)
 \item{object}{A \code{GWASdata} object.}
 }
 \description{
-An S4 class defining an object to represent a Genome-wide Assocaition Study.
+S4 class for an object representing a Genome-wide Assocaition Study.
 
 \code{'GWASdata'} is a GWASdata object constructor
 
@@ -36,7 +36,10 @@ An S4 class defining an object to represent a Genome-wide Assocaition Study.
 \section{Slots}{
 
 \describe{
-\item{\code{geno}}{an object of any type, including genotype information.}
+\item{\code{geno}}{An object of any type, including genotype information. The format
+needs to be one line per individual and on colum per SNP in minor-allele
+coding (0,1,2). Other values between 0 and 2, as from impute dosages, are
+allowed. Missing values must be imputed prior to creation of a GWAS object.}
 
 \item{\code{anno}}{A \code{data.frame} mapping SNPs to genes and genes to
 pathways. Needs to include the columns 'pathway' (pathway ID, e.g. hsa
@@ -47,23 +50,24 @@ number from KEGG database), 'gene' (gene name (hgnc_symbol)), 'chr'
 covariates to be included in the regression model e.g. ID, pheno, sex,
 pack.years. Note: IDs have to be in the first column!}
 
-\item{\code{desc}}{A \code{character} giving the GWAS description, e.g. name of study.  Default is ''.}
+\item{\code{desc}}{A \code{character} giving the GWAS description, e.g. name of study.}
 }}
 \examples{
 data(pheno)
 data(geno)
 data(anno)
 gwas <- new('GWASdata', pheno=pheno, geno=geno, anno=anno, desc="some study")
+# show method
 data(gwas)
 gwas
+# summary method
 data(gwas)
 summary(gwas)
+# SNPs and genes in pathway
 data(gwas)
 GeneSNPsize(gwas)
 }
 \author{
 Juliane Manitz, Stefanie Friedrichs
-
-Juliane Manitz
 }
 

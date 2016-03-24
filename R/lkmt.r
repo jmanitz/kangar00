@@ -12,17 +12,18 @@
 #' the variance component test.
 #' @slot kernel An object of class \code{\link{kernel}} representing the similarity
 #' matrix of the individuals based on which the pathways influence is evaluated.
-#' @slot GWASdata An object of class \code{\link{GWASdata}} stating the data on
-#' which the test is conducted.
+#' @slot GWASdata An object of class \code{\link{GWASdata}} including the data
+#' on which the test is conducted.
 #' @slot statistic A \code{vector} giving the value of the variance component
-#' t-test statistic.
-#' @slot df A \code{vector} giving the number of degrees of freedom.
+#' test statistic.
+#' @slot df A \code{vector} containing the number of degrees of freedom.
 #' @slot p.value A \code{vector} giving the p-value calculated for the pathway
 #' in the variance component test.
 #'
 #' For details on the variance component test see the references.
 #' @references
 #' \itemize{
+#' \item  Liu D, Lin X, Ghosh D: Semiparametric regression of multidimensional genetic pathway data: least-squares kernel machines and linear mixed models. Biometrics 2007, 63(4):1079-88.
 #'  \item Wu MC, Kraft P, Epstein MP, Taylor DM, Chanock SJ, Hunter DJ, Lin X: Powerful SNP-Set Analysis for Case-Control Genome-Wide Association Studies. Am J Hum Genet 2010, 86:929-42
 #' }
 #'
@@ -58,33 +59,14 @@ setValidity('lkmt', function(object){
 	}
 })
 
-
-#' @describeIn lkmt-class
-lkmt <- function(formula, kernel, GWASdata, method=c('satt','davies'), ...){
-
-    if(length(GWASdata@pheno) == 0) stop("Please specify phenotypes.")
-
-    method <- match.arg(method)
-    nullmodel <- glm(formula, data=GWASdata@pheno, family=binomial, x=TRUE)
-    if(method == 'satt'){
-        model <- score_test(kernel@kernel, nullmodel)
-    }
-    if(method == 'davies'){
-        model <- davies_test(kernel@kernel, nullmodel)
-    }
-    ret <- new('lkmt', formula=formula, kernel=kernel, GWASdata=GWASdata,
-               statistic=model$statistic, df=model$parameter, p.value=model$p.value)
-    return(ret)
-}
-
 #' \code{show} Shows basic information on \code{lkmt} object
 #'
-#' @param object An object of class \code{\link{lkmt}}.
+## @param object An object of class \code{\link{lkmt}}.
 #' @return \code{show} Basic information on \code{lkmt} object.
 ## @examples
 ## data(lkmt)
 ## lkmt
-#' @author Juliane Manitz
+## @author Juliane Manitz
 #' @export
 #' @rdname lkmt-class
 #' @aliases show,GWASdata,ANY-method
@@ -103,12 +85,12 @@ setGeneric('summary', function(object, ...) standardGeneric('summary'))
 
 #' \code{summary} Summarizes information on \code{lkmt} object
 #'
-#' @param object An object of class \code{\link{lkmt}}.
+## @param object An object of class \code{\link{lkmt}}.
 #' @return \code{summary} Summarized information on \code{lkmt} object.
 ## @examples
 ## data(lkmt)
 ## summary(lkmt)
-#' @author Juliane Manitz
+## @author Juliane Manitz
 #' @export
 #' @rdname lkmt-class
 #' @aliases summary,GWASdata,ANY-method
@@ -124,6 +106,61 @@ setMethod('summary', signature='lkmt',
               invisible(NULL)
           })
 
+
+#' A function to calculate the p-values for kernel-matrices. 
+#'
+#' @param formula The formula to be used for the regression nullmodel.  
+#' @param kernel An object of class \code{kernel} including the pathway 
+#' representing kernel-matrix based on which the test statistic will be calculated.
+#' @param GWASdata A \code{GWASdata} object stating the data used in analysis. 
+#' @param method A \code{character} specifying which method will be used for 
+#' p-value calculation. Available are \code{'satt'} for the Satterthwaite 
+#' approximation and \code{'davies'} for Davies' algorithm. For more details 
+#' see the references.
+#' @return 
+#' An \code{lkmt} object including the following test results
+#' \itemize{
+#' \item The formula of the regression nullmodel used in the variance 
+#' component test.
+#' \item An object of class \code{\link{kernel}} including the similarity
+#' matrix of the individuals based on which the pathways influence is evaluated.
+#' \item An object of class \code{\link{GWASdata}} stating the data on
+#' which the test was conducted.
+#' \item statistic A \code{vector} giving the value of the variance component
+#' test statistic.
+#' \item df A \code{vector} giving the number of degrees of freedom.
+#' \item p.value A \code{vector} giving the p-value calculated for the pathway
+#' in the variance component test.
+#' }
+#' @references
+#' For details on the variance component test 
+#' \itemize{
+#'  \item Wu MC, Kraft P, Epstein MP, Taylor DM, Chanock SJ, Hunter DJ, Lin X: Powerful SNP-Set Analysis for Case-Control Genome-Wide Association Studies. Am J Hum Genet 2010, 86:929-42
+#' \item  Liu D, Lin X, Ghosh D: Semiparametric regression of multidimensional genetic pathway data: least-squares kernel machines and linear mixed models. Biometrics 2007, 63(4):1079-88.
+#' }
+## @examples
+## data(lkmt)
+## lkmt
+#' @author Stefanie Friedrichs,Juliane Manitz , Saskia Freytag, Ngoc-Thuy Ha
+#' @export
+#' @rdname lkmt-function
+lkmt <- function(formula, kernel, GWASdata, method=c('satt','davies'), ...){
+
+    if(length(GWASdata@pheno) == 0) stop("Please specify phenotypes.")
+
+    method <- match.arg(method)
+    nullmodel <- glm(formula, data=GWASdata@pheno, family=binomial, x=TRUE)
+    if(method == 'satt'){
+        model <- score_test(kernel@kernel, nullmodel)
+    }
+    if(method == 'davies'){
+        model <- davies_test(kernel@kernel, nullmodel)
+    }
+    ret <- new('lkmt', formula=formula, kernel=kernel, GWASdata=GWASdata,
+               statistic=model$statistic, df=model$parameter, p.value=model$p.value)
+    return(ret)
+}
+
 setGeneric('score_test', function(x1, x2, ...) standardGeneric('score_test'))
 #' Calculates the p-value for a kernelmatrix using Satterthwaite approximation
 #'
@@ -131,16 +168,19 @@ setGeneric('score_test', function(x1, x2, ...) standardGeneric('score_test'))
 #' of beeing a case using the logistic kernel machine test. P-values are
 #' determined using a Sattherthwaite Approximation as described by Dan Schaid.
 #'
-#' @param x1 A \code{\link{matrix}} which is the
-#' similarity matrix calculated for the pathway to be tested.
-#' @param x2 An \code{lm} or \code{glm} object of the nullmodel with fixed 
-#' effects covariates included, but no genetic random effects.
-#' @return A \code{list} including the test results of the pathway.
-#' @author Stefanie Friedrichs, Saskia Freytag, Ngoc-Thuy Ha
+## @param x1 A \code{\link{matrix}} which is the
+## similarity matrix calculated for the pathway to be tested.
+## @param x2 An \code{lm} or \code{glm} object of the nullmodel with fixed 
+## effects covariates included, but no genetic random effects.
+## @return A \code{list} including the test results of the pathway.
+## @author Stefanie Friedrichs, Saskia Freytag, Ngoc-Thuy Ha
+#' @references
+#' For details on the p-value calculation see
 #' \itemize{
 #' \item Schaid DJ: Genomic Similarity and Kernel Methods I: Advancements by 
 #' Building on Mathematical and Statistical Foundations. Hum Hered 2010, 70:109-31
 #' }
+#' @rdname lkmt-function
 setMethod('score_test', signature(x1 = 'matrix'), 
           definition = function(x1, x2){   
         if(sum(is(x2) %in% c("glm","lm")) == 0 ){
@@ -185,19 +225,19 @@ setGeneric('davies_test', function(x1, x2, ...) standardGeneric('davies_test'))
 #' determined using the method described by Davies as implemented in the
 #'  function \code{davies()} from package \code{CompQuadForm}.
 #'
-#' @param x1 A \code{\link{matrix}} which is the
-#' similarity matrix calculated for the pathway to be tested.
-#' @param x2 A \code{glm} object of the nullmodel with fixed effects
-#' covariates included, but no genetic random effects.
-#' @return A \code{list} including the test results of the pathway.
-#' @author Stefanie Friedrichs
+## @param x1 A \code{matrix} which is the
+## similarity matrix calculated for the pathway to be tested.
+## @param x2 A \code{glm} object of the nullmodel with fixed effects
+## covariates included, but no genetic random effects.
+## @return A \code{list} including the test results of the pathway.
+## @author Stefanie Friedrichs
 #' @references
-#' For details on the p-value calculation see
 #' \itemize{
 #' \item Davies R: Algorithm as 155: the distribution of a linear combination of
 #'      chi-2 random variables. J R Stat Soc Ser C 1980, 29:323-333.
 #' }
 #' @import CompQuadForm
+#' @rdname lkmt-function
 setMethod('davies_test', signature(x1 = 'matrix'), 
           definition = function(x1, x2){
           

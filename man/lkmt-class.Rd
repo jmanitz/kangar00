@@ -11,16 +11,9 @@
 \usage{
 lkmt(formula, kernel, GWASdata, method = c("satt", "davies"), ...)
 
-lkmt(formula, kernel, GWASdata, method = c("satt", "davies"), ...)
-
 \S4method{show}{lkmt}(object)
 
 \S4method{summary}{lkmt}(object)
-}
-\arguments{
-\item{object}{An object of class \code{\link{lkmt}}.}
-
-\item{object}{An object of class \code{\link{lkmt}}.}
 }
 \value{
 \code{show} Basic information on \code{lkmt} object.
@@ -34,10 +27,6 @@ An S4 class to represent the variance component test.
 
 \code{summary} Summarizes information on \code{lkmt} object
 }
-\section{Functions}{
-\itemize{
-\item \code{lkmt}: 
-}}
 \section{Slots}{
 
 \describe{
@@ -47,13 +36,13 @@ the variance component test.}
 \item{\code{kernel}}{An object of class \code{\link{kernel}} representing the similarity
 matrix of the individuals based on which the pathways influence is evaluated.}
 
-\item{\code{GWASdata}}{An object of class \code{\link{GWASdata}} stating the data on
-which the test is conducted.}
+\item{\code{GWASdata}}{An object of class \code{\link{GWASdata}} including the data
+on which the test is conducted.}
 
 \item{\code{statistic}}{A \code{vector} giving the value of the variance component
-t-test statistic.}
+test statistic.}
 
-\item{\code{df}}{A \code{vector} giving the number of degrees of freedom.}
+\item{\code{df}}{A \code{vector} containing the number of degrees of freedom.}
 
 \item{\code{p.value}}{A \code{vector} giving the p-value calculated for the pathway
 in the variance component test.
@@ -62,13 +51,10 @@ For details on the variance component test see the references.}
 }}
 \author{
 Juliane Manitz, Stefanie Friedrichs
-
-Juliane Manitz
-
-Juliane Manitz
 }
 \references{
 \itemize{
+\item  Liu D, Lin X, Ghosh D: Semiparametric regression of multidimensional genetic pathway data: least-squares kernel machines and linear mixed models. Biometrics 2007, 63(4):1079-88.
  \item Wu MC, Kraft P, Epstein MP, Taylor DM, Chanock SJ, Hunter DJ, Lin X: Powerful SNP-Set Analysis for Case-Control Genome-Wide Association Studies. Am J Hum Genet 2010, 86:929-42
 }
 }

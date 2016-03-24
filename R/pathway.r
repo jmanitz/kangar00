@@ -8,13 +8,12 @@
 #'
 #' @rdname pathway-class
 #'
-#' @slot id a character repesenting the pathway id, e.g. hsa00100 as used in 
+#' @slot id A character repesenting the pathway id, e.g. hsa00100 as used in 
 #' the KEGG database.
-#' @slot adj a matrix respresenting the network adjacency matrix  of dimension 
+#' @slot adj A matrix respresenting the network adjacency matrix  of dimension 
 #' equaling the number of genes (1 interaction, 0 otherwise)
-#' @slot sign a numeric vector indicating the interaction type for each link 
-#' (1 activation, -1 inhibition). Represents the interaction network within the 
-#' pathway.
+#' @slot sign A numeric vector indicating the interaction type for each link 
+#' (1 activation, -1 inhibition) in the interaction network for the pathway.
 #' 
 #' @author Juliane Manitz
 #'
@@ -378,9 +377,9 @@ setMethod('gene_name_number', signature='character',
 
 #' An S4 class for an object assigning genes to pathways
 #'
-#' @rdname spathway_info-class
+#' @rdname pathway_info-class
 #' @slot info A \code{data.frame} including information on genes contained in 
-#' pathways
+#' pathways with columns 'pathway', 'gene_start', 'gene_end', 'chr' and 'gene'.
 #' @examples
 #' data(hsa04022_info) 
 #'
@@ -461,7 +460,7 @@ setMethod('show', signature='pathway_info',
 setGeneric('summary', function(object, ...) standardGeneric('summary'))
 #' \code{summary} Summarizes information on \code{pathway_info} object
 #'
-#' @param object An object of class \code{\link{pathway_info}}.
+## @param object An object of class \code{\link{pathway_info}}.
 #' @return \code{summary} Summarized information on \code{pathway_info} object.
 ## @author Stefanie Friedrichs
 #' @examples
@@ -548,9 +547,9 @@ setGeneric('get_network_matrix', function(x, ...) standardGeneric('get_network_m
 #' @param directed A \code{logic} argument, stating whether the networkmatrix 
 #' should be returned directed (\code{TRUE}) or undirected (\code{FALSE}).
 #' @param keep.kgml A \code{logic} argument, specifying whether the downloaded 
-#' KEGG kgml file of the pathway should be kept in the working directory. 
-#' For (\code{FALSE}) the file is deleted, for (\code{TRUE}) not.  
-#' after calculation of the network matrix. 
+#' KEGG kgml file of the pathway should be kept in the working directory after
+#' calculation of the network matrix. For (\code{FALSE}) the file is deleted, 
+#' for (\code{TRUE}) not.   
 #' @return A \code{matrix} representing the interaction network in the pathway.
 ## @examples
 ## get_network_matrix("hsa04022", TRUE)

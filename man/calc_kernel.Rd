@@ -6,7 +6,7 @@
 \alias{lin_kernel,GWASdata-method}
 \alias{net_kernel,GWASdata-method}
 \alias{sia_kernel,GWASdata-method}
-\title{calculates a kernel to be evaluated in the logistic kernel machine test.}
+\title{Calculates teh kernel-matrix for a pathway}
 \usage{
 \S4method{calc_kernel}{GWASdata}(object, pathway, knots = NULL,
   type = c("lin", "sia", "net"), parallel = c("none", "cpu", "gpu"), ...)
@@ -21,30 +21,47 @@
   parallel = c("none", "cpu", "gpu"), ...)
 }
 \arguments{
-\item{object}{\code{GWASdata} object containing the genotypes of the individuals for which a kernel will be calculated.}
+\item{object}{\code{GWASdata} object containing the genotypes of the
+individuals for which a kernel will be calculated.}
 
-\item{pathway}{object of the class \code{pathway} specifying the SNP set for which a kernel will be calculated.}
+\item{pathway}{object of the class \code{pathway} specifying the SNP set
+for which a kernel will be calculated.}
 
-\item{knots}{\code{GWASdata} object, if specified low-rank kernel be computed}
+\item{knots}{\code{GWASdata} object, if specified a low-rank kernel will be
+computed}
 
-\item{type}{character, kernel type: Use \code{"lin"} for linear kernels, \code{"sia"} for size-adjusted or \code{"net"} for network-based kernels.}
+\item{type}{\code{character} indicating the kernel type: Use \code{"lin"}
+for linear kernel, \code{"sia"} for size-adjusted or \code{"net"}
+for network-based kernel.}
 
-\item{parallel}{character specifying if the kernel matrix is computed in parallel: Use \code{"none"} for non-parallel calculation on CPU. (other options not yet implemented)}
+\item{parallel}{\code{character} specifying if the kernel matrix is computed in
+parallel: Use \code{"none"} for non-parallel calculation on CPU. (other
+options not yet implemented)}
 
 \item{...}{further arguments to be passed to the kernel computations}
 }
 \value{
-Returns object of class kernel, including the similarity matrix of the corresponding pathway for the considered individuals (\code{kernel}). If \code{knots} are specified low-rank kernel of class \code{lowrank_kernel} will be returned, which is not necessarily quadratic and symmetric.
+Returns an object of class \code{kernel}, including the similarity
+matrix of the pathway for the considered individuals.  \cr
+If \code{knots} are specified low-rank kernel of class \code{lowrank_kernel}
+will be returned, which is not necessarily quadratic and symmetric.
 }
 \description{
-calculates a kernel to be evaluated in the logistic kernel machine test.
+Uses individuals' genotypes to calculate a kernel-matrix for a specific
+pathway. Each numeric value within this matrix is calculated
+from two individuals' genotypevectors of the SNPs within
+the pathway by a kernelfunction. It can be interpreted as the genetic
+similiarity of the individuals. Association between the pathway and a
+binary phenotype (case-control status) can be evaluated
+in the logistic kernel machine test, based on the kernelmatrix.
+Three kernel functions are available.
 }
 \details{
 Different types of kernels can be constructed:
 \itemize{
   \item \code{type='lin'} creates the linear kernel assuming additive SNP effects to be evaluated in the logistic kernel machine test.
   \item \code{type='sia'} calculates the size-adjusted kernel which takes into consideration the numbers of SNPs and genes in a pathway to correct for size bias.
-  \item \code{type='net'} calculates a network-based kernel to be evaluated in the logistic kernel machine test. Not only information on gene membership and gene/pathway size in number of SNPs is incorporated in the calculation, but also the interaction structure of genes in the pathway.
+  \item \code{type='net'} calculates the network-based kernel. Here not only information on gene membership and gene/pathway size in number of SNPs is incorporated, but also the interaction structure of genes in the pathway.
 }
 For more details, check the references.
 }
@@ -57,10 +74,12 @@ For more details, check the references.
 \item \code{GWASdata}: 
 }}
 \examples{
-#### missing example #### <FIXME>
+data(gwas)
+data(hsa04020)
+K.net  <- calc_kernel(gwas, hsa04020, knots = NULL, type='net', parallel='none')
 }
 \author{
-Juliane Manitz, Saskia Freytag, Ngoc Thuy Ha
+Stefanie Friedrichs, Juliane Manitz, Saskia Freytag, Ngoc Thuy Ha
 }
 \references{
 \itemize{

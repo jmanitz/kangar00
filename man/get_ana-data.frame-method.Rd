@@ -27,4 +27,5 @@ Juliane Manitz, Saskia Freytag, Stefanie Friedrichs
 \seealso{
 \code{\link{get_anno}}
 }
+\keyword{internal}
 

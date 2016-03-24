@@ -8,14 +8,15 @@
 NULL
 
 #################################### kernel class definition #################
-#' An S4 class to represent a kernel for a SNPset
+#' An S4 class representing the kernel of a pathway
 #'
 #' @rdname kernel-class
 #'
-#' @slot type character, kernel type: Use \code{"lin"} for linear kernels,
-#' \code{"sia"} for size-adjusted or \code{"net"} for network-based kernels.
-#' @slot kernel kernel matrix of dimension equal to individuals
-#' @slot pathway pathway object
+#' @slot type A \code{character} representing the kernel type: Use 
+#' \code{"lin"} for linear kernels, \code{"sia"} for size-adjusted 
+#' or \code{"net"} for network-based kernels.
+#' @slot kernel A kernel matrix of dimension equal to the number of individuals
+#' @slot pathway A pathway object
 #'
 #' @author Juliane Manitz
 #' @export
@@ -83,25 +84,33 @@ setValidity('lowrank_kernel', function(object){
 
 # calculate kernel object
 setGeneric('calc_kernel', function(object, ...) standardGeneric('calc_kernel'))
-
-#' calculates the kernel-matrix of a pathway which can by evaluated in the 
-#' logistic kernel machine test.
+#' Calculates teh kernel-matrix for a pathway
+#'
+#' Uses individuals' genotypes to calculate a kernel-matrix for a specific 
+#' pathway. Each numeric value within this matrix is calculated
+#' from two individuals' genotypevectors of the SNPs within 
+#' the pathway by a kernelfunction. It can be interpreted as the genetic 
+#' similiarity of the individuals. Association between the pathway and a 
+#' binary phenotype (case-control status) can be evaluated
+#' in the logistic kernel machine test, based on the kernelmatrix. 
+#' Three kernel functions are available. 
 #'
 #' @param object \code{GWASdata} object containing the genotypes of the 
 #' individuals for which a kernel will be calculated.
 #' @param pathway object of the class \code{pathway} specifying the SNP set 
 #' for which a kernel will be calculated.
-#' @param type character, kernel type: Use \code{"lin"} for linear kernels, 
-#' \code{"sia"} for size-adjusted or \code{"net"} for network-based kernels.
+#' @param type \code{character} indicating the kernel type: Use \code{"lin"}
+#'  for linear kernel, \code{"sia"} for size-adjusted or \code{"net"}
+#'  for network-based kernel.
 #' @param knots \code{GWASdata} object, if specified a low-rank kernel will be 
 #' computed
-#' @param parallel character specifying if the kernel matrix is computed in 
+#' @param parallel \code{character} specifying if the kernel matrix is computed in 
 #' parallel: Use \code{"none"} for non-parallel calculation on CPU. (other 
 #' options not yet implemented)
 #' @param ... further arguments to be passed to the kernel computations
 #'
 #' @return Returns an object of class \code{kernel}, including the similarity 
-#' matrix of the  pathway for the considered individuals (\code{kernel}). 
+#' matrix of the pathway for the considered individuals.  \cr
 #' If \code{knots} are specified low-rank kernel of class \code{lowrank_kernel} 
 #' will be returned, which is not necessarily quadratic and symmetric.
 #' @details
@@ -109,7 +118,7 @@ setGeneric('calc_kernel', function(object, ...) standardGeneric('calc_kernel'))
 #' \itemize{
 #'   \item \code{type='lin'} creates the linear kernel assuming additive SNP effects to be evaluated in the logistic kernel machine test.
 #'   \item \code{type='sia'} calculates the size-adjusted kernel which takes into consideration the numbers of SNPs and genes in a pathway to correct for size bias.
-#'   \item \code{type='net'} calculates a network-based kernel to be evaluated in the logistic kernel machine test. Not only information on gene membership and gene/pathway size in number of SNPs is incorporated, but also the interaction structure of genes in the pathway.
+#'   \item \code{type='net'} calculates the network-based kernel. Here not only information on gene membership and gene/pathway size in number of SNPs is incorporated, but also the interaction structure of genes in the pathway.
 #' }
 #' For more details, check the references.
 #' @references
@@ -124,7 +133,7 @@ setGeneric('calc_kernel', function(object, ...) standardGeneric('calc_kernel'))
 #' data(hsa04020)
 #' K.net  <- calc_kernel(gwas, hsa04020, knots = NULL, type='net', parallel='none')
 #'
-#' @author Juliane Manitz, Saskia Freytag, Ngoc Thuy Ha
+#' @author Stefanie Friedrichs, Juliane Manitz, Saskia Freytag, Ngoc Thuy Ha
 #' @rdname calc_kernel
 #' @export
 #' @seealso \code{\link{kernel-class}}, \code{\link{GWASdata-class}}, \code{\link{pathway-class}}
@@ -285,17 +294,18 @@ setMethod('net_kernel', signature(object = 'GWASdata'),
 ################################## helper function #############################
 
 setGeneric('rewire_network', function(x, ...) standardGeneric('rewire_network'))
-#' Apply two-step network to rewire network genes if it contains no SNPs in 
-#' GWASdata (for internal use)
+#' Rewires interactions in a pathway, which go through a gene not represented 
+#' by any SNPs in the considered \code{GWASdata} object. (for internal use)  
 #'
 #' @export
 #' @author Juliane Manitz
 #'
-#' @param x adjacency matrix
-#' @param remov indication which genes should be removed <FIXME> what does this mean? TRUE/FALSE vector, gene names, or vector
-#' @return An adjacency matrix containing rewired network
+#' @param x Adjacency \code{matrix}
+#' @param remov A \code{vector} of gene names, indicating which genes are not 
+#' represented by SNPs in the considered \code{GWASdata} and will be removed  
+#' @return An adjacency \code{matrix} containing the rewired network
 #'
-#' @references TODO Newman?
+## @references TODO Newman?
 setMethod('rewire_network', signature = 'matrix',
           definition = function(x, remov) {
     # early exist if no genes have to be removed
@@ -352,6 +362,7 @@ setGeneric('get_ana', function(x, ...) standardGeneric('get_ana'))
 #' @param pathway pathway object
 #' @return matrix ANA' for inner part of network kernel
 #' @seealso \code{\link{get_anno}}  
+#' @keywords internal
 setMethod('get_ana', signature = 'data.frame',
           definition = function(x, SNPset, pathway){
 
@@ -390,12 +401,16 @@ setMethod('get_ana', signature = 'data.frame',
 setGeneric('make_psd', function(x, ...) standardGeneric('make_psd'))
 #' Adjust network matrix to be positive semi-definite
 #'
-#' @param x matrix specifying the network adjacency matrix.
-#' @param eps numeric, tolance for smallest eigenvalue adjustment
+#' @param x A \code{matrix} specifying the network adjacency matrix.
+#' @param eps A \code{numeric} value, setting the tolance for smallest 
+#' eigenvalue adjustment
 #' @return The matrix x, if it is positive definite and the closest positive 
 #' semi-definite matrix if x is not positive semi-definite.
 #'
-#' @details <FIXME> Add formula. For more details check the references.
+#' @details For a matrix N, the closest positive semi-definite matrix is 
+#' calculated as N* = rho*N + (1+rho)*I, where I is the identity matrix
+#' and rho = 1/(1 - lambda) with lambda the smallest eigenvalue of N. 
+#' For more details check the references.
 #'
 #' @references
 #' \itemize{
@@ -425,9 +440,7 @@ setMethod('make_psd', signature = 'matrix',
 #' \code{show} displays the kernel object briefly
 #' @param object kernel object
 #'
-#' @examples
-#' data(gwas)
-#' show(gwas)
+## @examples
 #'
 #' @export
 #' @rdname kernel-class

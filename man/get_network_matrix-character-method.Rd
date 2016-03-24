@@ -15,9 +15,9 @@ should be extracted. Here KEGG IDs ('hsa00100') are used.}
 should be returned directed (\code{TRUE}) or undirected (\code{FALSE}).}
 
 \item{keep.kgml}{A \code{logic} argument, specifying whether the downloaded
-KEGG kgml file of the pathway should be kept in the working directory.
-For (\code{FALSE}) the file is deleted, for (\code{TRUE}) not.
-after calculation of the network matrix.}
+KEGG kgml file of the pathway should be kept in the working directory after
+calculation of the network matrix. For (\code{FALSE}) the file is deleted,
+for (\code{TRUE}) not.}
 }
 \value{
 A \code{matrix} representing the interaction network in the pathway.

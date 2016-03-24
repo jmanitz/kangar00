@@ -8,18 +8,23 @@
 \S4method{make_psd}{matrix}(x, eps = sqrt(.Machine$double.eps))
 }
 \arguments{
-\item{x}{matrix specifying the network adjacency matrix.}
+\item{x}{A \code{matrix} specifying the network adjacency matrix.}
 
-\item{eps}{numeric, tolance for smallest eigenvalue adjustment}
+\item{eps}{A \code{numeric} value, setting the tolance for smallest
+eigenvalue adjustment}
 }
 \value{
-The matrix x, if it is positive definite and the closest positive semi-definite matrix if x is not positive semi-definite.
+The matrix x, if it is positive definite and the closest positive
+semi-definite matrix if x is not positive semi-definite.
 }
 \description{
 Adjust network matrix to be positive semi-definite
 }
 \details{
-<FIXME> Add formula. For more details check the references.
+For a matrix N, the closest positive semi-definite matrix is
+calculated as N* = rho*N + (1+rho)*I, where I is the identity matrix
+and rho = 1/(1 - lambda) with lambda the smallest eigenvalue of N.
+For more details check the references.
 }
 \author{
 Juliane Manitz, Saskia Freytag, Stefanie Friedrichs

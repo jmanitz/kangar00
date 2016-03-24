@@ -22,4 +22,5 @@ they are represented with in the KEGG network from the corresponding KGML pathwa
 \author{
 Stefanie Friedrichs
 }
+\keyword{internal}
 

@@ -9,7 +9,7 @@
 \alias{show,kernel-method}
 \alias{summary,kernel,ANY-method}
 \alias{summary,kernel-method}
-\title{An S4 class to represent a kernel for a SNPset}
+\title{An S4 class representing the kernel of a pathway}
 \usage{
 \S4method{show}{kernel}(object)
 
@@ -25,7 +25,7 @@
 \item{hclust}{\code{logical}, indicating whether a dendrogram should be added}
 }
 \description{
-An S4 class to represent a kernel for a SNPset
+An S4 class representing the kernel of a pathway
 
 \code{show} displays the kernel object briefly
 
@@ -36,17 +36,14 @@ An S4 class to represent a kernel for a SNPset
 \section{Slots}{
 
 \describe{
-\item{\code{type}}{character, kernel type: Use \code{"lin"} for linear kernels,
-\code{"sia"} for size-adjusted or \code{"net"} for network-based kernels.}
+\item{\code{type}}{A \code{character} representing the kernel type: Use
+\code{"lin"} for linear kernels, \code{"sia"} for size-adjusted
+or \code{"net"} for network-based kernels.}
 
-\item{\code{kernel}}{kernel matrix of dimension equal to individuals}
+\item{\code{kernel}}{A kernel matrix of dimension equal to the number of individuals}
 
-\item{\code{pathway}}{pathway object}
+\item{\code{pathway}}{A pathway object}
 }}
-\examples{
-data(gwas)
-show(gwas)
-}
 \author{
 Juliane Manitz
 }
