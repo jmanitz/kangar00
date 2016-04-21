@@ -564,9 +564,16 @@ setMethod('get_network_matrix', signature='character',
     #filename  <- paste(x,".xml",sep="")
     liste     <- gene_name_number(x)
     pathgraph <- parseKGML2Graph(paste(x,".xml",sep=""), expandGenes=TRUE)
+    # TODO: New function for making pathgraph
+    pathgraph.s1 <- parseKGML(paste(x, ".xml", sep = ""))
+    pathgraph  <- KEGGpathway2Graph(pathgraph.s1, expandGenes = TRUE)
+    #print(pathgraph)
+    #print(pathgraph@nodes)
+    #print(pathgraph@edges)
     nodes     <- nodes(pathgraph) #vector with gene numbers (format: "hsa:226")
     edgelist  <- parseKGML2DataFrame(paste(x,".xml",sep=""))
-    edgelist  <- edgelist[!is.na(edgelist[,3]),] #delete NA-types            
+    edgelist  <- edgelist[!is.na(edgelist[,3]),] #delete NA-types 
+    
 
   # --- Skip pathway, if no edges or wrong number of genes ---
     if(length(edgelist)==0){

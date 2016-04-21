@@ -3,16 +3,24 @@ Type: Package
 Title: Kernel Approaches for Nonlinear Genetic Association Regression
 Version: 0.5
 Date: 2015-02-04
-Author: Stefanie Friedrichs [aut], Juliane Manitz [aut], Patricia Burger
-    [aut], Benjamin Hofner [aut], Ngoc Thuy Ha [aut], Saskia Freytag [ctb], Martin
+Author: Stefanie Friedrichs [aut], Juliane Manitz [aut], Patricia Burger [aut],
+    Benjamin Hofner [aut], Ngoc Thuy Ha [aut], Saskia Freytag [ctb], Martin
     Schlather [ctb], Heike Bickeboeller [ctb]
 Maintainer: Stefanie Friedrichs <stefanie.friedrichs@med.uni-goettingen.de>
 Description: This package includes methods to extract information on pathways,
+<<<<<<< Updated upstream
     genes and SNPs from online databases. It provides functions for data preparation
     and evaluation of genetic influence on a binary outcome using the logistic
     kernel machine test (LKMT). Three different kernel functions are offered to
     analize genotype information in this variance component test: A linear kernel, a
     size-adjusted kernel and a network based kernel.
+=======
+    genes and SNPs from online databases. It provides functions for data
+    preparation and evaluation using the logistic kernel machine test (LKMT).
+    For this variance component test three different kernel functions are
+    offered in the package: A linear kernel, a size-adjusted kernel and a
+    network based kernel.
+>>>>>>> Stashed changes
 License: GPL-2
 Collate: 
     'GWASdata.r'
@@ -38,3 +46,4 @@ Suggests:
 VignetteBuilder: knitr
 NeedsCompilation: no
 Packaged: 2015-08-07 14:22:56 UTC; jmanitz
+RoxygenNote: 5.0.1

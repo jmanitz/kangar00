@@ -8,3 +8,8 @@
 # RStudio files
 .Rproj.user/
 inst/doc
+.Rproj.user
+.gitignore
+.Rbuildignore
+DESCRIPTION
+NAMESPACE
