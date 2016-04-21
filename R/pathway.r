@@ -554,95 +554,110 @@ setGeneric('get_network_matrix', function(x, ...) standardGeneric('get_network_m
 ## @examples
 ## get_network_matrix("hsa04022", TRUE)
 #'
-#' @author Stefanie Friedrichs
+#' @author Stefanie Friedrichs, Patricia Burger
 #' @import KEGGgraph, biomaRt 
 #' @export   
 setMethod('get_network_matrix', signature='character', 
-          definition = function(x, directed, keep.kgml){    
-    retrieveKGML(substr(x,4,nchar(x)), organism="hsa",
-                 destfile=paste(x,".xml",sep=""), method="internal")
-    #filename  <- paste(x,".xml",sep="")
-    liste     <- gene_name_number(x)
-    pathgraph <- parseKGML2Graph(paste(x,".xml",sep=""), expandGenes=TRUE)
-    # TODO: New function for making pathgraph
-    pathgraph.s1 <- parseKGML(paste(x, ".xml", sep = ""))
-    pathgraph  <- KEGGpathway2Graph(pathgraph.s1, expandGenes = TRUE)
-    #print(pathgraph)
-    #print(pathgraph@nodes)
-    #print(pathgraph@edges)
-    nodes     <- nodes(pathgraph) #vector with gene numbers (format: "hsa:226")
-    edgelist  <- parseKGML2DataFrame(paste(x,".xml",sep=""))
-    edgelist  <- edgelist[!is.na(edgelist[,3]),] #delete NA-types 
-    
-
-  # --- Skip pathway, if no edges or wrong number of genes ---
-    if(length(edgelist)==0){
-       print(paste("KGML-file for ",x," has no edges!",sep=""))
-       next}   
-    if(length(nodes)!=length(liste[,2])){
-       paste(paste("Wrong number of genes in ",x,"!",sep=""))
-       next}               
-    #set up empty matrix:
-    N <- matrix(rep(0, (length(nodes)^2)),nrow=length(nodes))
-    colnames(N) <- rownames(N) <- nodes 
-    verb.a <- edgelist[edgelist[,3]=="activation",] 
-    verb.i <- edgelist[edgelist[,3]=="inhibition",]
-    verb.s <- edgelist[edgelist[,3]!="inhibition"&edgelist[,3]!="activation",] 
-  
-  # --- if activations/inhibitions specified: Signed matrix ---
-    if( (length(verb.a[,1])+length(verb.i[,1]))>0 ){
-      if(length(verb.s[,1])==0){ print(paste(x,": Activation/Inhibition only: 
-                                 Signed graph!",sep="")) }
-      if(length(verb.s[,1])>0){ print(paste(x," has both: Activation/Inhibition   
-                                      edges and edges without type!",sep=""))}
-     # -- Directed --- 
-     #           to 
-     # from  (        )
-     if(length(verb.a[,1])>0){ 
-        from <- as.character(unique(verb.a[,1]))
-        for(i in from){ 
-           N[i,as.character(verb.a[verb.a[,1]==i,2])] <- 1}  }
-     if(length(verb.i[,1])>0){ 
-        from <- as.character(unique(verb.i[,1]))
-        for(i in from){ 
-           if(sum(N[i,as.character(verb.i[verb.i[,1]==i,2])])>0){
-              print("Edge will be removed!")} #if i. at same edge as a. was
-           N[i,as.character(verb.i[verb.i[,1]==i,2])] <- 
-           N[i,as.character(verb.i[verb.i[,1]==i,2])] -1 }   } 
-     N <- set_names(N,nodes,liste)                    
-     # -- Undirected --- 
-     M <- N + t(N) #contradictory edges will be removed
-     M <- set_one(M)    #double edges (2,-2) could be produced
-     M <- set_names(M,nodes,liste)           
-     }
-
-  # --- else, if no edge types specified: Unsigned matrix ---  
-    #only use edges without type, if ALL edges are without type
-    if(length(verb.s[,1])>0 & (length(verb.a[,1])+length(verb.i[,1]))==0){
-       print(paste(x,": No edge-types, unsigned graph only!",sep=""))
+          definition = function(x, directed = TRUE, keep.kgml = TRUE, method = "KEGG"){    
+        
+    if(method == "KEGG"){
+      retrieveKGML(substr(x,4,nchar(x)), organism="hsa",
+                   destfile=paste(x,".xml",sep=""), method="internal")
+      liste     <- gene_name_number(x)
+      pathgraph <- parseKGML2Graph(paste(x,".xml",sep=""), expandGenes=TRUE)
+     
+      
+     # parseKGML2Graph can also be split up in two steps 
+     # pathgraph.s1 <- parseKGML(paste(x, ".xml", sep = ""))
+     # pathgraph  <- KEGGpathway2Graph(pathgraph.s1, expandGenes = TRUE)
+           
+      nodes     <- nodes(pathgraph) #vector with gene numbers (format: "hsa:226")
+      edgelist  <- parseKGML2DataFrame(paste(x,".xml",sep=""))
+      if(length(edgelist) != 0){
+        edgelist  <- edgelist[!is.na(edgelist[,3]),] #delete NA-types 
+      }
+         
+      # --- Skip pathway, if no edges or wrong number of genes ---
+      if(length(edgelist)==0){
+        print(paste("KGML-file for ",x," has no edges!",sep=""))
+        }   
+      if(length(nodes)!=length(liste[,2])){
+        stop(paste("Wrong number of genes in ",x,"!",sep=""))
+        }               
+      #set up empty matrix:
+      N <- matrix(rep(0, (length(nodes)^2)),nrow=length(nodes))
+      colnames(N) <- rownames(N) <- nodes 
+      verb.a <- NULL
+      verb.i <- NULL
+      verb.s <- NULL
+      if(length(edgelist) != 0){
+        verb.a <- edgelist[edgelist[,3]=="activation",] 
+        verb.i <- edgelist[edgelist[,3]=="inhibition",]
+        verb.s <- edgelist[edgelist[,3]!="inhibition"&edgelist[,3]!="activation",] 
+      }
        
-    # -- Directed ---
-    if(length(verb.s[,1])>0){ 
-       from <- as.character(unique(verb.s[,1]))
-       for(i in from){ 
-         N[i,as.character(verb.s[verb.s[,1]==i,2])] <- 1
-       }  
-     }
-     N <- set_names(N,nodes,liste)                           
-     # -- Undirected --- 
-     M <- N + t(N)
-     #contradictory edges will be removed
-     #double edges (2,-2) can be produced:
-     M <- set_one(M)
-     M <- set_names(M,nodes,liste)      
-     }
-    if(keep.kgml == FALSE){ 
-       rm(paste(x,".xml",sep="")) 
-    }
-    if(directed==TRUE){
-      return(N)
-    }else{
-      return(M)
-    }    
+      
+      # --- if activations/inhibitions specified: Signed matrix ---
+      if( (length(verb.a[,1])+length(verb.i[,1]))>0 ){
+        if(length(verb.s[,1])==0){ 
+          print(paste(x,": Activation/Inhibition only: 
+                      Signed graph!",sep="")) 
+        }
+        if(length(verb.s[,1])>0){ 
+          print(paste(x," has both: Activation/Inhibition   
+                      edges and edges without type!",sep=""))
+        }
+        # -- Directed --- 
+        #           to 
+        # from  (        )
+        if(length(verb.a[,1])>0){ 
+          from <- as.character(unique(verb.a[,1]))
+          for(i in from){ 
+            N[i,as.character(verb.a[verb.a[,1]==i,2])] <- 1}  }
+        if(length(verb.i[,1])>0){ 
+          from <- as.character(unique(verb.i[,1]))
+          for(i in from){ 
+            if(sum(N[i,as.character(verb.i[verb.i[,1]==i,2])])>0){
+              print("Edge will be removed!")} #if i. at same edge as a. was
+            N[i,as.character(verb.i[verb.i[,1]==i,2])] <- 
+              N[i,as.character(verb.i[verb.i[,1]==i,2])] -1 }   } 
+        N <- set_names(N,nodes,liste)                    
+        # -- Undirected --- 
+        M <- N + t(N) #contradictory edges will be removed
+        M <- set_one(M)    #double edges (2,-2) could be produced
+        M <- set_names(M,nodes,liste)           
+        }
+      
+      # --- else, if no edge types specified: Unsigned matrix ---  
+      #only use edges without type, if ALL edges are without type
+      if(length(verb.s[,1])>0 & (length(verb.a[,1])+length(verb.i[,1]))==0){
+        print(paste(x,": No edge-types, unsigned graph only!",sep=""))
+        
+        # -- Directed ---
+        if(length(verb.s[,1])>0){ 
+          from <- as.character(unique(verb.s[,1]))
+          for(i in from){ 
+            N[i,as.character(verb.s[verb.s[,1]==i,2])] <- 1
+          }  
+        }
+        N <- set_names(N,nodes,liste)                           
+        # -- Undirected --- 
+        M <- N + t(N)
+        #contradictory edges will be removed
+        #double edges (2,-2) can be produced:
+        M <- set_one(M)
+        M <- set_names(M,nodes,liste)      
+      }
+      if(keep.kgml == FALSE){ 
+        rm(paste(x,".xml",sep="")) 
+      }
+      if(directed==TRUE){
+        return(N)
+      }else{
+        return(M)
+      }    
+    }        
+            
+    
 })
           
