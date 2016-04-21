@@ -358,15 +358,52 @@ setMethod('gene_name_number', signature='character',
     #if ";" entry is pos and pos-2 has "]" as last character -> ok. 
     #else: search until pos-j ends with "]".
     liste     <- matrix(rep(0,length(pos)*2),ncol=2, byrow=TRUE)
-    liste[1,] <- info[c((pos[1]-1),pos[1])] #before first entry no "]"
+    #Above "if else" is not applicable for the first pos. Therefore:
+    #If item before first gene name begins not with at least 2 digits search
+    #all entries before the first pos for matching pattern
+    if(grepl("^[0-9]{2,}" ,info[pos[1]-1]) == FALSE){
+      if(pos[1] <= 2){
+        cat("First gene in this pathway has incorrect hsa number. Please
+            check KEGG for this pathway.")
+      }      
+      for(j in 2:pos[1]-1){
+        check <- grepl("^[0-9]{2,}" ,info[pos[1]-j])
+        if(check){
+          liste[1,] <- info[c((pos[1]-j),pos[1])]
+          break
+        }
+      }
+    } else{
+      liste[1,] <- info[c((pos[1]-1),pos[1])] #before first entry no "]"
+    }
+    
+    
+    if(length(pos) == 1){
+      warning("This pathway contains only one gene.")
+      print("This pathway contains only one gene.")
+      return(liste)
+    }
+    
     for(i in 2:length(pos)){ 
       if(substr(info[pos[i]-2],nchar(info[pos[i]-2]),nchar(info[pos[i]-2]))=="]"){ 
-         liste[i,] <- info[c((pos[i]-1),pos[i])]}else{  
+         liste[i,] <- info[c((pos[i]-1),pos[i])]
+         }else{  
            j <- 3 
            while(liste[i,1]=="0"){
            if(substr(info[pos[i]-j],nchar(info[pos[i]-j]),nchar(info[pos[i]-j]))=="]"){
               textt <- paste(info[ (pos[i]-j+2):pos[i] ], collapse = '')
-              liste[i,] <- c(info[c(pos[i]-j+1)],textt) }else{ j <- j+1 }      
+              liste[i,] <- c(info[c(pos[i]-j+1)],textt) 
+           }else{ 
+             if(grepl(";", info[pos[i]-j])){
+               print("This gene has no [KO:XXXXXXX] number.")
+               if(grepl("^[0-9]{2,}" ,info[pos[1]-1])){
+                 cat("Check")
+                 liste[i,] <- info[c((pos[i]-1),pos[i])]
+                 
+               }
+             }
+             j <- j+1
+           }      
            }
        }
     }
