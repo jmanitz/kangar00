@@ -397,7 +397,6 @@ setMethod('gene_name_number', signature='character',
              if(grepl(";", info[pos[i]-j])){
                print("This gene has no [KO:XXXXXXX] number.")
                if(grepl("^[0-9]{2,}" ,info[pos[1]-1])){
-                 cat("Check")
                  liste[i,] <- info[c((pos[i]-1),pos[i])]
                  
                }
