@@ -5,7 +5,8 @@
 \alias{get_network_matrix,character-method}
 \title{Function to calculate the network matrix}
 \usage{
-\S4method{get_network_matrix}{character}(x, directed, keep.kgml)
+\S4method{get_network_matrix}{character}(x, directed = TRUE,
+  keep.kgml = TRUE, method = "KEGG")
 }
 \arguments{
 \item{x}{A \code{character} identifying the pathway for which gene infomation
@@ -18,6 +19,9 @@ should be returned directed (\code{TRUE}) or undirected (\code{FALSE}).}
 KEGG kgml file of the pathway should be kept in the working directory after
 calculation of the network matrix. For (\code{FALSE}) the file is deleted,
 for (\code{TRUE}) not.}
+
+\item{method}{A \code{character} stating from where the pathway data should
+be downloaded. Currently only 'KEGG' for the Kegg database is available.}
 }
 \value{
 A \code{matrix} representing the interaction network in the pathway.
@@ -28,6 +32,6 @@ structure within a particular pathway. In this process a KEGG kgml file is
 downloaded and saved in the working directory.
 }
 \author{
-Stefanie Friedrichs
+Stefanie Friedrichs, Patricia Burger
 }
 

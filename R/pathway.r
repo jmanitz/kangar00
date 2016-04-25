@@ -348,7 +348,7 @@ setGeneric('gene_name_number', function(x, ...) standardGeneric('gene_name_numbe
 #' infomation should be extracted as used in KEGG database ('hsa00100').    
 #' @return A \code{data.frame} listing the genes included in the pathway with 
 #' their names as well as numbers used in KEGG database.
-#' @author Stefanie Friedrichs
+#' @author Stefanie Friedrichs, Patricia Burger
 #' @keywords internal
 setMethod('gene_name_number', signature='character', 
           definition = function(x){
@@ -585,10 +585,12 @@ setGeneric('get_network_matrix', function(x, ...) standardGeneric('get_network_m
 #' @param keep.kgml A \code{logic} argument, specifying whether the downloaded 
 #' KEGG kgml file of the pathway should be kept in the working directory after
 #' calculation of the network matrix. For (\code{FALSE}) the file is deleted, 
-#' for (\code{TRUE}) not.   
+#' for (\code{TRUE}) not.
+#' @param method A \code{character} stating from where the pathway data should 
+#' be downloaded. Currently only 'KEGG' for the Kegg database is available.    
 #' @return A \code{matrix} representing the interaction network in the pathway.
 ## @examples
-## get_network_matrix("hsa04022", TRUE)
+## get_network_matrix("hsa04022", TRUE, TRUE, 'KEGG')
 #'
 #' @author Stefanie Friedrichs, Patricia Burger
 #' @import KEGGgraph, biomaRt 
