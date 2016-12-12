@@ -23,13 +23,10 @@ with gene names as rownames and columnnames.
 This function exchanges the numbers used for genes in KEGG download KGML files
 with the corresponding gene names. Names are set to be the column names and
 rownames of the pathway's network matrix. The function
-is called by \code{\link{get_network_matrix}}. (For internal use)
+is called by \code{get_network_matrix}. (For internal use)
 }
 \author{
 Stefanie Friedrichs
-}
-\seealso{
-\code{\link{get_network_matrix}}
 }
 \keyword{internal}
 

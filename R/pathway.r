@@ -52,8 +52,8 @@ setValidity('pathway', function(object){
 })
 
 # show method
-#' \code{show} displays the pathway object briefly
-#' @param object pathway object
+#' \code{show} displays the pathway object briefly   
+#' @param object An object of class \code{pathway-class}
 #' @examples
 #' #show method
 #' data(hsa04020)
@@ -81,7 +81,7 @@ setGeneric('summary', function(object, ...) standardGeneric('summary'))
 #' @export
 #' @rdname pathway-class 
 #' @aliases summary,pathway,ANY-method
-#'
+## @param object An object of class \code{pathway-class}
 #' @examples
 #' #summary method
 #' data(hsa04020)
@@ -437,7 +437,7 @@ setValidity('pathway_info', function(object){
 	}
 })
 
-setGeneric('pathway_info', function(x, ...) standardGeneric('pathway_info'))
+setGeneric('pathway_info', function(x) standardGeneric('pathway_info'))
 #' Get information on genes in a pathway
 #'
 #' This function lists all genes formig a particular pathway. Start and end  
@@ -520,7 +520,7 @@ setGeneric('set_one', function(x, ...) standardGeneric('set_one'))
 #' Helper function to set matrix entries to 0/1/-1 only 
 #'
 #' This function sets all entries in a matrix bigger than 1 to 1 and all entries 
-#' smaller than -1 to -1. It is called by \code{\link{get_network_matrix}}.
+#' smaller than -1 to -1. It is called by \code{get_network_matrix}.
 #' (For internal use)
 #'
 #' @param x numeric \code{matrix} representing the network adjacency matrix. 
@@ -528,7 +528,6 @@ setGeneric('set_one', function(x, ...) standardGeneric('set_one'))
 #' with entries equal to 1, -1 or 0.
 #'
 #' @author Stefanie Friedrichs 
-#' @seealso \code{\link{get_network_matrix}}
 #' @keywords internal
 setMethod('set_one', signature='matrix', 
           definition = function(x){       
@@ -548,7 +547,7 @@ setGeneric('set_names', function(x, ...) standardGeneric('set_names'))
 #' This function exchanges the numbers used for genes in KEGG download KGML files
 #' with the corresponding gene names. Names are set to be the column names and 
 #' rownames of the pathway's network matrix. The function 
-#' is called by \code{\link{get_network_matrix}}. (For internal use)
+#' is called by \code{get_network_matrix}. (For internal use)
 #'
 #' @param x A \code{matrix} representing the networkmatrix. 
 #' @param nodes A \code{vector} of gene numbers to be replaced by names.   
@@ -558,7 +557,6 @@ setGeneric('set_names', function(x, ...) standardGeneric('set_names'))
 #' with gene names as rownames and columnnames. 
 #'
 #' @author Stefanie Friedrichs
-#' @seealso \code{\link{get_network_matrix}}
 #' @keywords internal
 setMethod('set_names', signature='matrix', 
           definition = function(x, nodes, my_list){
@@ -593,7 +591,7 @@ setGeneric('get_network_matrix', function(x, ...) standardGeneric('get_network_m
 ## get_network_matrix("hsa04022", TRUE, TRUE, 'KEGG')
 #'
 #' @author Stefanie Friedrichs, Patricia Burger
-#' @import KEGGgraph, biomaRt 
+#' @import KEGGgraph
 #' @export   
 setMethod('get_network_matrix', signature='character', 
           definition = function(x, directed = TRUE, keep.kgml = TRUE, method = "KEGG"){    

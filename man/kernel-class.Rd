@@ -18,7 +18,7 @@
 \S4method{plot}{kernel,missing}(x, y = NA, hclust = FALSE, ...)
 }
 \arguments{
-\item{object}{kernel object}
+\item{object}{An object of class \code{kernel}}
 
 \item{y}{missing (placeholder)}
 

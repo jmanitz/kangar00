@@ -2,10 +2,10 @@ Package: kangar00
 Type: Package
 Title: Kernel Approaches for Nonlinear Genetic Association Regression
 Version: 0.5
-Date: 2015-02-04
+Date: 2016-12-12
 Author: Stefanie Friedrichs [aut], Juliane Manitz [aut], Patricia Burger
-    [aut], Benjamin Hofner [aut], Ngoc Thuy Ha [aut], Saskia Freytag [ctb], Martin
-    Schlather [ctb], Heike Bickeboeller [ctb]
+    [aut], Benjamin Hofner [aut], Ngoc Thuy Ha [aut], Saskia Freytag [ctb],
+    Heike Bickeboeller [ctb]
 Maintainer: Stefanie Friedrichs <stefanie.friedrichs@med.uni-goettingen.de>
 Description: This package includes methods to extract information on pathways,
     genes and SNPs from online databases. It provides functions for data preparation
@@ -15,8 +15,8 @@ Description: This package includes methods to extract information on pathways,
     size-adjusted kernel and a network based kernel.
 License: GPL-2
 Collate:
-    'GWASdata.r'
     'pathway.r'
+    'GWASdata.r'
     'kernel.r'
     'lkmt.r'
 Depends:
@@ -33,7 +33,6 @@ LazyData: true
 Suggests:
     knitr,
     gputools,
-    bigmemory,
     rmarkdown
 VignetteBuilder: knitr
 NeedsCompilation: no

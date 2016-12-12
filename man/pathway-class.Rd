@@ -37,7 +37,7 @@
 \S4method{sample_genes}{pathway}(object, no = 3)
 }
 \arguments{
-\item{object}{pathway object}
+\item{object}{An object of class \code{pathway-class}}
 
 \item{...}{further arguments specifying plotting options in \code{\link{plot.igraph}}}
 

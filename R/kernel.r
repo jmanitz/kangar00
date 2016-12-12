@@ -84,7 +84,7 @@ setValidity('lowrank_kernel', function(object){
 
 # calculate kernel object
 setGeneric('calc_kernel', function(object, ...) standardGeneric('calc_kernel'))
-#' Calculates teh kernel-matrix for a pathway
+#' Calculates the kernel-matrix for a pathway
 #'
 #' Uses individuals' genotypes to calculate a kernel-matrix for a specific 
 #' pathway. Each numeric value within this matrix is calculated
@@ -133,10 +133,10 @@ setGeneric('calc_kernel', function(object, ...) standardGeneric('calc_kernel'))
 #' data(hsa04020)
 #' K.net  <- calc_kernel(gwas, hsa04020, knots = NULL, type='net', parallel='none')
 #'
-#' @author Stefanie Friedrichs, Juliane Manitz, Saskia Freytag, Ngoc Thuy Ha
+#' @author Stefanie Friedrichs, Juliane Manitz
 #' @rdname calc_kernel
 #' @export
-#' @seealso \code{\link{kernel-class}}, \code{\link{GWASdata-class}}, \code{\link{pathway-class}}
+#' @seealso \code{\link{kernel-class}},\code{\link{pathway-class}}
 setMethod('calc_kernel', signature(object = 'GWASdata'),
        definition = function(object, pathway, knots = NULL,
 			                       type = c('lin', 'sia', 'net'),
@@ -298,7 +298,7 @@ setGeneric('rewire_network', function(x, ...) standardGeneric('rewire_network'))
 #' by any SNPs in the considered \code{GWASdata} object. (for internal use)  
 #'
 #' @export
-#' @author Juliane Manitz
+#' @author Stefanie Friedrichs, Juliane Manitz
 #'
 #' @param x Adjacency \code{matrix}
 #' @param remov A \code{vector} of gene names, indicating which genes are not 
@@ -357,11 +357,10 @@ setGeneric('get_ana', function(x, ...) standardGeneric('get_ana'))
 #' @author Juliane Manitz, Saskia Freytag, Stefanie Friedrichs
 #'
 #' @param x \code{data.frame} with annotation information as returned from
-#' \code{\link{get_anno}}
+#' \code{get_anno}
 #' @param SNPset vector with SNPs to be analyzed
 #' @param pathway pathway object
 #' @return matrix ANA' for inner part of network kernel
-#' @seealso \code{\link{get_anno}}  
 #' @keywords internal
 setMethod('get_ana', signature = 'data.frame',
           definition = function(x, SNPset, pathway){
@@ -438,7 +437,7 @@ setMethod('make_psd', signature = 'matrix',
 #################################### basic methods for kernel #################
 # show method
 #' \code{show} displays the kernel object briefly
-#' @param object kernel object
+#' @param object An object of class \code{kernel}
 #'
 ## @examples
 #'
@@ -452,7 +451,7 @@ setMethod('show', signature('kernel'),
           })
 
 # summary method
-setGeneric('summary', function(object, ...) standardGeneric('summary'))
+setGeneric('summary', function(object) standardGeneric('summary'))
 
 #' \code{summary} generates a kernel object summary including the number of individuals and genes for the pathway
 #'

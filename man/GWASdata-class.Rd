@@ -21,6 +21,16 @@ GWASdata(object, ...)
 }
 \arguments{
 \item{object}{A \code{GWASdata} object.}
+
+\item{geno}{An object of any type, including the genotype information.}
+
+\item{anno}{A \code{data.frame} containing the annotation file for the
+GWASdata object.}
+
+\item{pheno}{A \code{data.frame} specifying individual IDs, phenotypes and
+covariates to be included in the regression model.}
+
+\item{desc}{A \code{character} giving the GWAS description, e.g. name of study.}
 }
 \description{
 S4 class for an object representing a Genome-wide Assocaition Study.

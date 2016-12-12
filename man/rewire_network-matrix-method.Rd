@@ -22,6 +22,6 @@ Rewires interactions in a pathway, which go through a gene not represented
 by any SNPs in the considered \code{GWASdata} object. (for internal use)
 }
 \author{
-Juliane Manitz
+Stefanie Friedrichs, Juliane Manitz
 }
 

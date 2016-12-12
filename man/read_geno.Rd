@@ -4,7 +4,7 @@
 \name{read_geno,character-method}
 \alias{read_geno,character-method}
 \title{read genotype data from file to one of several available objects, which
-can be passed to a GWASdata object \code{\link{GWASdata-class}}}
+can be passed to a GWASdata object \code{GWASdata-class}.}
 \usage{
 \S4method{read_geno}{character}(file.path, save.path = NULL, sep = " ",
   header = TRUE, use.fread = TRUE, row.names = TRUE, ...)
@@ -19,16 +19,17 @@ details.}
 
 \item{header}{logical. Does the data set contain column names?}
 
+\item{use.fread}{logical. Should the dataset be read using the package fread?}
+
+\item{row.names}{logical. Does the dataset include rownames?}
+
 \item{...}{further arguments to be passed to \code{bigmemory::read.big.matrix}.}
 }
 \description{
 read genotype data from file to one of several available objects, which
-can be passed to a GWASdata object \code{\link{GWASdata-class}}
+can be passed to a GWASdata object \code{GWASdata-class}.
 }
 \details{
 If the data set contains rownames specified, set option \code{has.row.names = TRUE}.
-}
-\seealso{
-\code{\link{GWASdata-class}}
 }
 

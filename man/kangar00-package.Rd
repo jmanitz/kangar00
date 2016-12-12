@@ -32,7 +32,7 @@ Depends: \tab methods, igraph, biomaRt, KEGGgraph, sqldf \cr
 }
 \author{
 Juliane Manitz, Stefanie Friedrichs, Patricia Burger, Benjamin Hofner  \cr
-Maintainer: Stefanie Friedrichs <stefanie.friedrichs@med.uni-goettingen.de>
+Maintainer: Juliane Manitz <jmanitz@uni-goettingen.de>
 }
 \references{
 \itemize{
@@ -48,9 +48,3 @@ Maintainer: Stefanie Friedrichs <stefanie.friedrichs@med.uni-goettingen.de>
 }
 
 \keyword{ package }
-\seealso{
-
-}
-\examples{
-
-}

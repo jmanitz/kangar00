@@ -9,7 +9,7 @@
 }
 \arguments{
 \item{x}{\code{data.frame} with annotation information as returned from
-\code{\link{get_anno}}}
+\code{get_anno}}
 
 \item{SNPset}{vector with SNPs to be analyzed}
 
@@ -23,9 +23,6 @@ Produce middle part of network kernel (for internal use)
 }
 \author{
 Juliane Manitz, Saskia Freytag, Stefanie Friedrichs
-}
-\seealso{
-\code{\link{get_anno}}
 }
 \keyword{internal}
 

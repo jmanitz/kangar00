@@ -7,7 +7,6 @@
 
 #' An S4 class to represent the variance component test.
 #'
-#' @rdname lkmt-class
 #' @slot formula A formula stating the regression nullmodel that will be used in
 #' the variance component test.
 #' @slot kernel An object of class \code{\link{kernel}} representing the similarity
@@ -28,6 +27,7 @@
 #' }
 #'
 #' @author Juliane Manitz, Stefanie Friedrichs
+#' @rdname lkmt-class
 #' @export lkmt
 #' @import methods
 lkmt <- setClass('lkmt',
@@ -61,7 +61,7 @@ setValidity('lkmt', function(object){
 
 #' \code{show} Shows basic information on \code{lkmt} object
 #'
-## @param object An object of class \code{\link{lkmt}}.
+#' @param object An object of class \code{lkmt}.
 #' @return \code{show} Basic information on \code{lkmt} object.
 ## @examples
 ## data(lkmt)
@@ -140,11 +140,10 @@ setMethod('summary', signature='lkmt',
 #' }
 ## @examples
 ## data(lkmt)
-## lkmt
-#' @author Stefanie Friedrichs,Juliane Manitz , Saskia Freytag, Ngoc-Thuy Ha
+#' @author Stefanie Friedrichs, Juliane Manitz
 #' @export
-#' @rdname lkmt-function
-lkmt <- function(formula, kernel, GWASdata, method=c('satt','davies'), ...){
+#' @rdname lkmt_test
+lkmt_test <- function(formula, kernel, GWASdata, method=c('satt','davies'), ...){
 
     if(length(GWASdata@pheno) == 0) stop("Please specify phenotypes.")
 
@@ -168,10 +167,10 @@ setGeneric('score_test', function(x1, x2, ...) standardGeneric('score_test'))
 #' of beeing a case using the logistic kernel machine test. P-values are
 #' determined using a Sattherthwaite Approximation as described by Dan Schaid.
 #'
-## @param x1 A \code{\link{matrix}} which is the
-## similarity matrix calculated for the pathway to be tested.
-## @param x2 An \code{lm} or \code{glm} object of the nullmodel with fixed 
-## effects covariates included, but no genetic random effects.
+#' @param x1 A \code{\link{matrix}} which is the
+#' similarity matrix calculated for the pathway to be tested.
+#' @param x2 An \code{lm} or \code{glm} object of the nullmodel with fixed 
+#' effects covariates included, but no genetic random effects.
 ## @return A \code{list} including the test results of the pathway.
 ## @author Stefanie Friedrichs, Saskia Freytag, Ngoc-Thuy Ha
 #' @references
@@ -180,7 +179,7 @@ setGeneric('score_test', function(x1, x2, ...) standardGeneric('score_test'))
 #' \item Schaid DJ: Genomic Similarity and Kernel Methods I: Advancements by 
 #' Building on Mathematical and Statistical Foundations. Hum Hered 2010, 70:109-31
 #' }
-#' @rdname lkmt-function
+#' @rdname lkmt_test
 setMethod('score_test', signature(x1 = 'matrix'), 
           definition = function(x1, x2){   
         if(sum(is(x2) %in% c("glm","lm")) == 0 ){
@@ -237,7 +236,7 @@ setGeneric('davies_test', function(x1, x2, ...) standardGeneric('davies_test'))
 #'      chi-2 random variables. J R Stat Soc Ser C 1980, 29:323-333.
 #' }
 #' @import CompQuadForm
-#' @rdname lkmt-function
+#' @rdname lkmt_test
 setMethod('davies_test', signature(x1 = 'matrix'), 
           definition = function(x1, x2){
           

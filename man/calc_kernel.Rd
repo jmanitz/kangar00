@@ -6,7 +6,7 @@
 \alias{lin_kernel,GWASdata-method}
 \alias{net_kernel,GWASdata-method}
 \alias{sia_kernel,GWASdata-method}
-\title{Calculates teh kernel-matrix for a pathway}
+\title{Calculates the kernel-matrix for a pathway}
 \usage{
 \S4method{calc_kernel}{GWASdata}(object, pathway, knots = NULL,
   type = c("lin", "sia", "net"), parallel = c("none", "cpu", "gpu"), ...)
@@ -79,7 +79,7 @@ data(hsa04020)
 K.net  <- calc_kernel(gwas, hsa04020, knots = NULL, type='net', parallel='none')
 }
 \author{
-Stefanie Friedrichs, Juliane Manitz, Saskia Freytag, Ngoc Thuy Ha
+Stefanie Friedrichs, Juliane Manitz
 }
 \references{
 \itemize{
@@ -89,6 +89,6 @@ Stefanie Friedrichs, Juliane Manitz, Saskia Freytag, Ngoc Thuy Ha
 }
 }
 \seealso{
-\code{\link{kernel-class}}, \code{\link{GWASdata-class}}, \code{\link{pathway-class}}
+\code{\link{kernel-class}},\code{\link{pathway-class}}
 }
 

@@ -4,6 +4,11 @@
 #
 #################################################
 
+#' @include pathway.r
+NULL
+
+#################################################
+
 #' S4 class for an object representing a Genome-wide Assocaition Study.
 #'
 #' @slot geno An object of any type, including genotype information. The format
@@ -79,7 +84,12 @@ GWASdata <- setClass('GWASdata',
 # GWASdata object constructor
 setGeneric('GWASdata', function(object, ...) standardGeneric('GWASdata'))
 #' \code{'GWASdata'} is a GWASdata object constructor
-#'
+#' @param geno An object of any type, including the genotype information.  
+#' @param anno A \code{data.frame} containing the annotation file for the 
+#' GWASdata object.
+#' @param pheno A \code{data.frame} specifying individual IDs, phenotypes and
+#' covariates to be included in the regression model.
+#' @param desc A \code{character} giving the GWAS description, e.g. name of study. 
 #' @export
 #' @rdname GWASdata-class
 setMethod('GWASdata',
@@ -92,18 +102,19 @@ setMethod('GWASdata',
 # read genotype data from file
 setGeneric('read_geno', function(file.path, ...) standardGeneric('read_geno'))
 #' read genotype data from file to one of several available objects, which 
-#' can be passed to a GWASdata object \code{\link{GWASdata-class}}
+#' can be passed to a GWASdata object \code{GWASdata-class}.
 #'
 #' @param file.path character, which contains the path to the data file to be read
 #' @param save.path character, which contains the path for the backingfile
 #' @param sep character. A field delimeter. See \code{bigmemory::read.big.matrix} for
 #'  details.
 #' @param header logical. Does the data set contain column names?
+#' @param use.fread logical. Should the dataset be read using the package fread?
+#' @param row.names logical. Does the dataset include rownames?
 #' @param ... further arguments to be passed to \code{bigmemory::read.big.matrix}.
 #' @details If the data set contains rownames specified, set option \code{has.row.names = TRUE}.
 #'
 #' @rdname read_geno
-#' @seealso \code{\link{GWASdata-class}}
 #' @import tools
 #' @export
 
@@ -355,7 +366,7 @@ setMethod('GeneSNPsize', signature='GWASdata',
 #'
 #' @rdname snp_info-class
 #' @slot info A \code{data.frame} including information on SNP positions
-#'
+#' 
 #' @author Stefanie Friedrichs
 #' @examples
 #' # snp_info

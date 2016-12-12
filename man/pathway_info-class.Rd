@@ -10,7 +10,7 @@
 \alias{summary,pathway_info-method}
 \title{An S4 class for an object assigning genes to pathways}
 \usage{
-pathway_info(x, ...)
+pathway_info(x)
 
 \S4method{pathway_info}{character}(x)
 
