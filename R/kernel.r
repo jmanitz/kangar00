@@ -104,9 +104,8 @@ setGeneric('calc_kernel', function(object, ...) standardGeneric('calc_kernel'))
 #'  for network-based kernel.
 #' @param knots \code{GWASdata} object, if specified a low-rank kernel will be 
 #' computed
-#' @param parallel \code{character} specifying if the kernel matrix is computed in 
-#' parallel: Use \code{"none"} for non-parallel calculation on CPU. (other 
-#' options not yet implemented)
+#' @param calculation \code{character} specifying if the kernel matrix is computed in 
+#' on CPU or GPU. 
 #' @param ... further arguments to be passed to the kernel computations
 #'
 #' @return Returns an object of class \code{kernel}, including the similarity 
@@ -140,10 +139,10 @@ setGeneric('calc_kernel', function(object, ...) standardGeneric('calc_kernel'))
 setMethod('calc_kernel', signature(object = 'GWASdata'),
        definition = function(object, pathway, knots = NULL,
 			                       type = c('lin', 'sia', 'net'),
-                             parallel = c('none', 'cpu', 'gpu'), ...) {
+                             calculation = c('cpu', 'gpu'), ...) {
            # user inputs
            type     <- match.arg(type)
-           parallel <- match.arg(parallel)
+           calculation <- match.arg(calculation)
 	   if(!inherits(object, "GWASdata")){
 	       stop("GWASdata must inherit from class 'GWASdata'")
 	   }
@@ -163,7 +162,7 @@ setMethod('calc_kernel', signature(object = 'GWASdata'),
 	   # transfer to specific kernel function
            k <- eval(parse(text=paste(type, "_kernel(
                            object = object, pathway = pathway,
-                           knots = knots, parallel = parallel, ...)",sep='')))
+                           knots = knots, calculation = calculation, ...)",sep='')))
            return(k)
 })
 
@@ -174,7 +173,7 @@ setGeneric('lin_kernel', function(object, ...) standardGeneric('lin_kernel'))
 #' @export
 setMethod('lin_kernel', signature(object = 'GWASdata'),
           definition = function(object, pathway, knots=NULL,
-                       parallel = c('none', 'cpu', 'gpu'), ...) {
+                       calculation = c('cpu', 'gpu'), ...) {
     lowrank <- !is.null(knots)
 #    further_args <- list(...)
 #    if (!is.null(further_args))
@@ -192,13 +191,10 @@ setMethod('lin_kernel', signature(object = 'GWASdata'),
         return(new('lowrank_kernel', type='lin', kernel=k, pathway=pathway))
     }else{
       # K=ZZ' kernel matrix = genetic similarity
-      if(parallel=='none'){
+      if(calculation=='cpu'){
         k <- tcrossprod(Z1)
       }
-      if(parallel=='cpu'){
-        stop('sorry, not yet defined')
-      }
-      if(parallel=='gpu'){   # Suggests gputools #
+      if(calculation=='gpu'){   # Suggests gputools #
       if(require(gputools)){
         Z <- as.numeric(Z1)
         k <- gpuMatMult(Z1,t(Z1))
@@ -218,17 +214,73 @@ setGeneric('sia_kernel', function(object, ...) standardGeneric('sia_kernel'))
 #' @export 
 setMethod('sia_kernel', signature(object = 'GWASdata'),
           definition = function(object, pathway, knots=NULL,
-                       parallel = c('none', 'cpu', 'gpu'), ...) {
-
-    if (!is.null(knots))
-        stop("knots are not yet implemented for SIA kernel")
-# <FIXME> add calculations with knots
+                       calculation = c('cpu', 'gpu'), ...) {
+    
+  if(calculation=='gpu'){   # Suggests gputools #
+     stop("GPU calculation is not available for SIA kernel")
+  }else{    
+ 
+   # get Z1 matrix (old observations=full genotypes):    
+   SNPset <- unique(object@anno$snp[which(object@anno$pathway==pathway@id)])
+   z1 <- as(object@geno[,as.character(SNPset)],'matrix')
+   if(any(is.na(z1))){
+      stop("genotype information contains missing values")
+   }  
+     
+    #check if knots are specified
+    lowrank <- !is.null(knots)  
+      
+    if(lowrank){
+    #get Z2 matrix (new observations):
+     z2 <- knots@geno
+     z2 <- as(z2[,as.character(SNPset)],'matrix')
+     if(any(is.na(z2))){
+        stop("genotype information for new observations contains missing values")  
+     }     
+     anno  <- object@anno[object@anno[,"pathway"]==pathway@id, c("gene","snp")]  
+     genes <- as.character(anno[,"gene"])
+     gene.counts <- table(genes)
+     max.length  <- max(gene.counts)
+      
+     EffectiveNumberSNPs <- function(gene.ids){
+       effectivesnps <- cbind(as.character(gene.ids),rep(NA, length(gene.ids)))
+       for(g in gene.ids){
+        #g <- gene.ids[1]
+        snps <- as.matrix(anno[anno$gene==g,"snp"])  
+        #eigen.value calculation for effective number of snps on Z1:
+        ev <- eigen(cor(z1), symmetric=T)$values        
+        effectivesnps[effectivesnps[,1]==g,2] <- 
+          length(ev)*(1-(length(ev)-1)*var(ev)/(length(ev)^2))
+       }
+     return(effectivesnps)    
+     }
+     gene.ids <- names(gene.counts[gene.counts >= 2]) 
+     effSNPs <- EffectiveNumberSNPs(gene.ids) 
+     max.eff.length <- max(as.numeric(effSNPs[,2]), na.rm=T)
+    
+     kerneltimes <- matrix(rep(0,nrow(z2)*nrow(z1),ncol=nrow(z2))
+    
+     for(g in gene.ids){    
+       g.z1 <- as(z1[,unique(anno[anno[,"gene"]==g,"snp"])],"matrix") #all inds 
+       g.z2 <- as(z2[,unique(anno[anno[,"gene"]==g,"snp"])],"matrix") #knots         
+       n1 <- nrow(g.z1) 
+       n2 <- nrow(g.z2) 
+         
+       distances <- matrix(rep(rowSums(g.z2^2),n1), nrow=n2) - 2*g.z2%*%t(g.z1) 
+                    + matrix(rep(rowSums(g.z1^2),n2), nrow=n2, byrow=TRUE) #ok.
+       distances <- round(distances, digits=3)  #n* x n
+                 
+       length.gene <- as.numeric(ncol(g.z1))#snps in gene
+       eff.length.g <- as.numeric(effSNPs[which(effSNPs[,1]==g),2])
+       delta <- sqrt(eff.length.g/max.eff.length)
+       roh  <- mean(c(distances))^(-delta)*(eff.length.g/length.gene)^(-delta)
+       kerneltimes <- kerneltimes + -roh*(distances/length.gene)^(delta)
+       }                
+    k <- exp( sqrt(1/(length(unique(anno[,"gene"])))) * kerneltimes )           
+    return(lowrank_kernel(type='size-adjusted', kernel=k, pathway=pathway))
+    }else{  
     genemat <- function(g, object){
-        SNPset <- unique(object@anno$snp[which(object@anno$pathway==pathway@id)])
-        #subset genotype data for specified SNP set
-        z <- as(object@geno[,as.character(SNPset)],'matrix')
-        if(any(is.na(z)))
-            stop("genotype information contains missing values")
+        z <- z1
         z <- z[, apply(z,2,sum)/(2*nrow(z)) >= 0.001 &  apply(z,2,sum)/(2*nrow(z)) < 1] 
         #only snps maf >= 0.1%
         e.val <- eigen(cor(z), symmetric=TRUE, only.values=TRUE)$values
@@ -256,9 +308,10 @@ setMethod('sia_kernel', signature(object = 'GWASdata'),
 
     kerneltimes <- matrix( rep(0,(dim(object@pheno)[1])^2), nrow=dim(object@pheno)[1])
     kerneltimes <- Reduce('+', lapply(liste,genemat2,max.eff))
-    k <- exp( sqrt(1/(length(unique(anno[,"gene"])))) * kerneltimes )
-    #return kernel object
-    return(kernel(type='size-adjusted',kernel=k,pathway=pathway))
+    k <- exp( sqrt(1/(length(unique(anno[,"gene"])))) * kerneltimes )              
+   return(kernel(type='size-adjusted',kernel=k,pathway=pathway)) 
+   }
+  }   
 })
 
 
@@ -268,9 +321,10 @@ setGeneric('net_kernel', function(object, ...) standardGeneric('net_kernel'))
 #' @export
 setMethod('net_kernel', signature(object = 'GWASdata'),
           definition = function(object, pathway, knots=NULL,
-                       parallel = c('none', 'cpu', 'gpu'), ...) {
+                       calculation = c('cpu', 'gpu'), ...) {
     ## check if knots are specified
     lowrank <- !is.null(knots)
+    
     #genotype matrix Z, which SNPs are in specified pathway
     SNPset <- unique(object@anno$snp[which(object@anno$pathway==pathway@id)])
     #subset genotype data for specified SNP set
@@ -280,15 +334,21 @@ setMethod('net_kernel', signature(object = 'GWASdata'),
     # compute kernel
     ANA <- get_ana(object@anno, SNPset, pathway)
     ## if knots are specified
-    if (lowrank) {
+    if(lowrank){
         Z2 <- knots@geno
         Z2 <- as(Z2[,as.character(SNPset)],'matrix')
         K <- Z1 %*% ANA %*% t(Z2)
         return(lowrank_kernel(type='network', kernel=K, pathway=pathway))
     }
-    K <- Z1 %*% ANA %*% t(Z1)
-    #return kernel object
-    return(kernel(type='network',kernel=K,pathway=pathway))
+   if(calculation=='cpu'){    
+     K <- Z1 %*% ANA %*% t(Z1)
+   }  
+   if(calculation=='gpu'){   # Suggests gputools #
+     K1 <- gpuMatMult(Z1,ANA)
+     K  <- gpuMatMult(K1,t(Z1))
+   }  
+   #return kernel object
+   return(kernel(type='network',kernel=K,pathway=pathway))
 })
 
 ################################## helper function #############################
