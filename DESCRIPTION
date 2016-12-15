@@ -6,7 +6,7 @@ Date: 2016-12-12
 Author: Stefanie Friedrichs [aut], Juliane Manitz [aut], Patricia Burger
     [aut], Benjamin Hofner [aut], Ngoc Thuy Ha [aut], Saskia Freytag [ctb],
     Heike Bickeboeller [ctb]
-Maintainer: Stefanie Friedrichs <stefanie.friedrichs@med.uni-goettingen.de>
+Maintainer: Juliane Manitz <jmanitz@uni-goettingen.de>
 Description: This package includes methods to extract information on pathways,
     genes and SNPs from online databases. It provides functions for data preparation
     and evaluation of genetic influence on a binary outcome using the logistic

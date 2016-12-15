@@ -397,7 +397,7 @@ setGeneric('snp_info', function(x, ...) standardGeneric('snp_info'))
 #' @param x A character vector of SNP rsnumbers for which positions will be extracted.
 #' @param ... further arguments can be added.
 #' @return A \code{data.frame} including the SNP positions with columns
-#' 'chromosome', #position' and 'rsnumber'. SNPs not found in the Ensemble database
+#' 'chromosome', 'position' and 'rsnumber'. SNPs not found in the Ensemble database
 #' will not be listed in the returned \code{snp_info} object, SNPs with multiple
 #' positions  will appear several times.
 #' @examples
