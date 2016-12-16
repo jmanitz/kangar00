@@ -9,16 +9,16 @@
 \title{Calculates the kernel-matrix for a pathway}
 \usage{
 \S4method{calc_kernel}{GWASdata}(object, pathway, knots = NULL,
-  type = c("lin", "sia", "net"), parallel = c("none", "cpu", "gpu"), ...)
+  type = c("lin", "sia", "net"), calculation = c("cpu", "gpu"), ...)
 
 \S4method{lin_kernel}{GWASdata}(object, pathway, knots = NULL,
-  parallel = c("none", "cpu", "gpu"), ...)
+  calculation = c("cpu", "gpu"), ...)
 
 \S4method{sia_kernel}{GWASdata}(object, pathway, knots = NULL,
-  parallel = c("none", "cpu", "gpu"), ...)
+  calculation = c("cpu", "gpu"), ...)
 
 \S4method{net_kernel}{GWASdata}(object, pathway, knots = NULL,
-  parallel = c("none", "cpu", "gpu"), ...)
+  calculation = c("cpu", "gpu"), ...)
 }
 \arguments{
 \item{object}{\code{GWASdata} object containing the genotypes of the
@@ -34,9 +34,8 @@ computed}
 for linear kernel, \code{"sia"} for size-adjusted or \code{"net"}
 for network-based kernel.}
 
-\item{parallel}{\code{character} specifying if the kernel matrix is computed in
-parallel: Use \code{"none"} for non-parallel calculation on CPU. (other
-options not yet implemented)}
+\item{calculation}{\code{character} specifying if the kernel matrix is computed in
+on CPU or GPU.}
 
 \item{...}{further arguments to be passed to the kernel computations}
 }
@@ -59,8 +58,11 @@ Three kernel functions are available.
 \details{
 Different types of kernels can be constructed:
 \itemize{
-  \item \code{type='lin'} creates the linear kernel assuming additive SNP effects to be evaluated in the logistic kernel machine test.
-  \item \code{type='sia'} calculates the size-adjusted kernel which takes into consideration the numbers of SNPs and genes in a pathway to correct for size bias.
+  \item \code{type='lin'} creates the linear kernel assuming additive SNP
+effects to be evaluated in the logistic kernel machine test.
+  \item \code{type='sia'} calculates the size-adjusted kernel which takes
+into consideration the numbers of SNPs and genes in a pathway to correct for
+size bias.
   \item \code{type='net'} calculates the network-based kernel. Here not only information on gene membership and gene/pathway size in number of SNPs is incorporated, but also the interaction structure of genes in the pathway.
 }
 For more details, check the references.

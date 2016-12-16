@@ -17,6 +17,7 @@ License: GPL-2
 Collate:
     'pathway.r'
     'GWASdata.r'
+    'data.R'
     'kernel.r'
     'lkmt.r'
 Depends:

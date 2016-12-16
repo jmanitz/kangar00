@@ -111,7 +111,7 @@ setGeneric('pathway2igraph', function(object, ...) standardGeneric('pathway2igra
 #' @export
 #' @rdname pathway-class 
 #' @aliases pathway2igraph,pathway,ANY-method
-#' 
+## @param object An object of class \code{pathway-class}
 #' @examples
 #' # convert to igraph object
 #' data(hsa04020)
@@ -147,7 +147,7 @@ setGeneric('analyze', function(object, ...) standardGeneric('analyze'))
 #' @export
 #' @rdname pathway-class
 #' @aliases analyze,pathway,ANY-method
-#'
+## @param object An object of class \code{pathway-class}
 #' @return \code{analyze} returns a \code{data.frame} consisting of 
 #'   \describe{
 #'    \item{id}{pathway id,} 
@@ -213,7 +213,7 @@ setGeneric('get_genes', function(object, ...) standardGeneric('get_genes'))
 #' @export
 #' @rdname pathway-class 
 #' @aliases get_genes,pathway,ANY-method
-#' @param object A pathway object
+## @param object A pathway object
 #' @examples
 #' # extract gene names from pathway
 #' get_genes(hsa04020)

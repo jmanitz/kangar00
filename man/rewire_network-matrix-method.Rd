@@ -6,12 +6,12 @@
 \title{Rewires interactions in a pathway, which go through a gene not represented
 by any SNPs in the considered \code{GWASdata} object. (for internal use)}
 \usage{
-\S4method{rewire_network}{matrix}(x, remov)
+\S4method{rewire_network}{matrix}(x1, x2)
 }
 \arguments{
-\item{x}{Adjacency \code{matrix}}
+\item{x1}{Adjacency \code{matrix} of a pathway}
 
-\item{remov}{A \code{vector} of gene names, indicating which genes are not
+\item{x2}{A \code{vector} of gene names, indicating which genes are not
 represented by SNPs in the considered \code{GWASdata} and will be removed}
 }
 \value{

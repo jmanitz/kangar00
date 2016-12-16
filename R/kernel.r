@@ -115,8 +115,11 @@ setGeneric('calc_kernel', function(object, ...) standardGeneric('calc_kernel'))
 #' @details
 #' Different types of kernels can be constructed:
 #' \itemize{
-#'   \item \code{type='lin'} creates the linear kernel assuming additive SNP effects to be evaluated in the logistic kernel machine test.
-#'   \item \code{type='sia'} calculates the size-adjusted kernel which takes into consideration the numbers of SNPs and genes in a pathway to correct for size bias.
+#'   \item \code{type='lin'} creates the linear kernel assuming additive SNP 
+#'effects to be evaluated in the logistic kernel machine test.
+#'   \item \code{type='sia'} calculates the size-adjusted kernel which takes 
+#' into consideration the numbers of SNPs and genes in a pathway to correct for 
+#' size bias.
 #'   \item \code{type='net'} calculates the network-based kernel. Here not only information on gene membership and gene/pathway size in number of SNPs is incorporated, but also the interaction structure of genes in the pathway.
 #' }
 #' For more details, check the references.
@@ -174,6 +177,7 @@ setGeneric('lin_kernel', function(object, ...) standardGeneric('lin_kernel'))
 setMethod('lin_kernel', signature(object = 'GWASdata'),
           definition = function(object, pathway, knots=NULL,
                        calculation = c('cpu', 'gpu'), ...) {
+    calculation <- match.arg(calculation)
     lowrank <- !is.null(knots)
 #    further_args <- list(...)
 #    if (!is.null(further_args))
@@ -215,17 +219,17 @@ setGeneric('sia_kernel', function(object, ...) standardGeneric('sia_kernel'))
 setMethod('sia_kernel', signature(object = 'GWASdata'),
           definition = function(object, pathway, knots=NULL,
                        calculation = c('cpu', 'gpu'), ...) {
-    
-  if(calculation=='gpu'){   # Suggests gputools #
-     stop("GPU calculation is not available for SIA kernel")
-  }else{    
- 
+   
+   calculation <- match.arg(calculation)
+   if(calculation=='gpu'){ 
+      stop("GPU calculation is not available for SIA kernel") 
+   }
+     
    # get Z1 matrix (old observations=full genotypes):    
    SNPset <- unique(object@anno$snp[which(object@anno$pathway==pathway@id)])
    z1 <- as(object@geno[,as.character(SNPset)],'matrix')
-   if(any(is.na(z1))){
-      stop("genotype information contains missing values")
-   }  
+   if(any(is.na(z1)))
+      stop("genotype information contains missing values")  
      
     #check if knots are specified
     lowrank <- !is.null(knots)  
@@ -234,9 +238,9 @@ setMethod('sia_kernel', signature(object = 'GWASdata'),
     #get Z2 matrix (new observations):
      z2 <- knots@geno
      z2 <- as(z2[,as.character(SNPset)],'matrix')
-     if(any(is.na(z2))){
+     if(any(is.na(z2)))
         stop("genotype information for new observations contains missing values")  
-     }     
+          
      anno  <- object@anno[object@anno[,"pathway"]==pathway@id, c("gene","snp")]  
      genes <- as.character(anno[,"gene"])
      gene.counts <- table(genes)
@@ -245,7 +249,6 @@ setMethod('sia_kernel', signature(object = 'GWASdata'),
      EffectiveNumberSNPs <- function(gene.ids){
        effectivesnps <- cbind(as.character(gene.ids),rep(NA, length(gene.ids)))
        for(g in gene.ids){
-        #g <- gene.ids[1]
         snps <- as.matrix(anno[anno$gene==g,"snp"])  
         #eigen.value calculation for effective number of snps on Z1:
         ev <- eigen(cor(z1), symmetric=T)$values        
@@ -258,7 +261,7 @@ setMethod('sia_kernel', signature(object = 'GWASdata'),
      effSNPs <- EffectiveNumberSNPs(gene.ids) 
      max.eff.length <- max(as.numeric(effSNPs[,2]), na.rm=T)
     
-     kerneltimes <- matrix(rep(0,nrow(z2)*nrow(z1),ncol=nrow(z2))
+     kerneltimes <- matrix(rep(0,nrow(z2)*nrow(z1)),nrow=nrow(z2))
     
      for(g in gene.ids){    
        g.z1 <- as(z1[,unique(anno[anno[,"gene"]==g,"snp"])],"matrix") #all inds 
@@ -274,7 +277,7 @@ setMethod('sia_kernel', signature(object = 'GWASdata'),
        eff.length.g <- as.numeric(effSNPs[which(effSNPs[,1]==g),2])
        delta <- sqrt(eff.length.g/max.eff.length)
        roh  <- mean(c(distances))^(-delta)*(eff.length.g/length.gene)^(-delta)
-       kerneltimes <- kerneltimes + -roh*(distances/length.gene)^(delta)
+       kerneltimes <- kerneltimes - roh*(distances/length.gene)^(delta)
        }                
     k <- exp( sqrt(1/(length(unique(anno[,"gene"])))) * kerneltimes )           
     return(lowrank_kernel(type='size-adjusted', kernel=k, pathway=pathway))
@@ -310,8 +313,7 @@ setMethod('sia_kernel', signature(object = 'GWASdata'),
     kerneltimes <- Reduce('+', lapply(liste,genemat2,max.eff))
     k <- exp( sqrt(1/(length(unique(anno[,"gene"])))) * kerneltimes )              
    return(kernel(type='size-adjusted',kernel=k,pathway=pathway)) 
-   }
-  }   
+   }   
 })
 
 
@@ -322,9 +324,10 @@ setGeneric('net_kernel', function(object, ...) standardGeneric('net_kernel'))
 setMethod('net_kernel', signature(object = 'GWASdata'),
           definition = function(object, pathway, knots=NULL,
                        calculation = c('cpu', 'gpu'), ...) {
+    calculation <- match.arg(calculation)                   
     ## check if knots are specified
     lowrank <- !is.null(knots)
-    
+
     #genotype matrix Z, which SNPs are in specified pathway
     SNPset <- unique(object@anno$snp[which(object@anno$pathway==pathway@id)])
     #subset genotype data for specified SNP set
@@ -353,22 +356,24 @@ setMethod('net_kernel', signature(object = 'GWASdata'),
 
 ################################## helper function #############################
 
-setGeneric('rewire_network', function(x, ...) standardGeneric('rewire_network'))
+setGeneric('rewire_network', function(x1, x2) standardGeneric('rewire_network'))
 #' Rewires interactions in a pathway, which go through a gene not represented 
 #' by any SNPs in the considered \code{GWASdata} object. (for internal use)  
 #'
 #' @export
 #' @author Stefanie Friedrichs, Juliane Manitz
 #'
-#' @param x Adjacency \code{matrix}
-#' @param remov A \code{vector} of gene names, indicating which genes are not 
+#' @param x1 Adjacency \code{matrix} of a pathway
+#' @param x2 A \code{vector} of gene names, indicating which genes are not 
 #' represented by SNPs in the considered \code{GWASdata} and will be removed  
 #' @return An adjacency \code{matrix} containing the rewired network
 #'
 ## @references TODO Newman?
 setMethod('rewire_network', signature = 'matrix',
-          definition = function(x, remov) {
-    # early exist if no genes have to be removed
+          definition = function(x1, x2) {
+    x     <- x1
+    remov <- x2
+    #exit if no genes have to be removed 
     if(length(remov)==0){ return(x) }
 
     # identify genes that need to be carried forward to the subnetwork

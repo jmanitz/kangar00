@@ -86,6 +86,7 @@ setGeneric('summary', function(object, ...) standardGeneric('summary'))
 #' \code{summary} Summarizes information on \code{lkmt} object
 #'
 ## @param object An object of class \code{\link{lkmt}}.
+#' @param ... Further arguments can be added to the function
 #' @return \code{summary} Summarized information on \code{lkmt} object.
 ## @examples
 ## data(lkmt)

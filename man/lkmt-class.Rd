@@ -16,6 +16,8 @@
 }
 \arguments{
 \item{object}{An object of class \code{lkmt}.}
+
+\item{...}{Further arguments can be added to the function}
 }
 \value{
 \code{show} Basic information on \code{lkmt} object.

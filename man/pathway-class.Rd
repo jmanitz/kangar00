@@ -64,8 +64,6 @@
 \item{edge.color}{a character or numeric constant specifying the edge color, default is 'olivedrab4'}
 
 \item{no}{a numeric constant specifying the number of genes to be sampled, default is 3}
-
-\item{object}{A pathway object}
 }
 \value{
 \code{analyze} returns a \code{data.frame} consisting of
