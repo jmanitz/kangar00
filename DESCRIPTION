@@ -33,8 +33,8 @@ Imports:
 LazyData: true
 Suggests:
     knitr,
-    gputools,
     rmarkdown
 VignetteBuilder: knitr
 NeedsCompilation: no
 Packaged: 2015-08-07 14:22:56 UTC; jmanitz
+RoxygenNote: 5.0.1

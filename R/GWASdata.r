@@ -162,13 +162,13 @@ setMethod("read_geno",
 
             if (fileFormat == "gz"){
               # Step 2.1
-              car("Reading in huge beagle files may fail due to memory limits.
+              cat("Reading in huge beagle files may fail due to memory limits.
                   If this is the case convert your beagle file in a .txt-file and try again. \n")
               if(use.fread){
-                car("Loading data via fread. If this leads to problems set the function will try
+                cat("Loading data via fread. If this leads to problems set the function will try
                     automatically to load file via read.table. \n")
                 tryCatch({
-                  gwasGeno <- fread(file.path, header = TRUE)
+                  gwasGeno <- data.table:::fread(file.path, header = TRUE)
                 }, warning = function(wr){
                   cat("fread caused a warning. Please make sure your file has been read in correctly! \n")
                   print(wr)
@@ -189,34 +189,34 @@ setMethod("read_geno",
                     )
                 }
                   )
-                gwasGeno <- as.big.matrix(gwasGeno)
+                gwasGeno <- bigmemory:::as.big.matrix(gwasGeno)
               } else{
                 gwasGeno <- read.table(file.path, header=TRUE)
-                gwasGeno <- as.big.matrix(gwasGeno)
+                gwasGeno <- bigmemory:::as.big.matrix(gwasGeno)
               }
             } else if (fileFormat == "mldose"){
               cat("Reading in huge MACH files may fail due to memory limits.
                   If this is the case convert your MACH file in a .txt-file and try again.")
               if(use.fread){
                 cat("Loading data via fread. If this leads to problems set use.fread = FALSE")
-                gwasGeno <- fread(file.path, header = TRUE)
-                gwasGeno <- as.big.matrix(gwasGeno)
+                gwasGeno <- data.table:::fread(file.path, header = TRUE)
+                gwasGeno <- bigmemory:::as.big.matrix(gwasGeno)
 
               } else{
                 gwasGeno <- read.table(file.path, header=TRUE)
-                gwasGeno <- as.big.matrix(gwasGeno)
+                gwasGeno <- bigmemory:::as.big.matrix(gwasGeno)
               }
             } else if (fileFormat == "impute2"){
               cat("Reading in huge IMPUTE2 files may fail due to memory limits.
                   If this is the case convert your IMPUTE2 file in a .txt-file and try again.")
               if(use.fread){
                 cat("Loading data via fread. If this leads to problems set use.fread = FALSE")
-                gwasGeno <- fread(file.path, header = TRUE)
-                gwasGeno <- as.big.matrix(gwasGeno)
+                gwasGeno <- data.table:::fread(file.path, header = TRUE)
+                gwasGeno <- bigmemory:::as.big.matrix(gwasGeno)
 
               } else{
                 gwasGeno <- read.table(file.path, header=TRUE)
-                gwasGeno <- as.big.matrix(gwasGeno)
+                gwasGeno <- bigmemory:::as.big.matrix(gwasGeno)
               }
             } else if (fileFormat == "txt"){
               options(bigmemory.allow.dimnames=TRUE)
@@ -224,14 +224,14 @@ setMethod("read_geno",
                 print(save.file)
                 print(save.path)
                 if(row.names){
-                  gwasGeno <- read.big.matrix(file.path, type='char',
+                  gwasGeno <- bigmemory:::read.big.matrix(file.path, type='char',
                                               backingfile = save.file,
                                               backingpath = save.path,
                                               descriptorfile = paste0(file.name, ".desc", sep=""),
                                               sep = sep, header = header,
                                               has.row.names = TRUE,...)
                 } else {
-                  gwasGeno <- read.big.matrix(file.path, type='char',
+                  gwasGeno <- bigmemory:::read.big.matrix(file.path, type='char',
                                               backingfile = save.file,
                                               backingpath = save.path,
                                               descriptorfile = paste0(file.name, ".desc", sep=""),

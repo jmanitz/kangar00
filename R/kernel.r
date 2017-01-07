@@ -172,7 +172,7 @@ setMethod('calc_kernel', signature(object = 'GWASdata'),
 ############################### kernel functions ##############################
 # calculate linear kernel
 setGeneric('lin_kernel', function(object, ...) standardGeneric('lin_kernel'))
-#' @describeIn calc_kernel
+#' @describeIn calc_kernel Calculates a linear kernel 
 #' @export
 setMethod('lin_kernel', signature(object = 'GWASdata'),
           definition = function(object, pathway, knots=NULL,
@@ -201,7 +201,7 @@ setMethod('lin_kernel', signature(object = 'GWASdata'),
       if(calculation=='gpu'){   # Suggests gputools #
       if(require(gputools)){
         Z <- as.numeric(Z1)
-        k <- gpuMatMult(Z1,t(Z1))
+        k <- gputools:::gpuMatMult(Z1,t(Z1))
       }else{
         stop("Please install package 'gputools' to run matrix multiplication on GPU")
         }
@@ -214,7 +214,7 @@ setMethod('lin_kernel', signature(object = 'GWASdata'),
 
 # create size-adjusted kernel
 setGeneric('sia_kernel', function(object, ...) standardGeneric('sia_kernel'))
-#' @describeIn calc_kernel
+#' @describeIn calc_kernel Calculates a size adjusted-kernel
 #' @export 
 setMethod('sia_kernel', signature(object = 'GWASdata'),
           definition = function(object, pathway, knots=NULL,
@@ -319,7 +319,7 @@ setMethod('sia_kernel', signature(object = 'GWASdata'),
 
 # calculate network-based kernel
 setGeneric('net_kernel', function(object, ...) standardGeneric('net_kernel'))
-#' @describeIn calc_kernel
+#' @describeIn calc_kernel Calculates a network-based kernel 
 #' @export
 setMethod('net_kernel', signature(object = 'GWASdata'),
           definition = function(object, pathway, knots=NULL,
@@ -347,8 +347,8 @@ setMethod('net_kernel', signature(object = 'GWASdata'),
      K <- Z1 %*% ANA %*% t(Z1)
    }  
    if(calculation=='gpu'){   # Suggests gputools #
-     K1 <- gpuMatMult(Z1,ANA)
-     K  <- gpuMatMult(K1,t(Z1))
+     K1 <- gputools:::gpuMatMult(Z1,ANA)
+     K  <- gputools:::gpuMatMult(K1,t(Z1))
    }  
    #return kernel object
    return(kernel(type='network',kernel=K,pathway=pathway))
