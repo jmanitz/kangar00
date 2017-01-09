@@ -16,7 +16,7 @@
 simulated data
 }
 \usage{
-anno
+data(anno)
 }
 \description{
 A dataset containing an annotation example for 4056 SNPs in three different

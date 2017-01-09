@@ -20,7 +20,7 @@ pathway_info(x)
 }
 \arguments{
 \item{x}{A \code{character} identifying the pathway for which gene infomation
-should be extracted. Here KEGG IDs ('hsa00100') are used.}
+should be extracted. Here KEGG IDs (format: 'hsa00100') are used.}
 
 \item{object}{An object of class \code{\link{pathway_info}}.}
 }
@@ -51,7 +51,6 @@ database is accessed via the R-package \code{biomaRt}.
 pathways with columns 'pathway', 'gene_start', 'gene_end', 'chr' and 'gene'.}
 }}
 \examples{
-data(hsa04022_info)
 pathway_info("hsa04022")
 # show method
 data(hsa04022_info)
@@ -61,8 +60,6 @@ data(hsa04022_info)
 summary(hsa04022_info)
 }
 \author{
-Stefanie Friedrichs
-
 Stefanie Friedrichs
 }
 

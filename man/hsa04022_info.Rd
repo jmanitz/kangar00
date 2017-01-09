@@ -13,7 +13,7 @@ pathway. Has columns 'pathway', 'gene_start', 'gene_end', 'chr', and 'gene'}
 Ensembl extract
 }
 \usage{
-hsa04022_info
+data(hsa04022_info)
 }
 \description{
 An object of class \code{pathway_info} for the pathway with KEGG

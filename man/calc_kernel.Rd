@@ -28,7 +28,7 @@ individuals for which a kernel will be calculated.}
 for which a kernel will be calculated.}
 
 \item{knots}{\code{GWASdata} object, if specified a low-rank kernel will be
-computed}
+computed.}
 
 \item{type}{\code{character} indicating the kernel type: Use \code{"lin"}
 for linear kernel, \code{"sia"} for size-adjusted or \code{"net"}
@@ -37,7 +37,7 @@ for network-based kernel.}
 \item{calculation}{\code{character} specifying if the kernel matrix is computed in
 on CPU or GPU.}
 
-\item{...}{further arguments to be passed to the kernel computations}
+\item{...}{further arguments to be passed to kernel computations.}
 }
 \value{
 Returns an object of class \code{kernel}, including the similarity
@@ -78,7 +78,9 @@ For more details, check the references.
 \examples{
 data(gwas)
 data(hsa04020)
-K.net  <- calc_kernel(gwas, hsa04020, knots = NULL, type='net', parallel='none')
+
+# get kernel using calc_kernel function
+calc_kernel(gwas, hsa04020, knots = NULL, type='net', calculation='cpu')
 }
 \author{
 Stefanie Friedrichs, Juliane Manitz
@@ -91,6 +93,6 @@ Stefanie Friedrichs, Juliane Manitz
 }
 }
 \seealso{
-\code{\link{kernel-class}},\code{\link{pathway-class}}
+\code{\link{kernel-class}},\code{\link{pathway}}
 }
 

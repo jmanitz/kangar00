@@ -22,6 +22,10 @@ equal, better construct a full-rank kernel of class \code{\link{kernel}}.
 
 \item{\code{pathway}}{pathway object}
 }}
+\examples{
+data(gwas)
+K.lin.knots <- calc_kernel(gwas, hsa04020, knots=gwas, type='lin', calculation='cpu')
+}
 \author{
 Juliane Manitz
 }

@@ -14,7 +14,7 @@ SNP. Columns given are 'chr', 'position', and 'rsnumber'}
 Ensembl extract
 }
 \usage{
-rs10243170_info
+data(rs10243170_info)
 }
 \description{
 An object of class \code{snp_info} for rs10243170.

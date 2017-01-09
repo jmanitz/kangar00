@@ -20,16 +20,21 @@
 \arguments{
 \item{object}{An object of class \code{kernel}}
 
-\item{y}{missing (placeholder)}
+\item{x}{the \code{kernel object} to be plotted.}
 
-\item{hclust}{\code{logical}, indicating whether a dendrogram should be added}
+\item{y}{missing (placeholder).}
+
+\item{hclust}{\code{logical}, indicating whether a dendrogram should be added.}
+
+\item{...}{further arguments to be passed to the function.}
 }
 \description{
 An S4 class representing the kernel of a pathway
 
 \code{show} displays the kernel object briefly
 
-\code{summary} generates a kernel object summary including the number of individuals and genes for the pathway
+\code{summary} generates a kernel object summary including the number of
+individuals and genes for the pathway
 
 \code{plot} creates an image plot of a kernel object
 }
@@ -44,6 +49,12 @@ or \code{"net"} for network-based kernels.}
 
 \item{\code{pathway}}{A pathway object}
 }}
+\examples{
+data(net.kernel.hsa04020)
+show(net.kernel.hsa04020)
+summary(net.kernel.hsa04020)
+plot(net.kernel.hsa04020)
+}
 \author{
 Juliane Manitz
 }

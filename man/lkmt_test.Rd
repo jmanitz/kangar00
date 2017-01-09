@@ -26,6 +26,8 @@ p-value calculation. Available are \code{'satt'} for the Satterthwaite
 approximation and \code{'davies'} for Davies' algorithm. For more details
 see the references.}
 
+\item{...}{Further arguments can be given to the function.}
+
 \item{x1}{A \code{\link{matrix}} which is the
 similarity matrix calculated for the pathway to be tested.}
 
@@ -51,14 +53,19 @@ in the variance component test.
 \description{
 A function to calculate the p-values for kernel-matrices.
 
-This function evaluates a pathways influence on an individuals probability
-of beeing a case using the logistic kernel machine test. P-values are
-determined using a Sattherthwaite Approximation as described by Dan Schaid.
+For parameter \code{"satt"} a pathways influence on the probability of
+beeing a case is evaluated in the logistic kernel machine test and p-values
+are determined using a Sattherthwaite Approximation as described by Dan Schaid.
 
-This function evaluates a pathways influence on an individuals probability
-of beeing a case using the logistic kernel machine test. P-values are
-determined using the method described by Davies as implemented in the
- function \code{davies()} from package \code{CompQuadForm}.
+For parameter \code{"davies"} a pathways influence on the probability
+of beeing a case is evaluated using the p-value calculation method described
+by Davies. Here the function \code{davies()} from package \code{CompQuadForm}
+is used.
+}
+\examples{
+data(net.kernel.hsa04020)
+data(gwas)
+lkmt_test(pheno ~ sex + age, net.kernel.hsa04020, gwas, method='satt')
 }
 \author{
 Stefanie Friedrichs, Juliane Manitz

@@ -20,7 +20,7 @@ considered in testing}
 simulated data and Ensembl extract
 }
 \usage{
-lkmt.net.kernel.hsa04020
+data(lkmt.net.kernel.hsa04020)
 }
 \description{
 An object of class \code{lkmt} containing exemplary test results for an

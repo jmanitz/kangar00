@@ -4,7 +4,6 @@
 \name{GWASdata}
 \alias{GWASdata}
 \alias{GWASdata,ANY-method}
-\alias{GeneSNPsize,GWASdata-method}
 \alias{show,GWASdata-method}
 \alias{summary,GWASdata-method}
 \title{S4 class for an object representing a Genome-wide Assocaition Study.}
@@ -16,11 +15,11 @@ GWASdata(object, ...)
 \S4method{show}{GWASdata}(object)
 
 \S4method{summary}{GWASdata}(object)
-
-\S4method{GeneSNPsize}{GWASdata}(object)
 }
 \arguments{
 \item{object}{A \code{GWASdata} object.}
+
+\item{...}{Further arguments can be added to the function.}
 
 \item{geno}{An object of any type, including the genotype information.}
 
@@ -35,13 +34,11 @@ covariates to be included in the regression model.}
 \description{
 S4 class for an object representing a Genome-wide Assocaition Study.
 
-\code{'GWASdata'} is a GWASdata object constructor
+\code{'GWASdata'} is a GWASdata object constructor.
 
 \code{show} displays basic information on \code{GWASdata} object
 
 \code{summary} summarizes the content of a \code{GWASdata} object and gives an overview about the information included in a \code{\link{GWASdata}} object. Summary statistics for phenotype and genotype data are calculated.
-
-\code{GeneSNPsize} creates a \code{data.frame} of pathway names with numbers of snps and genes in each pathway.
 }
 \section{Slots}{
 
@@ -73,9 +70,6 @@ gwas
 # summary method
 data(gwas)
 summary(gwas)
-# SNPs and genes in pathway
-data(gwas)
-GeneSNPsize(gwas)
 }
 \author{
 Juliane Manitz, Stefanie Friedrichs

@@ -16,7 +16,7 @@ kernelmatrix was calculated}
 simulated data and Ensembl extract
 }
 \usage{
-net.kernel.hsa04020
+data(net.kernel.hsa04020)
 }
 \description{
 An example of a kernel object.

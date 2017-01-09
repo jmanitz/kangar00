@@ -7,17 +7,17 @@
 \format{A \code{matrix} with 5 rows and 4056 columns:
 \describe{
  each entry in the matrix represents a simulated minor allele count for the
-corresponding SNp and individual.
+corresponding SNP and individual.
 }}
 \source{
 simulated data
 }
 \usage{
-geno
+data(geno)
 }
 \description{
 A matrix containing example genotypes for 4056 SNPs of 50 individuals.
-Column-names give the rs-numbers of 4056 example SNPs, row-names the
+Column names give the rs-numbers of 4056 example SNPs, row names the
 identifiers of 50 example individuals.
 }
 \keyword{datasets}

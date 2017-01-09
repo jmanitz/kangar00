@@ -20,6 +20,8 @@ snp_info(x, ...)
 \item{x}{A character vector of SNP rsnumbers for which positions will be extracted.}
 
 \item{...}{further arguments can be added.}
+
+\item{object}{An object of class \code{\link{snp_info}}.}
 }
 \value{
 A \code{data.frame} including the SNP positions with columns

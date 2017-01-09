@@ -33,6 +33,7 @@ A function to create the annotation for a GWASdata object. It combines a
 \examples{
 data(hsa04022_info)
 data(rs10243170_info)
+get_anno(rs10243170_info, hsa04022_info)
 }
 \author{
 Stefanie Friedrichs, Saskia Freytag, Ngoc-Thuy Ha

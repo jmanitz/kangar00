@@ -17,7 +17,7 @@ inhibitions in the adjacency matrix }
 simulated data and Ensembl extract
 }
 \usage{
-hsa04020
+data(hsa04020)
 }
 \description{
 An object of class \code{pathway} for the pathway with KEGG identifier hsa04020.

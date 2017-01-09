@@ -16,11 +16,11 @@
 simulated data
 }
 \usage{
-pheno
+data(pheno)
 }
 \description{
 A dataset containing simulated example phenotypes for 50 individuals
-Row-names include the identifiers of 50 example individuals.
+row names include the identifiers of 50 example individuals.
 }
 \keyword{datasets}
 

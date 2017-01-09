@@ -53,6 +53,13 @@ in the variance component test.
 
 For details on the variance component test see the references.}
 }}
+\examples{
+# show method
+data(lkmt.net.kernel.hsa04020)
+lkmt.net.kernel.hsa04020
+# summary method
+summary(lkmt.net.kernel.hsa04020)
+}
 \author{
 Juliane Manitz, Stefanie Friedrichs
 }

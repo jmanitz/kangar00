@@ -15,11 +15,11 @@
 simulated data
 }
 \usage{
-gwas
+data(gwas)
 }
 \description{
-An object of type GWASdata  dataset containing the example files for
-annotatio, phenotypes and genotypes.
+An object of type GWASdata containing the example files for
+annotation, phenotypes and genotypes.
 }
 \keyword{datasets}
 

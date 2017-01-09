@@ -215,7 +215,7 @@ setMethod('lin_kernel', signature(object = 'GWASdata'),
       if(calculation=='gpu'){   # Suggests gputools #
       if(require(gputools)){
         Z <- as.numeric(Z1)
-        k <- gputools:::gpuMatMult(Z1,t(Z1))
+        k <- gputools::gpuMatMult(Z1,t(Z1))
       }else{
         stop("Please install package 'gputools' to run matrix multiplication on GPU")
         }
@@ -361,8 +361,8 @@ setMethod('net_kernel', signature(object = 'GWASdata'),
      K <- Z1 %*% ANA %*% t(Z1)
    }  
    if(calculation=='gpu'){   # Suggests gputools #
-     K1 <- gputools:::gpuMatMult(Z1,ANA)
-     K  <- gputools:::gpuMatMult(K1,t(Z1))
+     K1 <- gputools::gpuMatMult(Z1,ANA)
+     K  <- gputools::gpuMatMult(K1,t(Z1))
    }  
    #return kernel object
    return(kernel(type='network',kernel=K,pathway=pathway))
