@@ -15,15 +15,14 @@ The genetic information collected in genome-wide association studies (GWAS)
 is represented by the genotypes of various single-nucleotid polymorphisms (SNPS).
 Testing biological meaningful SNP Sets is a successful strategy for the
 evaluation of GWAS data, as it may increase power as well as interpretation of
-results. Via mapping of SNPs to genes forming a network, associations of 
-specific pathways with disease risk can be analysed.  
+results. Via mapping of SNPs to genes forming a network, association between 
+pathways and disease risk can be investigated.  
 Kernel methods are particularly well suited to cope with the challenges connected 
 to the analysis of large SNP sets from GWAS data. They do not require to model
 a direct functional relationship between SNPs and effects, while at the same 
 time can deal with high-dimensional data and allow for straightforward
-incorporation of covariates. Furthermore, they are computationally efficient.
-The model for a logistic kernel machine regression of a pathway on a binary
-outcome is given by
+incorporation of covariates. The model for a logistic kernel machine regression 
+of a pathway on a binary outcome is given by
 
 $$logit(P(y_i=1|x_i,z_i))=x_i^t \beta + h(z_i)                    (1)        $$                        		
 
@@ -64,7 +63,7 @@ pathway as an example.
     and the chromosome are listed.
      
 *  Gene membership is obtained directly from KEGG, while startpoints, endpoints 
-   and chromosome information is extracted from Ensemble (Cunningham et al 2015).
+   and chromosome information is extracted from Ensembl (Cunningham et al 2015).
    The database is accessed via the function `getBM()` in the biomaRt package. 
    This means that the gene boundaries given will equal the current build used 
    in Ensemble. An internet connection is required for this step.   
@@ -82,30 +81,6 @@ will return a `pathway_info` object containing a data frame of the form
 
 listing informatin on all genes KEGG assigned to Circadian rhythm.
 
-
-
-### Networkmatrix
-
-The gene-gene interactions within pathways are represented by a network matrix. 
-This quadratic matrix is of dimension equal to the number of genes in 
-the corresponding pathway. It includes entries equal to $1$ (representing an 
-activation interaction), $-1$ (denoting an inhibiting interaction) or $0$ 
-(no interaction). Every gene is modeled as self-interacting, thus all diagonal
-elements are $1$. 
-
-A networkmatrix can be created using the function `get_network_matrix()`. Gene
-interaction information for a specific pathway is extracted from the KEGG
-database. It is accessed via the function `retrieveKGML()` from the `KEGGgraph`
- package. An internet connection is required for this step. 
-
-``` 
-get_network_matrix('hsa04710', directed=FALSE)
-``` 
-will download the KEGG XML file for the pathway with ID 'hsa04710' and save 
-it in the working directory. The function will convert the data into a
-networkmatrix and return it. The user can specify whether this `matrix` should
-be given directed (directed=TRUE) or undirected (directed=FALSE).
-
 ### Pathway object
 
 In `kangar00` all information on a specific pathway is combined in a `pathway`
@@ -117,20 +92,45 @@ object.  It includes
 
 *   A `vector` giving the signs for the interactions.
 
+The following example creates a new pathway object, to which gene-interaction
+information has yet to be added
+
 ``` 
-N <- get_network_matrix('hsa04710', directed=FALSE)
-p <- pathway(id='hsa04710', adj=abs(N), sign=as.vector(N[N!=0]))
+pathw <- pathway(id='hsa04710', adj=matrix(0), sign=as.vector(matrix(0)[matrix(0)!=0]))
+```
+
+### Networkmatrix
+
+The gene-gene interactions within pathways are represented by a network matrix. 
+This quadratic matrix is of dimension equal to the number of genes in 
+the corresponding pathway. It includes entries equal to $1$ (representing an 
+activation interaction), $-1$ (denoting an inhibiting interaction) or $0$ 
+(no interaction). 
+
+A networkmatrix can be created using the function `get_network_matrix()`. Gene
+interaction information for a specific pathway is extracted from the KEGG
+database. It is accessed via the function `retrieveKGML()` from the `KEGGgraph`
+ package. An internet connection is required for this step. 
+
 ``` 
+pathw_complete <- get_network_matrix(pathw, directed=FALSE)
+``` 
+will download the KEGG XML file for the pathway with ID 'hsa04710' and save 
+it in the working directory. The function will convert the data into a
+networkmatrix and add it to the given pathway object. The expanded pathway 
+object will be returned. The user can specify whether the gene-interaction 
+matrix should be given directed (directed=TRUE) or undirected (directed=FALSE).
+
 
 ## SNP positions
 
-Kangar00 offers a function to update the positions of the SNPs in your GWAS 
-dataset.
+Kangar00 offers a function to download positions of the SNPs available in 
+your GWAS dataset from the Ensembl database.
  
 *  `snp_info()` will take a vector of rsnumbers and give the corresponding base 
    pair positions.
    
-*  Positions are extracted from the Ensemble database and thus equal the current 
+*  Positions are extracted from the Ensembl database and thus equal the current 
    build used on the website. The database is accessed via the function `getBM()` 
    from the package `biomaRt`. This requires an internet connection. 
 
@@ -150,8 +150,9 @@ To define SNP sets representing a pathway, the function `get_anno()` can be used
 
 *  Input arguments are a `pathway_info` as well as a `snp_info` object.
 
-*  If you do not want to update your SNP information, you have to create a `snp_info`
-   object including a data frame listing all SNPs to be annotated. This data frame 
+*  If you do not want to change positions in your SNP file using the `snp_info()`
+   function, you will have to transform it into a `snp_info` object
+   including a data frame listing all SNPs to be annotated. This data frame 
    must include the columns 'chr', 'position' and 'rsnumber', giving for each SNP 
    the chromosome it lies on, its base pair position on the chromosome and the 
    rsnumber identifier, respectively.
@@ -178,7 +179,7 @@ multiple genes if they overlap. The data frame will have the following format
 ## GWAS data
 
 Data from a case control study is needed to test a pathways influence on disease
- risk with the logistic kernel machine test. In `kangar00` GWAS study data is 
+ risk with the logistic kernel machine test in `kangar00`. Here, GWAS data is 
  represented by the `GWASdata` object. It includes 
  
 *   Genotype data for each individual. 
@@ -207,20 +208,12 @@ Data from a case control study is needed to test a pathways influence on disease
     could for instance be the name of the study.    
 
 A `GWASdata` object can be constructed as 
-```
-anno  <- get_anno(snp_info, pathway_info)                   
-pheno <- read.table("...path/to/file/containing/phenotypes")
-geno  <- read.table("...path/to/file/containing/genotypes") 
-
-ADD READ_GENO FUNCTION HERE WEHEN FINISHED  
-       
-geno  <- matrix(geno)  
-
-
+```   
 
 my_gwas <- GWASdata(pheno=pheno, geno=geno, anno=anno, desc="study xy")
-```
 
+
+```
 
 # Calculation of Kernelmatrices
 
@@ -242,13 +235,12 @@ It requires as arguments
 
 *   A `pathway` object specifying the pathway to be tested. 
 
-*   A value for argument `parallel` to decide how the kernel should be 
-    calculated. Options are `none` for sequential, `cpu` for parallel and `gpu`
-    for gpu calculation are available. Currently only parallel computation is 
-    implemented. 
+*   A value for argument `calculation` to decide how the kernel should be 
+    calculated. Options are `cpu` for calculation on cpu and `gpu`
+    for gpu calculation.  
  
 ```
-K_lin <- lin_kernel(gwas, p, parallel='none')
+K_lin <- lin_kernel(gwas, p, calculation='cpu')
 ```
 
 will return a quadratic `matrix` of dimension equal to the number of individuals
@@ -274,11 +266,11 @@ the following arguments
 
 *   A `pathway` object specifying the pathway to be tested. 
 
-*   A value for argument `parallel` to decide how the kernel should be 
-    calculated. Currently only `none` for sequential calculation is available.  
+*   A value for argument `calculation` to decide how the kernel should be 
+    calculated. Currently only `cpu` for cpu calculation is available.  
  
 ```
-K_sia <- sia_kernel(gwas, p, parallel='gpu')
+K_sia <- sia_kernel(gwas, p, calculation='cpu')
 ```
 will return a quadratic `matrix` of dimension equal to the number of individuals
 in the `GWASdata` object.
@@ -298,11 +290,11 @@ The network based kernelmatrix for a pathway can be calculated with the function
 
 *   A `pathway` object specifying the pathway to be tested. 
 
-*   A value for argument parallel to decide how the kernel should be 
-    calculated. Currently only 'none' for sequential calculation is available.  
+*   A value for argument 'calculation' to decide how the kernel should be 
+    calculated.   
  
 ```
-K_net <- net_kernel(gwas, p, parallel='none')
+K_net <- net_kernel(gwas, p, calculation='cpu')
 ```
 will return a quadratic `matrix` of dimension equal to the number of individuals
 in the `GWASdata` object.

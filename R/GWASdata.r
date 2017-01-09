@@ -44,12 +44,11 @@ GWASdata <- setClass('GWASdata',
         valid <- FALSE
         msg   <- c(msg, "object geno needs specified col- and/or rownames")
     }
-    ## check whether GWASdata@geno has missings
-    # <FIXME> Currently not working
-    # if(sum(is.na(object@geno))>0){
-    #     valid <- FALSE
-    #     msg   <- c(msg, "genotypes include missing values and need to be imputed!")
-    # }
+    ## check if genotypes include missings
+     if(sum(is.na(object@geno))>0){
+         valid <- FALSE
+         msg   <- c(msg, "genotypes include missing values that need to be imputed!")
+     }
     ## check phenotypes
     if(length(object@pheno)>0){
       ## phenotypes for more individuals than have genotypes
@@ -83,13 +82,14 @@ GWASdata <- setClass('GWASdata',
 
 # GWASdata object constructor
 setGeneric('GWASdata', function(object, ...) standardGeneric('GWASdata'))
-#' \code{'GWASdata'} is a GWASdata object constructor
+#' \code{'GWASdata'} is a GWASdata object constructor.
 #' @param geno An object of any type, including the genotype information.  
 #' @param anno A \code{data.frame} containing the annotation file for the 
 #' GWASdata object.
 #' @param pheno A \code{data.frame} specifying individual IDs, phenotypes and
 #' covariates to be included in the regression model.
 #' @param desc A \code{character} giving the GWAS description, e.g. name of study. 
+#' @param ... Further arguments can be added to the function.
 #' @export
 #' @rdname GWASdata-class
 setMethod('GWASdata',
@@ -117,10 +117,7 @@ setGeneric('read_geno', function(file.path, ...) standardGeneric('read_geno'))
 #' @rdname read_geno
 #' @import tools
 #' @export
-
 # <ADD> example
-# @suggest bigmemory  how to incorporate suggestions? 
-
 setMethod("read_geno",
           signature="character",
                      #save.path="character", sep="character",
@@ -350,8 +347,10 @@ setGeneric('GeneSNPsize', function(object, ...) standardGeneric('GeneSNPsize'))
 #' data(gwas) 
 #' GeneSNPsize(gwas)
 #'
-#' @export
-#' @rdname GWASdata-class
+#' @export 
+#' @name GeneSNPsize  
+#' @rdname GWASdata
+#' @aliases GeneSNPsize,GWASdata,ANY-method
 setMethod('GeneSNPsize', signature='GWASdata',
           definition <- function(object){
               nrsnps <- table(unique(object@anno[,c('pathway','gene','snp')])$pathway)
@@ -406,6 +405,7 @@ setGeneric('snp_info', function(x, ...) standardGeneric('snp_info'))
 ## @author Stefanie Friedrichs
 #' @import biomaRt
 #' @rdname snp_info-class 
+#' @export 
 setMethod('snp_info', signature='character', 
           definition = function(x){        
   #set database; Homo sapiens Short Variation (SNPs and indels):
@@ -442,7 +442,7 @@ setMethod('show', signature='snp_info',
 setGeneric('summary', function(object, ...) standardGeneric('summary'))
 #' \code{summary} Summarizes information on \code{snp_info} object
 #'
-## @param object An object of class \code{\link{snp_info}}.
+#' @param object An object of class \code{\link{snp_info}}.
 #' @return \code{summary} Summarized information on \code{snp_info} object.
 #' @examples
 #' # summary
@@ -483,11 +483,13 @@ setGeneric('get_anno', function(object1, object2, ...) standardGeneric('get_anno
 #' @examples
 #' data(hsa04022_info)
 #' data(rs10243170_info)
-##get_anno(rs10243170_info, hsa04022_info)
+#' get_anno(rs10243170_info, hsa04022_info)
 #'
 #' @author Stefanie Friedrichs, Saskia Freytag, Ngoc-Thuy Ha
 #' @seealso \code{\link{snp_info}}, \code{\link{pathway_info}}
 #' @import sqldf
+#' @export
+#' @rdname get_anno
 setMethod('get_anno', signature=c('snp_info','pathway_info'),
           definition <- function(object1, object2, ...) {
           
@@ -523,16 +525,3 @@ setMethod('get_anno', signature=c('snp_info','pathway_info'),
   anno <- do.call("rbind", lapply(list_out, data.frame, stringsAsFactors=FALSE))
   return(anno)
 })
-
-
-##<TODO> add dataset descriptions
-# This is data to be included in my package
-#
-# @name data-name
-# @docType data
-# @author My Name \email{blahblah@@roxygen.org}
-# @references \url{data_blah.com}
-# @keywords data
-#NULL
-
-

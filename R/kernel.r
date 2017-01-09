@@ -68,6 +68,12 @@ setValidity('kernel', function(object){
 #' @details This kernel is used for predictions. If observations and knots are 
 #' equal, better construct a full-rank kernel of class \code{\link{kernel}}.
 #'
+#' @examples
+#' data(gwas)
+#' K.lin.knots <- calc_kernel(gwas, hsa04020, knots=gwas, type='lin', calculation='cpu')
+#'
+## K.lin.knots <- lin_kernel(gwas, hsa04020, knots=GWASdata(geno=gwas@geno[c(1,2,4,7,9),], anno=gwas@anno, pheno=gwas@pheno[c(1,2,4,7,9),], desc='study 2'), calculation='cpu')
+#'
 #' @author Juliane Manitz
 #' @export
 #' @import methods
@@ -75,9 +81,12 @@ lowrank_kernel <- setClass('lowrank_kernel',
                    slots=c(type='character', kernel='matrix', pathway='pathway'))
 
 setValidity('lowrank_kernel', function(object){
-    msg  <- NULL
+    msg   <- NULL
     valid <- TRUE
-#    <FIXME> any validity check required
+    if( sum(is.na(object@kernel))>0 ){
+        valid <- FALSE
+        msg   <- c(msg, "kernel matrix has missing values")
+    }
     if(valid) TRUE else msg
 })
 #################################### kernel object constructor #################
@@ -103,10 +112,10 @@ setGeneric('calc_kernel', function(object, ...) standardGeneric('calc_kernel'))
 #'  for linear kernel, \code{"sia"} for size-adjusted or \code{"net"}
 #'  for network-based kernel.
 #' @param knots \code{GWASdata} object, if specified a low-rank kernel will be 
-#' computed
+#' computed.
 #' @param calculation \code{character} specifying if the kernel matrix is computed in 
 #' on CPU or GPU. 
-#' @param ... further arguments to be passed to the kernel computations
+#' @param ... further arguments to be passed to kernel computations.
 #'
 #' @return Returns an object of class \code{kernel}, including the similarity 
 #' matrix of the pathway for the considered individuals.  \cr
@@ -133,12 +142,17 @@ setGeneric('calc_kernel', function(object, ...) standardGeneric('calc_kernel'))
 #' @examples
 #' data(gwas)
 #' data(hsa04020)
-#' K.net  <- calc_kernel(gwas, hsa04020, knots = NULL, type='net', parallel='none')
 #'
+#' # get kernel using calc_kernel function
+#' calc_kernel(gwas, hsa04020, knots = NULL, type='net', calculation='cpu')
+#' 
+## # get kernel using specific kernel function directly
+## sia_kernel(gwas, hsa04020, knots = NULL, calculation='cpu')
+#' 
 #' @author Stefanie Friedrichs, Juliane Manitz
 #' @rdname calc_kernel
 #' @export
-#' @seealso \code{\link{kernel-class}},\code{\link{pathway-class}}
+#' @seealso \code{\link{kernel-class}},\code{\link{pathway}}
 setMethod('calc_kernel', signature(object = 'GWASdata'),
        definition = function(object, pathway, knots = NULL,
 			                       type = c('lin', 'sia', 'net'),
@@ -173,7 +187,7 @@ setMethod('calc_kernel', signature(object = 'GWASdata'),
 # calculate linear kernel
 setGeneric('lin_kernel', function(object, ...) standardGeneric('lin_kernel'))
 #' @describeIn calc_kernel Calculates a linear kernel 
-#' @export
+# @export
 setMethod('lin_kernel', signature(object = 'GWASdata'),
           definition = function(object, pathway, knots=NULL,
                        calculation = c('cpu', 'gpu'), ...) {
@@ -356,69 +370,90 @@ setMethod('net_kernel', signature(object = 'GWASdata'),
 
 ################################## helper function #############################
 
-setGeneric('rewire_network', function(x1, x2) standardGeneric('rewire_network'))
+setGeneric('rewire_network', function(object, ...) standardGeneric('rewire_network'))
 #' Rewires interactions in a pathway, which go through a gene not represented 
-#' by any SNPs in the considered \code{GWASdata} object. (for internal use)  
+#' by any SNPs in the considered GWAS dataset.   
 #'
 #' @export
 #' @author Stefanie Friedrichs, Juliane Manitz
 #'
-#' @param x1 Adjacency \code{matrix} of a pathway
-#' @param x2 A \code{vector} of gene names, indicating which genes are not 
+#' @param object \code{pathway} object which's network matrix will be rewired
+#' @param x A \code{vector} of gene names, indicating which genes are not 
 #' represented by SNPs in the considered \code{GWASdata} and will be removed  
-#' @return An adjacency \code{matrix} containing the rewired network
+#' @return A \code{pathway} object including the rewired network
 #'
-## @references TODO Newman?
-setMethod('rewire_network', signature = 'matrix',
-          definition = function(x1, x2) {
-    x     <- x1
-    remov <- x2
+#' @name rewire_network
+#' @rdname rewire_network
+#' @aliases rewire_network,pathway-method
+## @examples
+## data(hsa04020)
+## rewire_network(hsa04020, c("PHKB", "ORAI2"))
+## @references TODO Newman?   
+setMethod('rewire_network', signature(object = 'pathway'),
+          definition = function(object, x) {
+          
+    remov <- x
     #exit if no genes have to be removed 
-    if(length(remov)==0){ return(x) }
-
+    if(length(remov)==0){ return(object) }          
+          
+    N <- as.matrix(object@adj)
+    N[N!=0] <- object@sign
+    if(any(is.na(N)))
+        stop("network information contains missing values")      
+        
     # identify genes that need to be carried forward to the subnetwork
-    a <- (x[remov,]!=0)
+    a <- (N[remov,]!=0)
     # can be vector or matrix -> make matrix to apply colsums
     if(is.null(dim(a))){
        a <- rbind(rep(0,length(a)),a)
     }
     ind_sub <- which(colSums(a)!= 0)
     # extract the subnetwork
-    xsub <- x[ind_sub, ind_sub]
+    Nsub <- N[ind_sub, ind_sub]
 
     #if gene to remove had no connections
-    if(is.null(dim(xsub))){
-       return(x[-remov,-remov])
+    if(is.null(dim(Nsub))){
+       N <- N[!(colnames(N)%in%remov),!(colnames(N)%in%remov)]
+       object@adj  <- abs(N) 
+       object@sign <- as.vector(N[N!=0])
+       return(object)
     }
 
     # exclude self-interaction
-    diag(xsub) <- 0
+    diag(Nsub) <- 0
     # if nullmatrix
-    if(sum(xsub!=0)==0){
-       return(x[-remov,-remov])
+    if(sum(Nsub!=0)==0){   
+       N <- N[!(colnames(N)%in%remov),!(colnames(N)%in%remov)]
+       object@adj  <- abs(N) 
+       object@sign <- as.vector(N[N!=0])
+       return(object)
     }
 
     # calculate the two-step network
-    xsub2step <- xsub %*% xsub
-    xsub2step[xsub2step>0] <-  1
-    xsub2step[xsub2step<0] <- -1
+    Nsub2step <- Nsub %*% Nsub
+    Nsub2step[Nsub2step>0] <-  1
+    Nsub2step[Nsub2step<0] <- -1
 
     # check whether interaction types contradict
-    check_contradicts <- ((xsub != 0) & (xsub + xsub2step == 0))
+    check_contradicts <- ((Nsub != 0) & (Nsub + Nsub2step == 0))
     if(any(check_contradicts)){
-       xsub2step[(xsub != 0) & (xsub + xsub2step == 0)] <- 0
+       Nsub2step[(Nsub != 0) & (Nsub + Nsub2step == 0)] <- 0
        message('Interaction types contradict after rewiring: Edges removed.')
     }
     # replace the subnetwork in the adjacency matrix
-    x[ind_sub,ind_sub] <- xsub2step
+    N[ind_sub,ind_sub] <- Nsub2step
     # remove the genes and return network
-    return(x[-remov,-remov])
+    
+    N <- N[!(colnames(N)%in%remov),!(colnames(N)%in%remov)]
+    object@adj  <- abs(N) 
+    object@sign <- as.vector(N[N!=0])
+    return(object)
 })
 
 setGeneric('get_ana', function(x, ...) standardGeneric('get_ana'))
 #' Produce middle part of network kernel (for internal use)
 #'
-#' @export
+## @export
 #' @author Juliane Manitz, Saskia Freytag, Stefanie Friedrichs
 #'
 #' @param x \code{data.frame} with annotation information as returned from
@@ -430,11 +465,6 @@ setGeneric('get_ana', function(x, ...) standardGeneric('get_ana'))
 setMethod('get_ana', signature = 'data.frame',
           definition = function(x, SNPset, pathway){
 
-    N <- as.matrix(pathway@adj)
-    N[N!=0] <- pathway@sign
-    if(any(is.na(N)))
-        stop("network information contains missing values")
-
     ### remove genes that have no SNPs (not in anno):
     # genes in pathway
     net_genes <- get_genes(pathway)
@@ -444,8 +474,13 @@ setMethod('get_ana', signature = 'data.frame',
     # pathway genes that are not in annotation
     remov <- which(! net_genes %in% anno_genes)
     # rewire network -> separate function
-    N <- rewire_network(N, remov)
-
+    
+    pathway <- rewire_network(pathway, remov)
+    N <- as.matrix(pathway@adj)
+    N[N!=0] <- pathway@sign
+    if(any(is.na(N)))
+        stop("network information contains missing values")
+        
     # include selfinteractions for main effects
     diag(N) <- 1
     ## make N positive semidefinit
@@ -504,8 +539,9 @@ setMethod('make_psd', signature = 'matrix',
 #' \code{show} displays the kernel object briefly
 #' @param object An object of class \code{kernel}
 #'
-## @examples
-#'
+#' @examples
+#' data(net.kernel.hsa04020)
+#' show(net.kernel.hsa04020)
 #' @export
 #' @rdname kernel-class
 setMethod('show', signature('kernel'),
@@ -518,8 +554,10 @@ setMethod('show', signature('kernel'),
 # summary method
 setGeneric('summary', function(object) standardGeneric('summary'))
 
-#' \code{summary} generates a kernel object summary including the number of individuals and genes for the pathway
-#'
+#' \code{summary} generates a kernel object summary including the number of 
+#' individuals and genes for the pathway
+#' @examples
+#' summary(net.kernel.hsa04020)
 #' @export
 #' @rdname kernel-class
 #' @aliases summary,kernel,ANY-method
@@ -533,15 +571,18 @@ setMethod('summary', signature='kernel',
 
 # plot method
 if (!isGeneric("plot")) setGeneric('plot')
-
 #' \code{plot} creates an image plot of a kernel object
 #'
-#' @param y missing (placeholder)
-#' @param hclust \code{logical}, indicating whether a dendrogram should be added
+#' @param x the \code{kernel object} to be plotted.
+#' @param y missing (placeholder).
+#' @param hclust \code{logical}, indicating whether a dendrogram should be added.
+#' @param ... further arguments to be passed to the function.
 #'
 #' @import lattice
 #' @export
 #' @rdname kernel-class
+#' @examples
+#' plot(net.kernel.hsa04020)
 #' @aliases plot,kernel,ANY-method
 setMethod('plot', signature(x='kernel',y='missing'),
           function(x, y=NA, hclust=FALSE, ...){

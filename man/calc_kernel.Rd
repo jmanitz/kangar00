@@ -69,11 +69,11 @@ For more details, check the references.
 }
 \section{Methods (by class)}{
 \itemize{
-\item \code{GWASdata}: 
+\item \code{GWASdata}: Calculates a linear kernel
 
-\item \code{GWASdata}: 
+\item \code{GWASdata}: Calculates a size adjusted-kernel
 
-\item \code{GWASdata}: 
+\item \code{GWASdata}: Calculates a network-based kernel
 }}
 \examples{
 data(gwas)

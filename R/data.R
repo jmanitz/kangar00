@@ -1,7 +1,7 @@
 #' Example phenotype file for 50 individuals.
 #'
 #' A dataset containing simulated example phenotypes for 50 individuals 
-#' Row-names include the identifiers of 50 example individuals.
+#' row names include the identifiers of 50 example individuals.
 #'
 #' @format A \code{data frame} with 50 rows and 3 variables:
 #' \describe{
@@ -11,6 +11,7 @@
 #'    (male) or 0 (female)}
 #'  \item{age}{numerical value giving the persons age}
 #' }
+#' @usage data(pheno)
 #' @source simulated data
 "pheno"
 
@@ -27,27 +28,29 @@
 #'  \item{snp}{includes rs-numbers of example SNPs}
 #'  \item{position}{gives positions of example SNPs}
 #' }
+#' @usage data(anno)
 #' @source simulated data
 "anno"
 
 #' Example genotypes for 50 individuals.
 #'
 #' A matrix containing example genotypes for 4056 SNPs of 50 individuals. 
-#' Column-names give the rs-numbers of 4056 example SNPs, row-names the 
+#' Column names give the rs-numbers of 4056 example SNPs, row names the 
 #' identifiers of 50 example individuals.
 #'
 #' @format A \code{matrix} with 5 rows and 4056 columns:
 #' \describe{
 #'  each entry in the matrix represents a simulated minor allele count for the
-#' corresponding SNp and individual.
+#' corresponding SNP and individual.
 #' }
+#' @usage data(geno)
 #' @source simulated data
 "geno"
 
 #' Example GWASdata object.
 #'
-#' An object of type GWASdata  dataset containing the example files for 
-#' annotatio, phenotypes and genotypes. 
+#' An object of type GWASdata containing the example files for 
+#' annotation, phenotypes and genotypes. 
 #'
 #' @format An object of class \code{GWASdata}:
 #' \describe{
@@ -56,6 +59,7 @@
 #'  \item{pheno}{exemplary genotypes for the iondividuals listed in geno}
 #'  \item{desc}{a description of the GWAS study, here 'example study'}
 #' }
+#' @usage data(gwas)
 #' @source simulated data
 "gwas"
 
@@ -71,6 +75,7 @@
 #' \item{pathway}{includes the pathway object of the pathway, for which the 
 #' kernelmatrix was calculated}
 #' }
+#' @usage data(net.kernel.hsa04020)
 #' @source simulated data and Ensembl extract
 "net.kernel.hsa04020"
 
@@ -91,6 +96,7 @@
 #' \item{df}{specifies the degrees of freedom}
 #' \item{p.value}{includes teh p-value resulting from the test}
 #' }
+#' @usage data(lkmt.net.kernel.hsa04020)
 #' @source simulated data and Ensembl extract
 "lkmt.net.kernel.hsa04020"
 
@@ -107,6 +113,7 @@
 #'  \item{sign}{includes a vector of signs to distinguish activations and 
 #' inhibitions in the adjacency matrix }
 #' }
+#' @usage data(hsa04020)
 #' @source simulated data and Ensembl extract
 "hsa04020"
 
@@ -120,6 +127,7 @@
 #'  \item{info}{a \code{data frame} including information on genes included in 
 #' pathway. Has columns 'pathway', 'gene_start', 'gene_end', 'chr', and 'gene'}
 #' }
+#' @usage data(hsa04022_info)
 #' @source Ensembl extract
 "hsa04022_info"
 
@@ -133,5 +141,6 @@
 #'  \item{info}{a \code{data frame} including the extracted information on the 
 #' SNP. Columns given are 'chr', 'position', and 'rsnumber'}
 #' }
+#' @usage data(rs10243170_info)
 #' @source Ensembl extract
 "rs10243170_info"

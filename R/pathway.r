@@ -51,6 +51,28 @@ setValidity('pathway', function(object){
 	if(valid) TRUE else msg
 })
 
+# pathway object constructor
+setGeneric('pathway', function(object, ...) standardGeneric('pathway'))
+#' \code{'pathway'} is the pathway object constructor.
+#'
+#' @param id A character repesenting the pathway id.  
+#' @param adj A matrix respresenting the network adjacency matrix  of dimension 
+#' equaling the number of genes (1 interaction, 0 otherwise)
+#' @param sign A numeric vector indicating the interaction type for each link 
+#' (1 activation, -1 inhibition) in the interaction network for the pathway.
+## @param ... Further arguments can be added to the function.
+#' @export
+#'
+#' @examples
+#' pathway(id="hsa04022", adj=matrix(0), sign=as.vector(matrix(0)[matrix(0)!=0]))
+#' 
+#' @rdname pathway-class
+setMethod('pathway',
+       definition = function(id, adj, sign){
+       ## create GWASdata object
+       new('pathway', id=id, adj=adj, sign=sign)
+})
+
 # show method
 #' \code{show} displays the pathway object briefly   
 #' @param object An object of class \code{pathway-class}
@@ -168,6 +190,7 @@ setGeneric('analyze', function(object, ...) standardGeneric('analyze'))
 #'   \item Kunegis, J., A. Lommatzsch, and C. Bauckhage (2009). The slashdot zoo: Mining a social network with negative egdes. In Proceedings of the 18th international conference on World wide web, pp. 741-750. ACM Press.
 #' }
 #' @examples
+#' # analyse pathway network properties
 #' data(hsa04020)
 #' summary(hsa04020)
 #' analyze(hsa04020)
@@ -205,14 +228,16 @@ setMethod('analyze', signature='pathway',
           })
 
 #### function extracting genes in pathway
-#' @exportMethod get_genes
+## @exportMethod get_genes
 setGeneric('get_genes', function(object, ...) standardGeneric('get_genes'))
 
-#' \code{get_genes} is a helper function that extracts the gene names in a pathway and returns a vector of character containing gene names
+#' \code{get_genes} is a helper function that extracts the gene names in a 
+#' pathway and returns a vector of character containing gene names
 #'
 #' @export
-#' @rdname pathway-class 
-#' @aliases get_genes,pathway,ANY-method
+## @rdname pathway-class 
+#' @describeIn pathway 
+## @aliases get_genes,pathway,ANY-method
 ## @param object A pathway object
 #' @examples
 #' # extract gene names from pathway
@@ -416,11 +441,8 @@ setMethod('gene_name_number', signature='character',
 #' @rdname pathway_info-class
 #' @slot info A \code{data.frame} including information on genes contained in 
 #' pathways with columns 'pathway', 'gene_start', 'gene_end', 'chr' and 'gene'.
-#' @examples
-#' data(hsa04022_info) 
 #'
 #' @author Stefanie Friedrichs
-#' @export pathway_info
 pathway_info <- setClass('pathway_info', slots=c(info='data.frame'))
 
 setValidity('pathway_info', function(object){  
@@ -445,14 +467,14 @@ setGeneric('pathway_info', function(x) standardGeneric('pathway_info'))
 #' database is accessed via the R-package \code{biomaRt}.
 #'
 #' @param x A \code{character} identifying the pathway for which gene infomation 
-#' should be extracted. Here KEGG IDs ('hsa00100') are used.
+#' should be extracted. Here KEGG IDs (format: 'hsa00100') are used.
 #' @return A \code{data.frame} including as many rows as genes appear in the 
 #' pathway. for each gene its name, the start and end point and the chromosome 
 #' it lies on are given.
 #' @examples
 #' pathway_info("hsa04022") 
 #'
-#' @author Stefanie Friedrichs
+## @author Stefanie Friedrichs
 #' @import biomaRt  
 #' @export
 #' @rdname pathway_info-class
@@ -569,40 +591,36 @@ setMethod('set_names', signature='matrix',
 })
  
  
-setGeneric('get_network_matrix', function(x, ...) standardGeneric('get_network_matrix'))
+setGeneric('get_network_matrix', function(object, ...) standardGeneric('get_network_matrix'))
 #' Function to calculate the network matrix
 #'
 #' This function creates the networkmatrix representing the gene-gene interaction 
 #' structure within a particular pathway. In this process a KEGG kgml file is 
 #' downloaded and saved in the working directory. 
 #'
-#' @param x A \code{character} identifying the pathway for which gene infomation 
-#' should be extracted. Here KEGG IDs ('hsa00100') are used. 
-#' @param directed A \code{logic} argument, stating whether the networkmatrix 
-#' should be returned directed (\code{TRUE}) or undirected (\code{FALSE}).
-#' @param keep.kgml A \code{logic} argument, specifying whether the downloaded 
-#' KEGG kgml file of the pathway should be kept in the working directory after
-#' calculation of the network matrix. For (\code{FALSE}) the file is deleted, 
-#' for (\code{TRUE}) not.
-#' @param method A \code{character} stating from where the pathway data should 
-#' be downloaded. Currently only 'KEGG' for the Kegg database is available.    
-#' @return A \code{matrix} representing the interaction network in the pathway.
+#' @param object A \code{pathway} object identifying the pathway for which gene 
+#' interaction infomation should be extracted. Here, KEGG IDs of format
+#' 'hsa00100' are used and information is downloaded from the KEGG database.    
+#' @param directed A \code{logic} argument, stating whether the network matrix 
+#' should be returned directed (\code{TRUE}) or undirected (\code{FALSE}). 
+#' @return The altered \code{pathway} object, in which the slots 'adj' and 
+#' 'sign' have been changed according to the downloaded information on the pathway. 
 ## @examples
-## get_network_matrix("hsa04022", TRUE, TRUE, 'KEGG')
+## get_network_matrix(pathway(id="hsa04022", adj=matrix(0), sign=as.vector(matrix(0)[matrix(0)!=0])), TRUE)
 #'
 #' @author Stefanie Friedrichs, Patricia Burger
 #' @import KEGGgraph
 #' @export   
-setMethod('get_network_matrix', signature='character', 
-          definition = function(x, directed = TRUE, keep.kgml = TRUE, method = "KEGG"){    
-        
-    if(method == "KEGG"){
+setMethod('get_network_matrix', signature='pathway', 
+          definition = function(object, directed=TRUE){    
+      
+      x <- object@id
+      
       retrieveKGML(substr(x,4,nchar(x)), organism="hsa",
                    destfile=paste(x,".xml",sep=""), method="internal")
       liste     <- gene_name_number(x)
       pathgraph <- parseKGML2Graph(paste(x,".xml",sep=""), expandGenes=TRUE)
-     
-      
+          
      # parseKGML2Graph can also be split up in two steps 
      # pathgraph.s1 <- parseKGML(paste(x, ".xml", sep = ""))
      # pathgraph  <- KEGGpathway2Graph(pathgraph.s1, expandGenes = TRUE)
@@ -631,8 +649,7 @@ setMethod('get_network_matrix', signature='character',
         verb.i <- edgelist[edgelist[,3]=="inhibition",]
         verb.s <- edgelist[edgelist[,3]!="inhibition"&edgelist[,3]!="activation",] 
       }
-       
-      
+             
       # --- if activations/inhibitions specified: Signed matrix ---
       if( (length(verb.a[,1])+length(verb.i[,1]))>0 ){
         if(length(verb.s[,1])==0){ 
@@ -640,8 +657,8 @@ setMethod('get_network_matrix', signature='character',
                       Signed graph!",sep="")) 
         }
         if(length(verb.s[,1])>0){ 
-          print(paste(x," has both: Activation/Inhibition   
-                      edges and edges without type!",sep=""))
+          print(paste(x," has both: Activation/Inhibition edges and edges without type!",sep=""))  
+                      
         }
         # -- Directed --- 
         #           to 
@@ -649,7 +666,8 @@ setMethod('get_network_matrix', signature='character',
         if(length(verb.a[,1])>0){ 
           from <- as.character(unique(verb.a[,1]))
           for(i in from){ 
-            N[i,as.character(verb.a[verb.a[,1]==i,2])] <- 1}  }
+            N[i,as.character(verb.a[verb.a[,1]==i,2])] <- 1}  
+        }
         if(length(verb.i[,1])>0){ 
           from <- as.character(unique(verb.i[,1]))
           for(i in from){ 
@@ -684,16 +702,13 @@ setMethod('get_network_matrix', signature='character',
         M <- set_one(M)
         M <- set_names(M,nodes,liste)      
       }
-      if(keep.kgml == FALSE){ 
-        rm(paste(x,".xml",sep="")) 
-      }
       if(directed==TRUE){
-        return(N)
+         object@adj  <- abs(N) 
+         object@sign <- as.vector(N[N!=0])
+         return(object)
       }else{
-        return(M)
-      }    
-    }        
-            
-    
+         object@adj  <- abs(M) 
+         object@sign <- as.vector(M[M!=0])
+         return(object)
+      }                       
 })
-          
