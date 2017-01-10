@@ -128,8 +128,9 @@ setMethod('summary', signature='pathway',
 
 setGeneric('pathway2igraph', function(object, ...) standardGeneric('pathway2igraph'))
 
-#' \code{pathway2igraph} converts a \code{\link{pathway}} object into an \code{\link{igraph}} object with edge attribute \code{sign}
+#' \code{pathway2igraph} converts a \code{\link{pathway}} object into an \code{\link[igraph:make_graph]{igraph} object with edge attribute \code{sign}
 #'
+##\link[pkg2:foo_Rd_file_name]{foo}
 #' @export
 #' @describeIn pathway
 #' @aliases pathway2igraph,pathway,ANY-method
@@ -140,8 +141,6 @@ setGeneric('pathway2igraph', function(object, ...) standardGeneric('pathway2igra
 #' str(hsa04020)
 #' g <- pathway2igraph(hsa04020)
 #' str(g)
-#'
-#' @import igraph
 setMethod('pathway2igraph', signature='pathway',
           definition = function(object){
     # define adjacency matrix
@@ -149,14 +148,13 @@ setMethod('pathway2igraph', signature='pathway',
     net[net!=0] <- object@sign
 
     # define igraph object
-
-    g <- graph_from_adjacency_matrix(net, mode='undirected', 
+    g <- igraph::graph_from_adjacency_matrix(net, mode='undirected', 
                                      weighted=TRUE, diag=FALSE)
 
-    if(ecount(g)>0){
+    if(igraph::ecount(g)>0){
       # specify interaction type 
-      E(g)$sign <- E(g)$weight 
-      E(g)$weight <- 1
+      igraph::E(g)$sign <- igraph::E(g)$weight 
+      igraph::E(g)$weight <- 1
     }
     return(g)
 })
@@ -194,8 +192,7 @@ setGeneric('analyze', function(object, ...) standardGeneric('analyze'))
 #' data(hsa04020)
 #' summary(hsa04020)
 #' analyze(hsa04020)
-#'
-#' @import igraph
+
 setMethod('analyze', signature='pathway',
           definition = function(object, ...){
               # define graph
@@ -205,20 +202,20 @@ setMethod('analyze', signature='pathway',
 
               # compute graph characteristics
               res <-  data.frame(id=object@id,
-                   vcount=vcount(g),
-                   ecount=ecount(g),
+                   vcount=igraph::vcount(g),
+                   ecount=igraph::ecount(g),
                    # number of inhibition links
-                   inh_ecount = sum(E(g)$sign<0),
+                   inh_ecount = sum(igraph::E(g)$sign<0),
                    # graph density
-                   density=graph.density(g),
+                   density=igraph::graph.density(g),
                    # average degree
-                   av_deg=mean(degree(g)),
+                   av_deg=mean(igraph::degree(g)),
                    # inhibition degree (av neg links)
                    inh_deg=mean(rowSums(net<0)),
                    # diameter
-                   diam=diameter(g),
+                   diam=igraph::diameter(g),
                    # transitivity
-                   trans=transitivity(g, type='global'),
+                   trans=igraph::transitivity(g, type='global'),
                    # signed trasitivity (Kunegis, 2009)
                    s_trans = sum(net*(net%*%t(net)))/sum(abs(net)%*%t(abs(net)))
                    )
@@ -272,7 +269,6 @@ if (!isGeneric("plot")) setGeneric('plot')
 #' sample3 <- sample_genes(hsa04020, no = 3)
 #' plot(hsa04020, highlight.genes = sample3)
 #'
-#' @import igraph
 #' @importFrom graphics plot
 setMethod('plot', signature(x='pathway',y='missing'),
           function(x, y=NA,
@@ -282,45 +278,45 @@ setMethod('plot', signature(x='pathway',y='missing'),
                    vertex.label.cex=0.8,
                    edge.width=2, edge.color='olivedrab4', ...){
                          
-# define igraph object
-g <- pathway2igraph(x)
-
-# define vertex label
-gene.names <- match.arg(gene.names)
-if(gene.names == 'legend')  vertex.label <- 1:length(V(g))
-if(is.null(gene.names))    vertex.label <- NA
-if(gene.names == 'nodes'){
-   vertex.label <- V(g)$names
-}
-
-# define main title
-if(is.null(main))  main <- paste(x@id)
-
-# interaction type
-E(g)$lty <- ifelse( E(g)$sign > 0, 1, 2)
-signs <- ifelse( E(g)$sign > 0, '+', '-')
-
-# highlighting genes
-if(!is.null(highlight.genes)){
-    if(!is.vector(highlight.genes)) stop('highlight.genes has to be a vector')
-    vertex.color <- rep(vertex.color, vcount(g))
-    vertex.color[highlight.genes] <- 'yellowgreen' #'darkgreen' 
-}
-
-# define layout
-ltr <- try(layout.reingold.tilford(g, circular=FALSE), silent=TRUE)
-
-# plot igraph object
-plot.igraph(g, layout=ltr, asp=asp, 
-            vertex.size=vertex.size, vertex.color=vertex.color, vertex.label.cex=vertex.label.cex, vertex.label=vertex.label, 
-            edge.width=edge.width, edge.color=edge.color,
-            main=main, ...)
-# add legend
-if(gene.names == 'legend'){
-  legend(,x=-1.55, y=1.5, bty='n',lty=NULL, legend=paste(1:vcount(g),V(g)$name),cex=0.7)
-}
-
-invisible(NULL)
+    # define igraph object
+    g <- pathway2igraph(x)
+    
+    # define vertex label
+    gene.names <- match.arg(gene.names)
+    if(gene.names == 'legend')  vertex.label <- 1:length(igraph::V(g))
+    if(is.null(gene.names))    vertex.label <- NA
+    if(gene.names == 'nodes'){
+       vertex.label <- igraph::V(g)$names
+    }
+    
+    # define main title
+    if(is.null(main))  main <- paste(x@id)
+    
+    # interaction type
+    igraph::E(g)$lty <- ifelse( igraph::E(g)$sign > 0, 1, 2)
+    signs <- ifelse( igraph::E(g)$sign > 0, '+', '-')
+    
+    # highlighting genes
+    if(!is.null(highlight.genes)){
+        if(!is.vector(highlight.genes)) stop('highlight.genes has to be a vector')
+        vertex.color <- rep(vertex.color, igraph::vcount(g))
+        vertex.color[highlight.genes] <- 'yellowgreen' #'darkgreen' 
+    }
+    
+    # define layout
+    ltr <- try(igraph::layout.reingold.tilford(g, circular=FALSE), silent=TRUE)
+    
+    # plot igraph object
+    igraph::plot.igraph(g, layout=ltr, asp=asp, 
+                vertex.size=vertex.size, vertex.color=vertex.color, vertex.label.cex=vertex.label.cex, vertex.label=vertex.label, 
+                edge.width=edge.width, edge.color=edge.color,
+                main=main, ...)
+    # add legend
+    if(gene.names == 'legend'){
+      legend(,x=-1.55, y=1.5, bty='n',lty=NULL, legend=paste(1:igraph::vcount(g),igraph::V(g)$name),cex=0.7)
+    }
+    
+    invisible(NULL)
 })
 
 #' @exportMethod sample_genes
@@ -341,17 +337,16 @@ setGeneric('sample_genes', function(object, ...) standardGeneric('sample_genes')
 #' sample5 <- sample_genes(hsa04020, no = 5)
 #' plot(hsa04020, highlight.genes = sample5)
 #'
-#' @import igraph
 setMethod('sample_genes', signature='pathway',
           definition = function(object, no=3){
             g <- pathway2igraph(object)
-            if(vcount(g) < no) stop('number of sampled genes should be smaller 
+            if(igraph::vcount(g) < no) stop('number of sampled genes should be smaller 
                                than the total number in the pathway')
 
             # sample a gene with high betweennes centrality
-            sel1 <- sample(V(g), size=1, prob=betweenness(g))
+            sel1 <- sample(igraph::V(g), size=1, prob=igraph::betweenness(g))
             # sample two of its neighbors
-            sel2 <- sample(ego(g,1,sel1)[[1]], size=no-1)
+            sel2 <- sample(igraph::ego(g,1,sel1)[[1]], size=no-1)
             # combine samples
             samp <- c(as.numeric(sel1),sel2)
             names(samp)[1] <- sel1$name
