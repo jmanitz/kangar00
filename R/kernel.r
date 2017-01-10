@@ -71,10 +71,10 @@ setValidity('kernel', function(object){
 #'
 #' @examples
 #' data(gwas)
-## K.lin.knots <- calc_kernel(gwas, hsa04020, knots=gwas, type='lin', calculation='cpu')
+#' K.lin.knots <- calc_kernel(gwas, hsa04020, knots=gwas, type='lin', calculation='cpu')
 #'
-#' gwas2 <- GWASdata(geno=gwas@geno[c(1,2,4,7,9),], anno=gwas@anno, pheno=gwas@pheno[c(1,2,4,7,9),], desc='study 2')
-#' K.lin.knots <- lin_kernel(gwas, hsa04020, knots=gwas2, calculation='cpu')
+## gwas2 <- GWASdata(geno=gwas@geno[c(1,2,4,7,9),], anno=gwas@anno, pheno=gwas@pheno[c(1,2,4,7,9),], desc='study 2')
+## K.lin.knots <- lin_kernel(gwas, hsa04020, knots=gwas2, calculation='cpu')
 #'
 #' @author Juliane Manitz
 #' @export
