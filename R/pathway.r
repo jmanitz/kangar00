@@ -131,7 +131,7 @@ setGeneric('pathway2igraph', function(object, ...) standardGeneric('pathway2igra
 #' \code{pathway2igraph} converts a \code{\link{pathway}} object into an \code{\link{igraph}} object with edge attribute \code{sign}
 #'
 #' @export
-#' @rdname pathway-class 
+#' @describeIn pathway
 #' @aliases pathway2igraph,pathway,ANY-method
 ## @param object An object of class \code{pathway-class}
 #' @examples
@@ -167,7 +167,7 @@ setGeneric('analyze', function(object, ...) standardGeneric('analyze'))
 #' analyze pathway network properties
 #'
 #' @export
-#' @rdname pathway-class
+#' @describeIn pathway
 #' @aliases analyze,pathway,ANY-method
 ## @param object An object of class \code{pathway-class}
 #' @return \code{analyze} returns a \code{data.frame} consisting of 
@@ -235,10 +235,7 @@ setGeneric('get_genes', function(object, ...) standardGeneric('get_genes'))
 #' pathway and returns a vector of character containing gene names
 #'
 #' @export
-## @rdname pathway-class 
-#' @describeIn pathway 
-## @aliases get_genes,pathway,ANY-method
-## @param object A pathway object
+#' @describeIn pathway
 #' @examples
 #' # extract gene names from pathway
 #' get_genes(hsa04020)
@@ -332,7 +329,7 @@ setGeneric('sample_genes', function(object, ...) standardGeneric('sample_genes')
 #' \code{sample_genes} function randomly selects effect genes in pathway and returns a vector of length \code{no} with vertex id's of sampled genes 
 #'
 #' @export
-#' @rdname pathway-class 
+#' @describeIn pathway
 #' @aliases get_genes,pathway,ANY-method
 #'
 #' @param no a numeric constant specifying the number of genes to be sampled, default is 3
@@ -610,7 +607,10 @@ setGeneric('get_network_matrix', function(object, ...) standardGeneric('get_netw
 #'
 #' @author Stefanie Friedrichs, Patricia Burger
 #' @import KEGGgraph
-#' @export   
+#' @export 
+## @rdname get_network_matrix
+## @name get_network_matrix
+## @aliases get_network_matrix, pathway
 setMethod('get_network_matrix', signature='pathway', 
           definition = function(object, directed=TRUE){    
       

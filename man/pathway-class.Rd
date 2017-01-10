@@ -114,7 +114,13 @@ pathway and returns a vector of character containing gene names
 }
 \section{Methods (by generic)}{
 \itemize{
+\item \code{pathway2igraph}: 
+
+\item \code{analyze}: 
+
 \item \code{get_genes}: 
+
+\item \code{sample_genes}: 
 }}
 \section{Slots}{
 

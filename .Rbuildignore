@@ -2,6 +2,5 @@
 .*/auto
 .*.tar.gz
 .*.md
-inst/*
 ^.*\.Rproj$
 ^\.Rproj\.user$

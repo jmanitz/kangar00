@@ -4,7 +4,8 @@
 #
 #################################################
 
-#' @include GWASdata.r pathway.r
+#' @include GWASdata.r 
+#' @include pathway.r
 NULL
 
 #################################### kernel class definition #################
@@ -70,9 +71,10 @@ setValidity('kernel', function(object){
 #'
 #' @examples
 #' data(gwas)
-#' K.lin.knots <- calc_kernel(gwas, hsa04020, knots=gwas, type='lin', calculation='cpu')
+## K.lin.knots <- calc_kernel(gwas, hsa04020, knots=gwas, type='lin', calculation='cpu')
 #'
-## K.lin.knots <- lin_kernel(gwas, hsa04020, knots=GWASdata(geno=gwas@geno[c(1,2,4,7,9),], anno=gwas@anno, pheno=gwas@pheno[c(1,2,4,7,9),], desc='study 2'), calculation='cpu')
+#' gwas2 <- GWASdata(geno=gwas@geno[c(1,2,4,7,9),], anno=gwas@anno, pheno=gwas@pheno[c(1,2,4,7,9),], desc='study 2')
+#' K.lin.knots <- lin_kernel(gwas, hsa04020, knots=gwas2, calculation='cpu')
 #'
 #' @author Juliane Manitz
 #' @export
@@ -142,15 +144,12 @@ setGeneric('calc_kernel', function(object, ...) standardGeneric('calc_kernel'))
 #' @examples
 #' data(gwas)
 #' data(hsa04020)
-#'
-#' # get kernel using calc_kernel function
 #' calc_kernel(gwas, hsa04020, knots = NULL, type='net', calculation='cpu')
-#' 
-## # get kernel using specific kernel function directly
-## sia_kernel(gwas, hsa04020, knots = NULL, calculation='cpu')
 #' 
 #' @author Stefanie Friedrichs, Juliane Manitz
 #' @rdname calc_kernel
+#' @name calc_kernel
+#' @aliases calc_kernel,GWASdata-method
 #' @export
 #' @seealso \code{\link{kernel-class}},\code{\link{pathway}}
 setMethod('calc_kernel', signature(object = 'GWASdata'),
@@ -385,8 +384,8 @@ setGeneric('rewire_network', function(object, ...) standardGeneric('rewire_netwo
 #' @name rewire_network
 #' @rdname rewire_network
 #' @aliases rewire_network,pathway-method
-## @examples
-## data(hsa04020)
+#' @examples
+#' data(hsa04020)
 ## rewire_network(hsa04020, c("PHKB", "ORAI2"))
 ## @references TODO Newman?   
 setMethod('rewire_network', signature(object = 'pathway'),
@@ -517,6 +516,9 @@ setGeneric('make_psd', function(x, ...) standardGeneric('make_psd'))
 #' }
 #'
 #' @export
+## @rdname make_psd
+## @name make_psd
+#' @aliases make_psd, matrix
 #' @author Juliane Manitz, Saskia Freytag, Stefanie Friedrichs
 setMethod('make_psd', signature = 'matrix',
           definition = function(x, eps = sqrt(.Machine$double.eps)) {

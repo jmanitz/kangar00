@@ -114,10 +114,11 @@ setGeneric('read_geno', function(file.path, ...) standardGeneric('read_geno'))
 #' @param ... further arguments to be passed to \code{bigmemory::read.big.matrix}.
 #' @details If the data set contains rownames specified, set option \code{has.row.names = TRUE}.
 #'
-#' @rdname read_geno
+## @rdname read_geno
+## @name read_geno
+#' @aliases read_geno, character
 #' @import tools
 #' @export
-# <ADD> example
 setMethod("read_geno",
           signature="character",
                      #save.path="character", sep="character",
@@ -340,17 +341,17 @@ setMethod('summary', signature='GWASdata',
 ## GeneSNPsize
 setGeneric('GeneSNPsize', function(object, ...) standardGeneric('GeneSNPsize'))
 
-#' \code{GeneSNPsize} creates a \code{data.frame} of pathway names with numbers of snps and genes in each pathway.
+#' \code{GeneSNPsize} creates a \code{data.frame} of pathway names with numbers 
+#' of snps and genes in each pathway.
+#'
+#' @describeIn GWASdata
+#' @export 
 #'
 #' @examples
 #' # SNPs and genes in pathway
 #' data(gwas) 
 #' GeneSNPsize(gwas)
-#'
-#' @export 
-#' @name GeneSNPsize  
-#' @rdname GWASdata
-#' @aliases GeneSNPsize,GWASdata,ANY-method
+
 setMethod('GeneSNPsize', signature='GWASdata',
           definition <- function(object){
               nrsnps <- table(unique(object@anno[,c('pathway','gene','snp')])$pathway)
@@ -489,7 +490,9 @@ setGeneric('get_anno', function(object1, object2, ...) standardGeneric('get_anno
 #' @seealso \code{\link{snp_info}}, \code{\link{pathway_info}}
 #' @import sqldf
 #' @export
-#' @rdname get_anno
+## @rdname get_anno
+## @name get_anno
+#' @aliases get_anno,snp_info, pathway_info,ANY-method 
 setMethod('get_anno', signature=c('snp_info','pathway_info'),
           definition <- function(object1, object2, ...) {
           

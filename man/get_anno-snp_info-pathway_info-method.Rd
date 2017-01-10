@@ -2,7 +2,9 @@
 % Please edit documentation in R/GWASdata.r
 \docType{methods}
 \name{get_anno,snp_info,pathway_info-method}
+\alias{get_anno,snp_info,}
 \alias{get_anno,snp_info,pathway_info-method}
+\alias{pathway_info,ANY-method}
 \title{Annotates SNPs via genes to pathways}
 \usage{
 \S4method{get_anno}{snp_info,pathway_info}(object1, object2, ...)

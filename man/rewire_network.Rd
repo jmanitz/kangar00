@@ -22,6 +22,9 @@ A \code{pathway} object including the rewired network
 Rewires interactions in a pathway, which go through a gene not represented
 by any SNPs in the considered GWAS dataset.
 }
+\examples{
+data(hsa04020)
+}
 \author{
 Stefanie Friedrichs, Juliane Manitz
 }

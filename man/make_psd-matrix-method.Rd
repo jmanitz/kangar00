@@ -2,7 +2,9 @@
 % Please edit documentation in R/kernel.r
 \docType{methods}
 \name{make_psd,matrix-method}
+\alias{make_psd,}
 \alias{make_psd,matrix-method}
+\alias{matrix}
 \title{Adjust network matrix to be positive semi-definite}
 \usage{
 \S4method{make_psd}{matrix}(x, eps = sqrt(.Machine$double.eps))
