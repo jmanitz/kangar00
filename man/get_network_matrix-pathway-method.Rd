@@ -2,6 +2,7 @@
 % Please edit documentation in R/pathway.r
 \docType{methods}
 \name{get_network_matrix,pathway-method}
+\alias{get_network_matrix}
 \alias{get_network_matrix,pathway-method}
 \title{Function to calculate the network matrix}
 \usage{

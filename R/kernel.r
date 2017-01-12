@@ -71,11 +71,11 @@ setValidity('kernel', function(object){
 #'
 #' @examples
 #' data(gwas)
-#' K.lin.knots <- calc_kernel(gwas, hsa04020, knots=gwas, type='lin', calculation='cpu')
-#'
-## gwas2 <- GWASdata(geno=gwas@geno[c(1,2,4,7,9),], anno=gwas@anno, pheno=gwas@pheno[c(1,2,4,7,9),], desc='study 2')
-## K.lin.knots <- lin_kernel(gwas, hsa04020, knots=gwas2, calculation='cpu')
-#'
+#' calc_kernel(gwas, hsa04020, knots=gwas, type='lin', calculation='cpu') 
+#' \dontrun{
+#' gwas2 <- new('GWASdata', pheno=pheno[1:10,], geno=geno[1:10,], anno=anno, desc=" study 2")
+#' calc_kernel(gwas, hsa04020, knots = gwas2, type='net', calculation='cpu')
+#' }
 #' @author Juliane Manitz
 #' @export
 #' @import methods
@@ -145,7 +145,7 @@ setGeneric('calc_kernel', function(object, ...) standardGeneric('calc_kernel'))
 #' data(gwas)
 #' data(hsa04020)
 #' calc_kernel(gwas, hsa04020, knots = NULL, type='net', calculation='cpu')
-#' 
+#'
 #' @author Stefanie Friedrichs, Juliane Manitz
 #' @rdname calc_kernel
 #' @name calc_kernel
@@ -228,7 +228,7 @@ setMethod('lin_kernel', signature(object = 'GWASdata'),
 # create size-adjusted kernel
 setGeneric('sia_kernel', function(object, ...) standardGeneric('sia_kernel'))
 #' @describeIn calc_kernel Calculates a size adjusted-kernel
-#' @export 
+# @export 
 setMethod('sia_kernel', signature(object = 'GWASdata'),
           definition = function(object, pathway, knots=NULL,
                        calculation = c('cpu', 'gpu'), ...) {
@@ -333,7 +333,7 @@ setMethod('sia_kernel', signature(object = 'GWASdata'),
 # calculate network-based kernel
 setGeneric('net_kernel', function(object, ...) standardGeneric('net_kernel'))
 #' @describeIn calc_kernel Calculates a network-based kernel 
-#' @export
+# @export
 setMethod('net_kernel', signature(object = 'GWASdata'),
           definition = function(object, pathway, knots=NULL,
                        calculation = c('cpu', 'gpu'), ...) {
@@ -385,8 +385,10 @@ setGeneric('rewire_network', function(object, ...) standardGeneric('rewire_netwo
 #' @rdname rewire_network
 #' @aliases rewire_network,pathway-method
 #' @examples
+#' \dontrun{ 
 #' data(hsa04020)
-## rewire_network(hsa04020, c("PHKB", "ORAI2"))
+#' rewire_network(hsa04020, c("PHKB", "ORAI2"))
+#' }
 ## @references TODO Newman?   
 setMethod('rewire_network', signature(object = 'pathway'),
           definition = function(object, x) {
@@ -518,7 +520,7 @@ setGeneric('make_psd', function(x, ...) standardGeneric('make_psd'))
 #' @export
 ## @rdname make_psd
 ## @name make_psd
-#' @aliases make_psd, matrix
+#' @aliases make_psd matrix
 #' @author Juliane Manitz, Saskia Freytag, Stefanie Friedrichs
 setMethod('make_psd', signature = 'matrix',
           definition = function(x, eps = sqrt(.Machine$double.eps)) {

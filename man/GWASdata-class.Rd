@@ -4,6 +4,7 @@
 \name{GWASdata}
 \alias{GWASdata}
 \alias{GWASdata,ANY-method}
+\alias{GeneSNPsize}
 \alias{GeneSNPsize,GWASdata-method}
 \alias{show,GWASdata-method}
 \alias{summary,GWASdata-method}
@@ -43,12 +44,13 @@ S4 class for an object representing a Genome-wide Assocaition Study.
 
 \code{summary} summarizes the content of a \code{GWASdata} object and gives an overview about the information included in a \code{\link{GWASdata}} object. Summary statistics for phenotype and genotype data are calculated.
 
-\code{GeneSNPsize} creates a \code{data.frame} of pathway names with numbers
-of snps and genes in each pathway.
+\code{GeneSNPsize} creates a \code{data.frame} of pathway
+names with numbers of snps and genes in each pathway.
 }
 \section{Methods (by generic)}{
 \itemize{
-\item \code{GeneSNPsize}: 
+\item \code{GeneSNPsize}: creates a \code{data.frame} of pathway names with numbers
+of snps and genes in each pathway.
 }}
 \section{Slots}{
 

@@ -25,7 +25,7 @@ advanced kernels,  adjusting for size bias in the number of SNPs and genes in a
 Package: \tab kangar00\cr
 Type: \tab Package\cr
 Version: \tab 1.0\cr
-Date: \tab 2015-02-04\cr
+Date: \tab 2017-01-10\cr
 License: \tab GPL-2 \cr
 Depends: \tab methods, igraph, biomaRt, KEGGgraph, sqldf \cr
 }

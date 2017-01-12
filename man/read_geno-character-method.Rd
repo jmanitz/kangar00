@@ -3,13 +3,14 @@
 \docType{methods}
 \name{read_geno,character-method}
 \alias{character}
-\alias{read_geno,}
+\alias{read_geno}
 \alias{read_geno,character-method}
 \title{read genotype data from file to one of several available objects, which
 can be passed to a GWASdata object \code{GWASdata-class}.}
 \usage{
 \S4method{read_geno}{character}(file.path, save.path = NULL, sep = " ",
-  header = TRUE, use.fread = TRUE, row.names = TRUE, ...)
+  header = TRUE, use.fread = TRUE, use.big = FALSE, row.names = FALSE,
+  ...)
 }
 \arguments{
 \item{file.path}{character, which contains the path to the data file to be read}
@@ -23,6 +24,8 @@ details.}
 
 \item{use.fread}{logical. Should the dataset be read using the package fread?}
 
+\item{use.big}{logical. Should the dataset be read using the package big.memory?}
+
 \item{row.names}{logical. Does the dataset include rownames?}
 
 \item{...}{further arguments to be passed to \code{bigmemory::read.big.matrix}.}
@@ -33,5 +36,11 @@ can be passed to a GWASdata object \code{GWASdata-class}.
 }
 \details{
 If the data set contains rownames specified, set option \code{has.row.names = TRUE}.
+}
+\examples{
+\dontrun{
+path <- system.file("extdata", "geno.txt", package = "kangar00")
+geno <- read_geno(path, save.path = getwd(), sep = " ", use.fread = FALSE, row.names = FALSE)
+}
 }
 

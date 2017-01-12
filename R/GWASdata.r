@@ -110,13 +110,19 @@ setGeneric('read_geno', function(file.path, ...) standardGeneric('read_geno'))
 #'  details.
 #' @param header logical. Does the data set contain column names?
 #' @param use.fread logical. Should the dataset be read using the package fread?
+#' @param use.big logical. Should the dataset be read using the package big.memory?
 #' @param row.names logical. Does the dataset include rownames?
 #' @param ... further arguments to be passed to \code{bigmemory::read.big.matrix}.
 #' @details If the data set contains rownames specified, set option \code{has.row.names = TRUE}.
 #'
 ## @rdname read_geno
 ## @name read_geno
-#' @aliases read_geno, character
+#' @aliases read_geno character
+#' @examples 
+#' \dontrun{
+#' path <- system.file("extdata", "geno.txt", package = "kangar00")
+#' geno <- read_geno(path, save.path = getwd(), sep = " ", use.fread = FALSE, row.names = FALSE)
+#' }
 #' @import tools
 #' @export
 setMethod("read_geno",
@@ -124,8 +130,8 @@ setMethod("read_geno",
                      #save.path="character", sep="character",
                      #header="logical", use.fread="logical"),
           definition = function(file.path, save.path = NULL, sep = " ",
-                                header = TRUE, use.fread = TRUE,
-                                row.names = TRUE, ...) {
+                                header = TRUE, use.fread = TRUE, use.big = FALSE,
+                                row.names = FALSE, ...) {
 
             # Step 1: Check if file meets requirements
             # Step 1.1: Check if file exists
@@ -153,12 +159,24 @@ setMethod("read_geno",
             }else{
               save.file <- paste0(save.path, "/", file.name, ".bin", sep="")
             }
+            
+            ## Step 1.4: Check read options
+            if(use.fread == TRUE & use.big == TRUE){
+              stop(paste("You can not use fread and bigmemory at the same time!"))
+            }
+            
+            # Step 1.5: Check rownames and fread
+            if(use.fread == TRUE & row.name == TRUE){
+              stop(paste("fread can not handle row.names! Please try big.memory or read.table!"))
+            }
 
             # Step 2: Read in file according to format
             cat("Loading data. This might take a while depending on the size of the
                 data set.")
 
             if (fileFormat == "gz"){
+              stop(paste(fileFormat, "currently not supported", sep=" "))
+              
               # Step 2.1
               cat("Reading in huge beagle files may fail due to memory limits.
                   If this is the case convert your beagle file in a .txt-file and try again. \n")
@@ -193,6 +211,7 @@ setMethod("read_geno",
                 gwasGeno <- bigmemory::as.big.matrix(gwasGeno)
               }
             } else if (fileFormat == "mldose"){
+              stop(paste(fileFormat, "currently not supported!", sep=" "))
               cat("Reading in huge MACH files may fail due to memory limits.
                   If this is the case convert your MACH file in a .txt-file and try again.")
               if(use.fread){
@@ -205,6 +224,7 @@ setMethod("read_geno",
                 gwasGeno <- bigmemory::as.big.matrix(gwasGeno)
               }
             } else if (fileFormat == "impute2"){
+              stop(paste(fileFormat, "currently not supported!", sep=" "))
               cat("Reading in huge IMPUTE2 files may fail due to memory limits.
                   If this is the case convert your IMPUTE2 file in a .txt-file and try again.")
               if(use.fread){
@@ -217,35 +237,74 @@ setMethod("read_geno",
                 gwasGeno <- bigmemory::as.big.matrix(gwasGeno)
               }
             } else if (fileFormat == "txt"){
-              options(bigmemory.allow.dimnames=TRUE)
-              tryCatch({
-                print(save.file)
-                print(save.path)
-                if(row.names){
-                  gwasGeno <- bigmemory::read.big.matrix(file.path, type='char',
-                                              backingfile = save.file,
-                                              backingpath = save.path,
-                                              descriptorfile = paste0(file.name, ".desc", sep=""),
-                                              sep = sep, header = header,
-                                              has.row.names = TRUE,...)
-                } else {
-                  gwasGeno <- bigmemory::read.big.matrix(file.path, type='char',
-                                              backingfile = save.file,
-                                              backingpath = save.path,
-                                              descriptorfile = paste0(file.name, ".desc", sep=""),
-                                              sep = sep, header = header,
-                                              has.row.names = FALSE,...)
+              if(use.big){
+                options(bigmemory.allow.dimnames=TRUE)
+                tryCatch({
+                  print(save.file)
+                  print(save.path)
+                  if(row.name){
+                    gwasGeno <- bigmemory::read.big.matrix(file.path, type='char',
+                                                           backingfile = save.file,
+                                                           backingpath = save.path,
+                                                           descriptorfile = paste0(file.name, ".desc", sep=""),
+                                                           sep = sep, header = header,
+                                                           has.row.names = TRUE,...)
+                  } else {
+                    gwasGeno <- bigmemory::read.big.matrix(file.path, type='char',
+                                                           backingfile = save.file,
+                                                           backingpath = save.path,
+                                                           descriptorfile = paste0(file.name, ".desc", sep=""),
+                                                           sep = sep, header = header,
+                                                           has.row.names = FALSE,...)
+                  }
+                  
+                }, warning = function(w){
+                  cat("read.big.matrix caused a warning! Please make sure your file has been read correctly!")
+                  print(w)
+                }, error = function(e){
+                  cat("read.big.matrix has stopped due to an error!")
+                  print(e)
+                  cat("Try reading in file with read.table. Attention: This function is very slow! \n")
+                  tryCatch({
+                    gwasGeno <- read.table(file.path, header = TRUE)
+                  }, warning = function(w){
+                    cat("read.table caused a warning, Please make sure your file has been read in correctly! \n")
+                    print(w)
+                  }, error = function(e){
+                    cat("Also read.table has stopped due to an error. Check your file and
+                        and try again. \n")
+                    print(e)
+                  }
+                  )
                 }
-
-              }, warning = function(w){
-                cat("read.big.matrix caused a warning!")
-                print(w)
-              }, error = function(e){
-                cat("read.big.matrix has stopped due to an error!")
-                print(e)
+                )
+              } else if(use.fread){
+                tryCatch({
+                  gwasGeno <- data.table::fread(file.path, header = TRUE)
+                }, warning = function(wr){
+                  cat("fread caused a warning. Please make sure your file has been read in correctly! \n")
+                  print(wr)
+                }, error = function(er){
+                  cat("fread has stopped due to an error. \n")
+                  print(er)
+                  cat("Try reading in file with read.table. Attention: This function is very slow! \n")
+                  tryCatch({
+                    gwasGeno <- read.table(file.path, header = TRUE)
+                  }, warning = function(w){
+                    cat("read.table caused a warning, Please make sure your file has been read in correctly! \n")
+                    print(w)
+                  }, error = function(e){
+                    cat("Also read.table has stopped due to an error. Check your file and try again
+                        and try again. \n")
+                    print(e)
+                  }
+                  )
               }
                 )
-
+              } else if(!use.fread & !use.big){
+                cat("Try reading in file with read.table. Attention: This function is very slow! \n")
+                gwasGeno <- read.table(file.path, header = TRUE, sep = sep)
+              }
             } else{
               stop("Unknown file format. Please only use
                    .txt-Files or output from MACH, Impute or Beagle!")
@@ -254,11 +313,12 @@ setMethod("read_geno",
             # Step 4: Check if output has right format
             # Step 4.1 Check if dataset contains data as expected
             # Step 4.1.1. Check if file has no row.names
-            if(!row.names){
+            if(row.name){
               firstRow <- gwasGeno[ , 1]
               if(!is.character(na.omit(firstRow)) || sum(firstRow > 2) == 0){
                 warning("Your geno file doesn't seem to contain ID numbers. Please make sure that
-                   the first row of your data contains ID numbers according to your phenotype file!")
+                   the first row of your data contains ID numbers according to your phenotype file! 
+                        Otherwise use row.names = FALSE!")
               }
 
               # Step 4.1.2 Check if the rest of the data is okay
@@ -279,7 +339,7 @@ setMethod("read_geno",
 
             }
 
-            # Step 5: Change geno object to big.matrix.object
+            # Step 5:
             return(gwasGeno)
 })
 
@@ -341,17 +401,17 @@ setMethod('summary', signature='GWASdata',
 ## GeneSNPsize
 setGeneric('GeneSNPsize', function(object, ...) standardGeneric('GeneSNPsize'))
 
-#' \code{GeneSNPsize} creates a \code{data.frame} of pathway names with numbers 
+#' \code{GeneSNPsize} creates a \code{data.frame} of pathway
+#' names with numbers of snps and genes in each pathway.
+#'
+#' @describeIn GWASdata creates a \code{data.frame} of pathway names with numbers 
 #' of snps and genes in each pathway.
-#'
-#' @describeIn GWASdata
 #' @export 
-#'
+#' @aliases GeneSNPsize GWASdata
 #' @examples
 #' # SNPs and genes in pathway
 #' data(gwas) 
 #' GeneSNPsize(gwas)
-
 setMethod('GeneSNPsize', signature='GWASdata',
           definition <- function(object){
               nrsnps <- table(unique(object@anno[,c('pathway','gene','snp')])$pathway)
@@ -490,9 +550,7 @@ setGeneric('get_anno', function(object1, object2, ...) standardGeneric('get_anno
 #' @seealso \code{\link{snp_info}}, \code{\link{pathway_info}}
 #' @import sqldf
 #' @export
-## @rdname get_anno
-## @name get_anno
-#' @aliases get_anno,snp_info, pathway_info,ANY-method 
+#' @aliases get_anno
 setMethod('get_anno', signature=c('snp_info','pathway_info'),
           definition <- function(object1, object2, ...) {
           

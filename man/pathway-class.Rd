@@ -2,16 +2,18 @@
 % Please edit documentation in R/pathway.r
 \docType{methods}
 \name{pathway}
-\alias{analyze,pathway,ANY-method}
+\alias{ANY-method}
+\alias{analyze}
 \alias{analyze,pathway-method}
-\alias{get_genes,pathway,ANY-method}
+\alias{get_genes}
 \alias{get_genes,pathway-method}
 \alias{pathway}
 \alias{pathway,ANY-method}
-\alias{pathway2igraph,pathway,ANY-method}
+\alias{pathway2igraph}
 \alias{pathway2igraph,pathway-method}
 \alias{plot,pathway,ANY-method}
 \alias{plot,pathway,missing-method}
+\alias{sample_genes}
 \alias{sample_genes,pathway-method}
 \alias{show,pathway,ANY-method}
 \alias{show,pathway-method}
@@ -43,7 +45,7 @@ pathway(object, ...)
 \arguments{
 \item{object}{An object of class \code{pathway-class}}
 
-\item{...}{further arguments specifying plotting options in \code{\link{plot.igraph}}}
+\item{...}{further arguments specifying plotting options in \code{plot.igraph}}
 
 \item{id}{A character repesenting the pathway id.}
 
@@ -101,7 +103,8 @@ An S4 class to represent a gene-gene interaction network
 
 \code{summary} generates a pathway object summary including basic network properties.
 
-\code{pathway2igraph} converts a \code{\link{pathway}} object into an \code{\link{igraph}} object with edge attribute \code{sign}
+\code{pathway2igraph} converts a \code{\link{pathway}} object into an
+\code{igraph} object with edge attribute \code{sign}
 
 analyze pathway network properties
 
@@ -114,8 +117,6 @@ pathway and returns a vector of character containing gene names
 }
 \section{Methods (by generic)}{
 \itemize{
-\item \code{pathway2igraph}: 
-
 \item \code{analyze}: 
 
 \item \code{get_genes}: 
