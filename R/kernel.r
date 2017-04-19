@@ -414,7 +414,7 @@ setMethod('rewire_network', signature(object = 'pathway'),
 
     #if gene to remove had no connections
     if(is.null(dim(Nsub))){
-       N <- N[!(colnames(N)%in%remov),!(colnames(N)%in%remov)]
+       N <- N[!(colnames(N)%in%colnames(N)[remov]),!(colnames(N)%in%colnames(N)[remov])]
        object@adj  <- abs(N) 
        object@sign <- as.vector(N[N!=0])
        return(object)
@@ -424,7 +424,7 @@ setMethod('rewire_network', signature(object = 'pathway'),
     diag(Nsub) <- 0
     # if nullmatrix
     if(sum(Nsub!=0)==0){   
-       N <- N[!(colnames(N)%in%remov),!(colnames(N)%in%remov)]
+       N <- N[!(colnames(N)%in%colnames(N)[remov]),!(colnames(N)%in%colnames(N)[remov])]
        object@adj  <- abs(N) 
        object@sign <- as.vector(N[N!=0])
        return(object)
@@ -445,7 +445,7 @@ setMethod('rewire_network', signature(object = 'pathway'),
     N[ind_sub,ind_sub] <- Nsub2step
     # remove the genes and return network
     
-    N <- N[!(colnames(N)%in%remov),!(colnames(N)%in%remov)]
+    N <- N[!(colnames(N)%in%colnames(N)[remov]),!(rownames(N)%in%rownames(N)[remov])]
     object@adj  <- abs(N) 
     object@sign <- as.vector(N[N!=0])
     return(object)

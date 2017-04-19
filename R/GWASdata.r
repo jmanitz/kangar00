@@ -442,10 +442,10 @@ setValidity('snp_info', function(object){
 	  valid=FALSE
 	  msg <- c(msg, "the SNP_info object must include a data.frame")
 	}
-	if(!all.equal(colnames(object@info),c("chr","position","rsnumber"))){
+	if(!all.equal(colnames(object@info),c("chr","position","snp"))){
 	  valid=FALSE
 	  msg <- c(msg, "the included data.frame needs columns 'chr', 'position' 
-    and 'rsnumber'")
+    and 'snp'")
 	}
 })
 
@@ -457,7 +457,7 @@ setGeneric('snp_info', function(x, ...) standardGeneric('snp_info'))
 #' @param x A character vector of SNP rsnumbers for which positions will be extracted.
 #' @param ... further arguments can be added.
 #' @return A \code{data.frame} including the SNP positions with columns
-#' 'chromosome', 'position' and 'rsnumber'. SNPs not found in the Ensemble database
+#' 'chromosome', 'position' and 'snp'. SNPs not found in the Ensemble database
 #' will not be listed in the returned \code{snp_info} object, SNPs with multiple
 #' positions  will appear several times.
 #' @examples
@@ -476,7 +476,7 @@ setMethod('snp_info', signature='character',
                      host = "jul2015.archive.ensembl.org")                         
   info <- getBM(attributes=c("chr_name","chrom_start","refsnp_id"),
                 filters=c("snp_filter"),values=x, mart=ensembl)
-  colnames(info) <- c("chr","position","rsnumber")
+  colnames(info) <- c("chr","position","snp")
   ret <- new('snp_info', info=info)
   return(ret)
 })
@@ -531,7 +531,7 @@ setGeneric('get_anno', function(object1, object2, ...) standardGeneric('get_anno
 #'
 #' @param object1 A \code{snp_info} object with SNP information as returned by
 #' the \code{\link{snp_info}} function. The included \code{data frame} contains
-#' the columns "chr", "position" and "rsnumber".
+#' the columns "chr", "position" and "snp".
 #' @param object2 A \code{pathway_info} object with information on genes
 #' contained in pathways. It is created by the \code{\link{pathway_info}} 
 #' function and contains a \code{data frame} with columns 
@@ -558,9 +558,9 @@ setMethod('get_anno', signature=c('snp_info','pathway_info'),
       stop("SNP information is not a snp_info object!")
   if (!inherits(object2, "pathway_info"))  
       stop("pathway gene information is not a pathway_info object!")
-  if (!(all.equal(colnames(object1@info),c("chr", "position", "rsnumber"))))
+  if (!(all.equal(colnames(object1@info),c("chr", "position", "snp"))))
       stop("snp_info object must contain a data frame with columns for 
-            'chr', 'positon' and 'rsnumber'!")
+            'chr', 'positon' and 'snp'!")
   if (!(all.equal(colnames(object2@info),c("pathway","gene_start",
       "gene_end","chr","gene"))))
       stop("pathway_info object must contain a data frame with columns for 
@@ -577,7 +577,7 @@ setMethod('get_anno', signature=c('snp_info','pathway_info'),
     y <- try(snp_info[[which(names(snp_info)==names(pathway_info)[i])]], silent=T)
     if(is.null(dim(y))) next
     list_out[[i]] <- sqldf("select x.pathway, x.gene,
-                                   y.chr ,y.rsnumber, y.position
+                                   y.chr ,y.snp, y.position
                                    from x x, y y
                                    where x.gene_start<=y.position AND
                                    x.gene_end>=y.position")
