@@ -149,7 +149,7 @@ setMethod("read_geno",
             }
 
             ## Step 1.3: Check for backing file path otherwise use default
-            file.name <- tail(unlist(strsplit(file.path, "/")), 1)
+            file.name <- utils::tail(unlist(strsplit(file.path, "/")), 1)
             file.name <- unlist(strsplit(file.name, "[.]"))
             file.name <- paste(file.name[-length(file.name)], collapse=".")
             if(is.null(save.path)){
@@ -166,7 +166,7 @@ setMethod("read_geno",
             }
             
             # Step 1.5: Check rownames and fread
-            if(use.fread == TRUE & row.name == TRUE){
+            if(use.fread == TRUE & row.names == TRUE){
               stop(paste("fread can not handle row.names! Please try big.memory or read.table!"))
             }
 
@@ -193,7 +193,7 @@ setMethod("read_geno",
                   print(er)
                   cat("Try reading in file with read.table. Attention: This function is very slow! \n")
                   tryCatch({
-                    gwasGeno <- read.table(file.path, header = TRUE)
+                    gwasGeno <- utils::read.table(file.path, header = TRUE)
                   }, warning = function(w){
                     cat("read.table caused a warning, Please make sure your file has been read in correctly! \n")
                     print(w)
@@ -207,7 +207,7 @@ setMethod("read_geno",
                   )
                 gwasGeno <- bigmemory::as.big.matrix(gwasGeno)
               } else{
-                gwasGeno <- read.table(file.path, header=TRUE)
+                gwasGeno <- utils::read.table(file.path, header=TRUE)
                 gwasGeno <- bigmemory::as.big.matrix(gwasGeno)
               }
             } else if (fileFormat == "mldose"){
@@ -220,7 +220,7 @@ setMethod("read_geno",
                 gwasGeno <- bigmemory::as.big.matrix(gwasGeno)
 
               } else{
-                gwasGeno <- read.table(file.path, header=TRUE)
+                gwasGeno <- utils::read.table(file.path, header=TRUE)
                 gwasGeno <- bigmemory::as.big.matrix(gwasGeno)
               }
             } else if (fileFormat == "impute2"){
@@ -233,7 +233,7 @@ setMethod("read_geno",
                 gwasGeno <- bigmemory::as.big.matrix(gwasGeno)
 
               } else{
-                gwasGeno <- read.table(file.path, header=TRUE)
+                gwasGeno <- utils::read.table(file.path, header=TRUE)
                 gwasGeno <- bigmemory::as.big.matrix(gwasGeno)
               }
             } else if (fileFormat == "txt"){
@@ -242,7 +242,7 @@ setMethod("read_geno",
                 tryCatch({
                   print(save.file)
                   print(save.path)
-                  if(row.name){
+                  if(row.names){
                     gwasGeno <- bigmemory::read.big.matrix(file.path, type='char',
                                                            backingfile = save.file,
                                                            backingpath = save.path,
@@ -266,7 +266,7 @@ setMethod("read_geno",
                   print(e)
                   cat("Try reading in file with read.table. Attention: This function is very slow! \n")
                   tryCatch({
-                    gwasGeno <- read.table(file.path, header = TRUE)
+                    gwasGeno <- utils::read.table(file.path, header = TRUE)
                   }, warning = function(w){
                     cat("read.table caused a warning, Please make sure your file has been read in correctly! \n")
                     print(w)
@@ -289,7 +289,7 @@ setMethod("read_geno",
                   print(er)
                   cat("Try reading in file with read.table. Attention: This function is very slow! \n")
                   tryCatch({
-                    gwasGeno <- read.table(file.path, header = TRUE)
+                    gwasGeno <- utils::read.table(file.path, header = TRUE)
                   }, warning = function(w){
                     cat("read.table caused a warning, Please make sure your file has been read in correctly! \n")
                     print(w)
@@ -303,7 +303,7 @@ setMethod("read_geno",
                 )
               } else if(!use.fread & !use.big){
                 cat("Try reading in file with read.table. Attention: This function is very slow! \n")
-                gwasGeno <- read.table(file.path, header = TRUE, sep = sep)
+                gwasGeno <- utils::read.table(file.path, header = TRUE, sep = sep)
               }
             } else{
               stop("Unknown file format. Please only use
@@ -313,27 +313,27 @@ setMethod("read_geno",
             # Step 4: Check if output has right format
             # Step 4.1 Check if dataset contains data as expected
             # Step 4.1.1. Check if file has no row.names
-            if(row.name){
+            if(row.names){
               firstRow <- gwasGeno[ , 1]
-              if(!is.character(na.omit(firstRow)) || sum(firstRow > 2) == 0){
+              if(!is.character(stats::na.omit(firstRow)) || sum(firstRow > 2) == 0){
                 warning("Your geno file doesn't seem to contain ID numbers. Please make sure that
                    the first row of your data contains ID numbers according to your phenotype file! 
                         Otherwise use row.names = FALSE!")
               }
 
               # Step 4.1.2 Check if the rest of the data is okay
-              if(sum(na.omit(gwasGeno[ , -1]) > 2) > 0){
+              if(sum(stats::na.omit(gwasGeno[ , -1]) > 2) > 0){
                 warning("Your geno data seems to contain values bigger than 2.")
               }
             } else{ # Step 4.2.1 Check if file has row.names
               possIDs <- rownames(gwasGeno)
-              if(!is.character(na.omit(possIDs)) || sum(possIDs > 2) == 0){
+              if(!is.character(stats::na.omit(possIDs)) || sum(possIDs > 2) == 0){
                 warning("Your geno file doesn't seem to contain ID numbers. Please make sure that
                    the first row of your data contains ID numbers according to your phenotype file!")
               }
 
               # Step 4.2.2 Check if rest of the data is okay
-              if(sum(na.omit(gwasGeno[,]) > 2) > 0){
+              if(sum(stats::na.omit(gwasGeno[,]) > 2) > 0){
                 warning("Your geno data seems to contain values bigger than 2.")
               }
 
@@ -362,7 +362,7 @@ setMethod('show', signature='GWASdata',
               }else{ # summary of phenotype and covariate data
                 cat('Phenotypes for ', dim(object@pheno)[1],
                 ' individuals: \n',sep='')
-              	print(head(object@pheno))
+              	print(utils::head(object@pheno))
               }
               invisible(NULL)
           })

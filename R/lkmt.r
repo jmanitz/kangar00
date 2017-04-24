@@ -153,7 +153,7 @@ lkmt_test <- function(formula, kernel, GWASdata, method=c('satt','davies'), ...)
     if(length(GWASdata@pheno) == 0) stop("Please specify phenotypes.")
 
     method <- match.arg(method)
-    nullmodel <- glm(formula, data=GWASdata@pheno, family=binomial, x=TRUE)
+    nullmodel <- stats::glm(formula, data=GWASdata@pheno, family=stats::binomial, x=TRUE)
     if(method == 'satt'){
         model <- score_test(kernel@kernel, nullmodel)
     }
@@ -212,7 +212,7 @@ setMethod('score_test', signature(x1 = 'matrix'),
 
         a <- VarT/(2*ExpT)
         d <- (2*ExpT^2)/VarT
-        p.value <- pchisq(TT/a, d, lower.tail=FALSE)
+        p.value <- stats::pchisq(TT/a, d, lower.tail=FALSE)
 
         mod <- list(p.value=p.value,          
                statistic=as.numeric(TT/a),  

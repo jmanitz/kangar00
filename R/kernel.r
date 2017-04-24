@@ -264,9 +264,9 @@ setMethod('sia_kernel', signature(object = 'GWASdata'),
        for(g in gene.ids){
         snps <- as.matrix(anno[anno$gene==g,"snp"])  
         #eigen.value calculation for effective number of snps on Z1:
-        ev <- eigen(cor(z1), symmetric=T)$values        
+        ev <- eigen(stats::cor(z1), symmetric=T)$values        
         effectivesnps[effectivesnps[,1]==g,2] <- 
-          length(ev)*(1-(length(ev)-1)*var(ev)/(length(ev)^2))
+          length(ev)*(1-(length(ev)-1)*stats::var(ev)/(length(ev)^2))
        }
      return(effectivesnps)    
      }
@@ -299,12 +299,12 @@ setMethod('sia_kernel', signature(object = 'GWASdata'),
         z <- z1
         z <- z[, apply(z,2,sum)/(2*nrow(z)) >= 0.001 &  apply(z,2,sum)/(2*nrow(z)) < 1] 
         #only snps maf >= 0.1%
-        e.val <- eigen(cor(z), symmetric=TRUE, only.values=TRUE)$values
+        e.val <- eigen(stats::cor(z), symmetric=TRUE, only.values=TRUE)$values
         nn    <- length(e.val)
         a <- matrix( rep(rowSums(z*z),nrow(z)),nrow=nrow(z))
         distances <- a -2*tcrossprod(z) + t(a)
         distances <- round(distances, digits=3)
-        return( list(distances, (nn*(1-(nn-1)*var(e.val)/(nn^2))), ncol(z)) )
+        return( list(distances, (nn*(1-(nn-1)*stats::var(e.val)/(nn^2))), ncol(z)) )
     }
         #matrix, eff.length.gene, length.gene
     genemat2 <- function(l, max.eff){
@@ -591,9 +591,9 @@ if (!isGeneric("plot")) setGeneric('plot')
 setMethod('plot', signature(x='kernel',y='missing'),
           function(x, y=NA, hclust=FALSE, ...){
               if(hclust) {
-                  heatmap(x@kernel, symm=TRUE, col=rev(heat.colors(n=20)), Colv=NA,labRow=NA,labCol=NA, main=list(paste('Genetic Similarity Kernel Matrix for Pathway',x@pathway@id), cex=1.4), ...)
+                  stats::heatmap(x@kernel, symm=TRUE, col=rev(stats::heat.colors(n=20)), Colv=NA,labRow=NA,labCol=NA, main=list(paste('Genetic Similarity Kernel Matrix for Pathway',x@pathway@id), cex=1.4), ...)
               }else{
-                  print(levelplot(x@kernel, col.regions=rev(heat.colors(n=20)),  drop.unused.levels=FALSE, scales=list(alternating=0), main=paste('Genetic Similarity Kernel Matrix for Pathway',x@pathway@id)), ...)
+                  print(lattice::levelplot(x@kernel, col.regions=rev(stats::heat.colors(n=20)),  drop.unused.levels=FALSE, scales=list(alternating=0), main=paste('Genetic Similarity Kernel Matrix for Pathway',x@pathway@id)), ...)
               }
               invisible(NULL)
           })

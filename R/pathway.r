@@ -133,7 +133,6 @@ setGeneric('pathway2igraph', function(object, ...) standardGeneric('pathway2igra
 #'
 ##\link[pkg2:foo_Rd_file_name]{foo}
 #' @export
-## @describeIn pathway
 #' @rdname pathway-class
 #' @aliases pathway2igraph pathway ANY-method     
 ## @param object An object of class \code{pathway-class}
@@ -168,6 +167,7 @@ setGeneric('analyze', function(object, ...) standardGeneric('analyze'))
 #'
 #' @export
 #' @describeIn pathway
+#' 
 #' @aliases analyze pathway ANY-method
 ## @param object An object of class \code{pathway-class}
 #' @return \code{analyze} returns a \code{data.frame} consisting of 
@@ -234,6 +234,7 @@ setGeneric('get_genes', function(object, ...) standardGeneric('get_genes'))
 #'
 #' @export
 #' @describeIn pathway
+#' 
 #' @aliases get_genes pathway ANY-method 
 #' @examples
 #' # extract gene names from pathway
@@ -315,7 +316,7 @@ setMethod('plot', signature(x='pathway',y='missing'),
                 main=main, ...)
     # add legend
     if(gene.names == 'legend'){
-      legend(,x=-1.55, y=1.5, bty='n',lty=NULL, legend=paste(1:igraph::vcount(g),igraph::V(g)$name),cex=0.7)
+      graphics::legend(,x=-1.55, y=1.5, bty='n',lty=NULL, legend=paste(1:igraph::vcount(g),igraph::V(g)$name),cex=0.7)
     }
     
     invisible(NULL)
@@ -480,7 +481,7 @@ setMethod('pathway_info', signature='character',
               "chromosome_name","hgnc_symbol"), filters=c("hgnc_symbol"),
               values=g, mart=ensembl)
    info$chromosome_name <- as.numeric(as.character(info$chromosome_name))
-   info                 <- na.omit(info)
+   info                 <- stats::na.omit(info)
    pathways             <- cbind(rep(paste(x,sep=""),length(info[,1])),info)
    colnames(pathways)   <- c("pathway","gene_start","gene_end","chr","gene") 
    ret <- new('pathway_info', info=pathways)

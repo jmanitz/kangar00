@@ -2,19 +2,19 @@ Package: kangar00
 Type: Package
 Title: Kernel Approaches for Nonlinear Genetic Association Regression
 Version: 1.0
-Date: 2017-01-10
+Date: 2017-04-24
 Author: Stefanie Friedrichs [aut], Juliane Manitz [aut], Patricia Burger
     [aut], Benjamin Hofner [aut], Ngoc Thuy Ha [aut], Saskia Freytag [ctb],
     Heike Bickeboeller [ctb]
 Maintainer: Juliane Manitz <jmanitz@uni-goettingen.de>
-Description: This package includes methods to extract information on pathways,
+Description: Methods to extract information on pathways,
     genes and SNPs from online databases. It provides functions for data preparation
     and evaluation of genetic influence on a binary outcome using the logistic
     kernel machine test (LKMT). Three different kernel functions are offered to
-    analize genotype information in this variance component test: A linear kernel, a
+    analyze genotype information in this variance component test: A linear kernel, a
     size-adjusted kernel and a network based kernel.
 License: GPL-2
-Collate:
+Collate: 
     'pathway.r'
     'GWASdata.r'
     'data.R'
@@ -26,6 +26,7 @@ Imports:
     methods,
     KEGGgraph,
     biomaRt,
+    bigmemory,
     sqldf,
     CompQuadForm,
     lattice,
@@ -36,4 +37,4 @@ Suggests:
     rmarkdown
 VignetteBuilder: knitr
 NeedsCompilation: no
-RoxygenNote: 5.0.1
+RoxygenNote: 6.0.1
