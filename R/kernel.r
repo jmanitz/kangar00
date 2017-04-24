@@ -590,10 +590,10 @@ if (!isGeneric("plot")) setGeneric('plot')
 #' @aliases plot,kernel,ANY-method
 setMethod('plot', signature(x='kernel',y='missing'),
           function(x, y=NA, hclust=FALSE, ...){
-              if(hclust) {
-                  stats::heatmap(x@kernel, symm=TRUE, col=rev(stats::heat.colors(n=20)), Colv=NA,labRow=NA,labCol=NA, main=list(paste('Genetic Similarity Kernel Matrix for Pathway',x@pathway@id), cex=1.4), ...)
-              }else{
-                  print(lattice::levelplot(x@kernel, col.regions=rev(stats::heat.colors(n=20)),  drop.unused.levels=FALSE, scales=list(alternating=0), main=paste('Genetic Similarity Kernel Matrix for Pathway',x@pathway@id)), ...)
+              if(hclust) {                                    
+                  stats::heatmap(x@kernel, symm=TRUE, col=rev(grDevices::heat.colors(n=20)), Colv=NA,labRow=NA,labCol=NA, main=list(paste('Genetic Similarity Kernel Matrix for Pathway',x@pathway@id), cex=1.4), ...)
+              }else{                                                 
+                  print(lattice::levelplot(x@kernel, col.regions=rev(grDevices::heat.colors(n=20)), drop.unused.levels=FALSE, scales=list(alternating=0), main=paste('Genetic Similarity Kernel Matrix for Pathway',x@pathway@id)), ...)
               }
               invisible(NULL)
           })
