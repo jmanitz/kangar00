@@ -22,9 +22,9 @@ details.}
 
 \item{header}{logical. Does the data set contain column names?}
 
-\item{use.fread}{logical. Should the dataset be read using the package fread?}
+\item{use.fread}{logical. Should the dataset be read using the function \code{fread} from package data.table?}
 
-\item{use.big}{logical. Should the dataset be read using the package big.memory?}
+\item{use.big}{logical. Should the dataset be read using the function \code{read.big.matrix} from package bigmemory?}
 
 \item{row.names}{logical. Does the dataset include rownames?}
 

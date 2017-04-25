@@ -7,14 +7,14 @@ Author: Stefanie Friedrichs [aut], Juliane Manitz [aut], Patricia Burger
     [aut], Benjamin Hofner [aut], Ngoc Thuy Ha [aut], Saskia Freytag [ctb],
     Heike Bickeboeller [ctb]
 Maintainer: Juliane Manitz <jmanitz@uni-goettingen.de>
-Description: Methods to extract information on pathways,
-    genes and SNPs from online databases. It provides functions for data preparation
-    and evaluation of genetic influence on a binary outcome using the logistic
-    kernel machine test (LKMT). Three different kernel functions are offered to
-    analyze genotype information in this variance component test: A linear kernel, a
-    size-adjusted kernel and a network based kernel.
+Description: Methods to extract information on pathways, genes and SNPs from
+    online databases. It provides functions for data preparation and evaluation
+    of genetic influence on a binary outcome using the logistic kernel machine
+    test (LKMT). Three different kernel functions are offered to analyze genotype
+    information in this variance component test: A linear kernel, a size-adjusted
+    kernel and a network based kernel.
 License: GPL-2
-Collate: 
+Collate:
     'pathway.r'
     'GWASdata.r'
     'data.R'
@@ -29,6 +29,7 @@ Imports:
     bigmemory,
     sqldf,
     CompQuadForm,
+    data.table,
     lattice,
     igraph
 LazyData: true
