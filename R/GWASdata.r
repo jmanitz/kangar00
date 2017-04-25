@@ -109,12 +109,15 @@ setGeneric('read_geno', function(file.path, ...) standardGeneric('read_geno'))
 #' @param sep character. A field delimeter. See \code{bigmemory::read.big.matrix} for
 #'  details.
 #' @param header logical. Does the data set contain column names?
-#' @param use.fread logical. Should the dataset be read using the package fread?
-#' @param use.big logical. Should the dataset be read using the package big.memory?
+#' @param use.fread logical. Should the dataset be read using the function \code{fread} from package data.table?
+#' @param use.big logical. Should the dataset be read using the function \code{read.big.matrix} from package bigmemory?
 #' @param row.names logical. Does the dataset include rownames?
 #' @param ... further arguments to be passed to \code{bigmemory::read.big.matrix}.
 #' @details If the data set contains rownames specified, set option \code{has.row.names = TRUE}.
 #'
+#' @importFrom bigmemory as.big.matrix read.big.matrix
+#' @importFrom data.table fread
+#' 
 ## @rdname read_geno
 ## @name read_geno
 #' @aliases read_geno character
@@ -167,7 +170,7 @@ setMethod("read_geno",
             
             # Step 1.5: Check rownames and fread
             if(use.fread == TRUE & row.names == TRUE){
-              stop(paste("fread can not handle row.names! Please try big.memory or read.table!"))
+              stop(paste("fread can not handle row.names! Please try bigmemory or read.table!"))
             }
 
             # Step 2: Read in file according to format
@@ -181,7 +184,7 @@ setMethod("read_geno",
               cat("Reading in huge beagle files may fail due to memory limits.
                   If this is the case convert your beagle file in a .txt-file and try again. \n")
               if(use.fread){
-                cat("Loading data via fread. If this leads to problems set the function will try
+                cat("Loading data via fread. If this leads to problems, the function will try
                     automatically to load file via read.table. \n")
                 tryCatch({
                   gwasGeno <- data.table::fread(file.path, header = TRUE)
