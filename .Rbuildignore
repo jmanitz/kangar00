@@ -1,7 +1,7 @@
 ^\..*
 .*/auto
 .*.tar.gz
-.*.md
+.*\.md
 ^.*\.Rproj$
 ^\.Rproj\.user$
 release_SOPs.txt
