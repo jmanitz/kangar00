@@ -1,0 +1,15 @@
+
+To make a new release to CRAN the following steps need to be taken:
+
+1) Update Date and Version in DESCRIPTION
+
+2) Update Date and Version in man/kangar00-package.Rd
+
+3) Commit changes to github
+
+4) Build source package and upload to win-builder:
+   https://win-builder.r-project.org/upload.aspx
+   
+5) If package passes all checks without WARNINGS or ERRORS (and only known NOTES)
+   the package can be uploaded to CRAN:
+   http://xmpalantir.wu.ac.at/cransubmit/

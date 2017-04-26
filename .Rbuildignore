@@ -4,3 +4,4 @@
 .*.md
 ^.*\.Rproj$
 ^\.Rproj\.user$
+release_SOPs.txt
