@@ -14,7 +14,7 @@ NULL
 #' @slot geno An object of any type, including genotype information. The format
 #' needs to be one line per individual and on colum per SNP in minor-allele 
 #' coding (0,1,2). Other values between 0 and 2, as from impute dosages, are 
-#' allowed. Missing values must be imputed prior to creation of a GWAS object. 
+#' allowed. Missing values must be imputed prior to creation of a \code{GWASdata} object. 
 #' @slot anno A \code{data.frame} mapping SNPs to genes and genes to
 #' pathways. Needs to include the columns 'pathway' (pathway ID, e.g. hsa
 #' number from KEGG database), 'gene' (gene name (hgnc_symbol)), 'chr'
@@ -42,7 +42,7 @@ GWASdata <- setClass('GWASdata',
     ## check genotype has colnames (=SNP names) and rownames (individuals)
     if(any(is.null(colnames(object@geno)), is.null(rownames(object@geno)))){
         valid <- FALSE
-        msg   <- c(msg, "object geno needs specified col- and/or rownames")
+        msg   <- c(msg, "genotypes need specified column- and/or rownames!")
     }
     ## check if genotypes include missings
      if(sum(is.na(object@geno))>0){
@@ -70,7 +70,7 @@ GWASdata <- setClass('GWASdata',
     anno_names <- c('pathway','gene','chr','snp','position')
     if(!all(anno_names %in% colnames(object@anno))){
         valid <- FALSE
-        msg   <- c(msg, paste("anno variable names do not match:",anno_names))
+        msg   <- c(msg, paste("column names in annotation are incorrect! They need to be:",anno_names))
     }
     ## SNPs in annotation file, that are not in genotype file (too big?)
     if(!all(unique(object@anno$snp) %in% colnames(object@geno))){
@@ -85,7 +85,7 @@ setGeneric('GWASdata', function(object, ...) standardGeneric('GWASdata'))
 #' \code{'GWASdata'} is a GWASdata object constructor.
 #' @param geno An object of any type, including the genotype information.  
 #' @param anno A \code{data.frame} containing the annotation file for the 
-#' GWASdata object.
+#' \code{GWASdata} object.
 #' @param pheno A \code{data.frame} specifying individual IDs, phenotypes and
 #' covariates to be included in the regression model.
 #' @param desc A \code{character} giving the GWAS description, e.g. name of study. 
@@ -102,17 +102,19 @@ setMethod('GWASdata',
 # read genotype data from file
 setGeneric('read_geno', function(file.path, ...) standardGeneric('read_geno'))
 #' read genotype data from file to one of several available objects, which 
-#' can be passed to a GWASdata object \code{GWASdata-class}.
+#' can be passed to a GWASdata object \code{\link{GWASdata}}.
 #'
-#' @param file.path character, which contains the path to the data file to be read
-#' @param save.path character, which contains the path for the backingfile
-#' @param sep character. A field delimeter. See \code{bigmemory::read.big.matrix} for
-#'  details.
-#' @param header logical. Does the data set contain column names?
-#' @param use.fread logical. Should the dataset be read using the function \code{fread} from package data.table?
-#' @param use.big logical. Should the dataset be read using the function \code{read.big.matrix} from package bigmemory?
-#' @param row.names logical. Does the dataset include rownames?
-#' @param ... further arguments to be passed to \code{bigmemory::read.big.matrix}.
+#' @param file.path \code{character} giving the path to the data file to be read
+#' @param save.path \code{character} containing the path for the backingfile
+#' @param sep \code{character}. A field delimeter. See 
+#' \code{\link[bigmemory]{read.big.matrix}} for details. 
+#' @param header \code{logical}. Does the data set contain column names?
+#' @param use.fread \code{logical}. Should the dataset be read using the function 
+#' \code{\link[data.table]{fread}} \code{fread} from package \pkg{data.table}?
+#' @param use.big \code{logical}. Should the dataset be read using the function 
+#' \code{\link[bigmemory]{read.big.matrix}} from package \pkg{bigmemory}?
+#' @param row.names \code{logical}. Does the dataset include rownames?
+#' @param ... further arguments to be passed to \code{read_geno}.
 #' @details If the data set contains rownames specified, set option \code{has.row.names = TRUE}.
 #'
 #' @importFrom bigmemory as.big.matrix read.big.matrix
@@ -165,12 +167,12 @@ setMethod("read_geno",
             
             ## Step 1.4: Check read options
             if(use.fread == TRUE & use.big == TRUE){
-              stop(paste("You can not use fread and bigmemory at the same time!"))
+              stop(paste("You can not use the functions fread from package data.table and read.big.matrix from package bigmemory at the same time!"))
             }
             
             # Step 1.5: Check rownames and fread
             if(use.fread == TRUE & row.names == TRUE){
-              stop(paste("fread can not handle row.names! Please try bigmemory or read.table!"))
+              stop(paste("The function fread from package data.table can not handle row.names! Please try to use the function read.big.matrix from package bigmemory or the read.table function!"))
             }
 
             # Step 2: Read in file according to format
@@ -184,25 +186,23 @@ setMethod("read_geno",
               cat("Reading in huge beagle files may fail due to memory limits.
                   If this is the case convert your beagle file in a .txt-file and try again. \n")
               if(use.fread){
-                cat("Loading data via fread. If this leads to problems, the function will try
-                    automatically to load file via read.table. \n")
+                cat("Loading data via fread function from package data.table. If problems occur, your file will automatrically be read using the function read.table instead. \n")
                 tryCatch({
                   gwasGeno <- data.table::fread(file.path, header = TRUE)
                 }, warning = function(wr){
-                  cat("fread caused a warning. Please make sure your file has been read in correctly! \n")
+                  cat("fread caused a warning. Please check if your file has been read in correctly! \n")
                   print(wr)
                 }, error = function(er){
                   cat("fread has stopped due to an error. \n")
                   print(er)
-                  cat("Try reading in file with read.table. Attention: This function is very slow! \n")
+                  cat("Try to read your file using the read.table function. Attention: This function my be very slow on large files! \n")
                   tryCatch({
                     gwasGeno <- utils::read.table(file.path, header = TRUE)
                   }, warning = function(w){
-                    cat("read.table caused a warning, Please make sure your file has been read in correctly! \n")
+                    cat("read.table caused a warning, Please check if your file has been read in correctly! \n")
                     print(w)
                   }, error = function(e){
-                    cat("Also read.table has stopped due to an error. Try to convert your file in a .txt-file
-                        and try again. \n")
+                    cat("Also the read.table function has stopped due to an error. Try to convert your file in a .txt-file and try again. \n")
                     print(e)
                   }
                     )
@@ -218,7 +218,7 @@ setMethod("read_geno",
               cat("Reading in huge MACH files may fail due to memory limits.
                   If this is the case convert your MACH file in a .txt-file and try again.")
               if(use.fread){
-                cat("Loading data via fread. If this leads to problems set use.fread = FALSE")
+                cat("Loading data using function fread. If this leads to problems set use.fread = FALSE")
                 gwasGeno <- data.table::fread(file.path, header = TRUE)
                 gwasGeno <- bigmemory::as.big.matrix(gwasGeno)
 
@@ -265,17 +265,16 @@ setMethod("read_geno",
                   cat("read.big.matrix caused a warning! Please make sure your file has been read correctly!")
                   print(w)
                 }, error = function(e){
-                  cat("read.big.matrix has stopped due to an error!")
+                  cat("The function read.big.matrix has stopped due to an error!")
                   print(e)
-                  cat("Try reading in file with read.table. Attention: This function is very slow! \n")
+                  cat("Try reading your file using the read.table function. Attention: This function is very slow for big files! \n")
                   tryCatch({
                     gwasGeno <- utils::read.table(file.path, header = TRUE)
                   }, warning = function(w){
                     cat("read.table caused a warning, Please make sure your file has been read in correctly! \n")
                     print(w)
                   }, error = function(e){
-                    cat("Also read.table has stopped due to an error. Check your file and
-                        and try again. \n")
+                    cat("Also the read.table function has stopped due to an error. \n")
                     print(e)
                   }
                   )
@@ -285,27 +284,26 @@ setMethod("read_geno",
                 tryCatch({
                   gwasGeno <- data.table::fread(file.path, header = TRUE)
                 }, warning = function(wr){
-                  cat("fread caused a warning. Please make sure your file has been read in correctly! \n")
+                  cat("The fread fucntion caused a warning. Please make sure your file has been read in correctly! \n")
                   print(wr)
                 }, error = function(er){
                   cat("fread has stopped due to an error. \n")
                   print(er)
-                  cat("Try reading in file with read.table. Attention: This function is very slow! \n")
+                  cat("Try reading in file with read.table. Attention: This function can be very slow for large files! \n")
                   tryCatch({
                     gwasGeno <- utils::read.table(file.path, header = TRUE)
                   }, warning = function(w){
-                    cat("read.table caused a warning, Please make sure your file has been read in correctly! \n")
+                    cat("teh read.table function caused a warning, Please make sure your file has been read in correctly! \n")
                     print(w)
                   }, error = function(e){
-                    cat("Also read.table has stopped due to an error. Check your file and try again
-                        and try again. \n")
+                    cat("Also the read.table function has stopped due to an error. \n")
                     print(e)
                   }
                   )
               }
                 )
               } else if(!use.fread & !use.big){
-                cat("Try reading in file with read.table. Attention: This function is very slow! \n")
+                cat("Try reading in file using the read.table function. Attention: This function may be very slow on big files! \n")
                 gwasGeno <- utils::read.table(file.path, header = TRUE, sep = sep)
               }
             } else{
@@ -319,25 +317,27 @@ setMethod("read_geno",
             if(row.names){
               firstRow <- gwasGeno[ , 1]
               if(!is.character(stats::na.omit(firstRow)) || sum(firstRow > 2) == 0){
-                warning("Your geno file doesn't seem to contain ID numbers. Please make sure that
-                   the first row of your data contains ID numbers according to your phenotype file! 
-                        Otherwise use row.names = FALSE!")
+                warning("Your geno file doesn't seem to contain ID numbers. 
+                Please make sure that the first row of your data contains ID 
+                numbers according to your phenotype file! Otherwise use 
+                row.names = FALSE!")
               }
 
               # Step 4.1.2 Check if the rest of the data is okay
               if(sum(stats::na.omit(gwasGeno[ , -1]) > 2) > 0){
-                warning("Your geno data seems to contain values bigger than 2.")
+                warning("Your genotypes contain values bigger than 2.")
               }
             } else{ # Step 4.2.1 Check if file has row.names
               possIDs <- rownames(gwasGeno)
               if(!is.character(stats::na.omit(possIDs)) || sum(possIDs > 2) == 0){
-                warning("Your geno file doesn't seem to contain ID numbers. Please make sure that
-                   the first row of your data contains ID numbers according to your phenotype file!")
+                warning("Your genotype file doesn't seem to contain ID numbers. 
+                Please make sure that the first row of your data contains ID 
+                numbers matching  your phenotype file!")
               }
 
               # Step 4.2.2 Check if rest of the data is okay
               if(sum(stats::na.omit(gwasGeno[,]) > 2) > 0){
-                warning("Your geno data seems to contain values bigger than 2.")
+                warning("Your genotype data seems to contain values bigger than 2.")
               }
 
             }
@@ -346,8 +346,8 @@ setMethod("read_geno",
             return(gwasGeno)
 })
 
-#' \code{show} displays basic information on \code{GWASdata} object
-#' @param object A \code{GWASdata} object.
+#' \code{show} displays basic information on \code{\link{GWASdata}} object
+#' @param object A \code{\link{GWASdata}} object.
 #' @examples
 #' # show method
 #' data(gwas) 
@@ -374,7 +374,10 @@ setMethod('show', signature='GWASdata',
 ## summary
 setGeneric('summary', function(object, ...) standardGeneric('summary'))
 
-#' \code{summary} summarizes the content of a \code{GWASdata} object and gives an overview about the information included in a \code{\link{GWASdata}} object. Summary statistics for phenotype and genotype data are calculated.
+#' \code{summary} summarizes the content of a \code{\link{GWASdata}} object 
+#' and gives an overview about the information included in a 
+#' \code{\link{GWASdata}} object. Summary statistics for phenotype and genotype 
+#' data are calculated.
 #'
 #' @examples
 #' # summary method
@@ -404,10 +407,10 @@ setMethod('summary', signature='GWASdata',
 ## GeneSNPsize
 setGeneric('GeneSNPsize', function(object, ...) standardGeneric('GeneSNPsize'))
 
-#' \code{GeneSNPsize} creates a \code{data.frame} of pathway
-#' names with numbers of snps and genes in each pathway.
+#' \code{GeneSNPsize} creates a \code{data.frame} of \code{\link{pathway}}
+#' names with numbers of snps and genes in each \code{\link{pathway}}.
 #'
-#' @describeIn GWASdata creates a \code{data.frame} of pathway names with numbers 
+#' @describeIn GWASdata creates a \code{data.frame} of \code{\link{pathway}} names with numbers 
 #' of snps and genes in each pathway.
 #' @export 
 #' @aliases GeneSNPsize GWASdata
@@ -453,11 +456,12 @@ setValidity('snp_info', function(object){
 })
 
 setGeneric('snp_info', function(x, ...) standardGeneric('snp_info'))
-#' This function gives for a vector of SNP identifiers the position of each SNP 
+#' This function gives for a \code{vector} of SNP identifiers the position of each SNP 
 #' as extracted from the Ensemble database. The database is accessed via the
-#' R-package \code{biomaRt}.
+#' R-package \pkg{biomaRt}.
 #'
-#' @param x A character vector of SNP rsnumbers for which positions will be extracted.
+#' @param x A \code{character} \code{vector} of SNP rsnumbers for which 
+#' positions will be extracted.
 #' @param ... further arguments can be added.
 #' @return A \code{data.frame} including the SNP positions with columns
 #' 'chromosome', 'position' and 'snp'. SNPs not found in the Ensemble database
@@ -484,10 +488,10 @@ setMethod('snp_info', signature='character',
   return(ret)
 })
 
-#' \code{show} Shows basic information on \code{snp_info} object
+#' \code{show} Shows basic information on \code{\link{snp_info}} object
 #'
-## @param object An object of class \code{\link{snp_info}}.
-#' @return \code{show} Basic information on \code{snp_info} object.
+## @param object An \code{object} of class \code{\link{snp_info}}.
+#' @return \code{show} Basic information on \code{\link{snp_info}} object.
 #' @examples
 #' # show
 #' data(rs10243170_info)
@@ -504,10 +508,10 @@ setMethod('show', signature='snp_info',
 })
 
 setGeneric('summary', function(object, ...) standardGeneric('summary'))
-#' \code{summary} Summarizes information on \code{snp_info} object
+#' \code{summary} Summarizes information on \code{\link{snp_info}} object
 #'
-#' @param object An object of class \code{\link{snp_info}}.
-#' @return \code{summary} Summarized information on \code{snp_info} object.
+#' @param object An \code{object} of class \code{\link{snp_info}}.
+#' @return \code{summary} Summarized information on \code{\link{snp_info}} object.
 #' @examples
 #' # summary
 #' data(rs10243170_info)
@@ -527,22 +531,22 @@ setMethod('summary', signature='snp_info',
 setGeneric('get_anno', function(object1, object2, ...) standardGeneric('get_anno'))
 #' Annotates SNPs via genes to pathways
 #'
-#' A function to create the annotation for a GWASdata object. It combines a 
-#' \code{snp_info} and a \code{pathway_info} object into an annotation
-#'  \code{data.frame} used for pathway analysis on GWAS. SNPs are assigned to
-#'  pathways via gene membership.
+#' A function to create the annotation for a \code{\link{GWASdata}} object. 
+#' It combines a \code{\link{snp_info}} and a \code{\link{pathway_info}}
+#' object into an annotation \code{data.frame} used for \code{\link{pathway}} 
+#' analysis on GWAS. SNPs are assigned to pathways via gene membership.
 #'
-#' @param object1 A \code{snp_info} object with SNP information as returned by
-#' the \code{\link{snp_info}} function. The included \code{data frame} contains
-#' the columns "chr", "position" and "snp".
-#' @param object2 A \code{pathway_info} object with information on genes
+#' @param object1 A \code{\link{snp_info}} object with SNP information as returned
+#' by the \code{\link{snp_info}} function. The included \code{data frame} contains
+#' the columns 'chr', 'position' and 'snp'.
+#' @param object2 A \code{\link{pathway_info}} object with information on genes
 #' contained in pathways. It is created by the \code{\link{pathway_info}} 
 #' function and contains a \code{data frame} with columns 
-#' "pathway", "gene_start", gene_end", "chr", "gene".
+#' 'pathway', 'gene_start', 'gene_end', 'chr', 'gene'.
 #' @param ... further arguments can be added.
-#' @return A \code{data.frame} including mapping SNPs to genes and genes to
-#' pathways. It includes the columns "pathway", "gene", "chr", "snp" and 
-#' "position".
+#' @return A \code{data.frame} mapping SNPs to genes and genes to
+#' pathways. It includes the columns 'pathway', 'gene', 'chr', 'snp' and 
+#' 'position'.
 #' 
 #' @examples
 #' data(hsa04022_info)
@@ -558,16 +562,15 @@ setMethod('get_anno', signature=c('snp_info','pathway_info'),
           definition <- function(object1, object2, ...) {
           
   if (!inherits(object1, "snp_info"))
-      stop("SNP information is not a snp_info object!")
+      stop("First argument needs to be a snp_info object!")
   if (!inherits(object2, "pathway_info"))  
-      stop("pathway gene information is not a pathway_info object!")
+      stop("Second argument has to be a pathway_info object!")
   if (!(all.equal(colnames(object1@info),c("chr", "position", "snp"))))
-      stop("snp_info object must contain a data frame with columns for 
-            'chr', 'positon' and 'snp'!")
+      stop("The data frame included in the snp_info object has incorrect column names! 
+            Column names need to be: 'chr', 'positon' and 'snp'!")
   if (!(all.equal(colnames(object2@info),c("pathway","gene_start",
       "gene_end","chr","gene"))))
-      stop("pathway_info object must contain a data frame with columns for 
-            'pathway', 'gene_start', 'gene_end', 'chr' and 'gene'!")  
+      stop("The data frame included in the pathway_info object has incorrect column names! Column names need to be: 'pathway', 'gene_start', 'gene_end', 'chr' and 'gene'!")  
                               
   object1@info$chr <- as.factor(object1@info$chr)
   object2@info$chr <- as.factor(object2@info$chr)  

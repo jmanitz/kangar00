@@ -8,12 +8,13 @@
 #'
 #' @rdname pathway-class
 #'
-#' @slot id A character repesenting the pathway id, e.g. hsa00100 as used in 
-#' the KEGG database.
-#' @slot adj A matrix respresenting the network adjacency matrix  of dimension 
+#' @slot id A \code{character} repesenting the \code{\link{pathway}} id, 
+#' e.g. hsa00100 as used in the KEGG database.
+#' @slot adj A \code{matrix} respresenting the network adjacency matrix of dimension 
 #' equaling the number of genes (1 interaction, 0 otherwise)
-#' @slot sign A numeric vector indicating the interaction type for each link 
-#' (1 activation, -1 inhibition) in the interaction network for the pathway.
+#' @slot sign A \code{numeric} \code{vector} indicating the interaction type for 
+#' each link (1 activation, -1 inhibition) in the interaction network for the 
+#' \code{\link{pathway}}.
 #' 
 #' @author Juliane Manitz
 #'
@@ -53,13 +54,13 @@ setValidity('pathway', function(object){
 
 # pathway object constructor
 setGeneric('pathway', function(object, ...) standardGeneric('pathway'))
-#' \code{'pathway'} is the pathway object constructor.
+#' \code{'pathway'} is the \code{\link{pathway}} object constructor.
 #'
-#' @param id A character repesenting the pathway id.  
-#' @param adj A matrix respresenting the network adjacency matrix  of dimension 
+#' @param id A \code{character} repesenting the \code{\link{pathway}} id.  
+#' @param adj A \code{matrix} respresenting the network adjacency matrix of dimension 
 #' equaling the number of genes (1 interaction, 0 otherwise)
-#' @param sign A numeric vector indicating the interaction type for each link 
-#' (1 activation, -1 inhibition) in the interaction network for the pathway.
+#' @param sign A \code{numeric} \code{vector} indicating the interaction type for  
+#' each link (1 activation, -1 inhibition) in the interaction network for the \code{\link{pathway}}.
 ## @param ... Further arguments can be added to the function.
 #' @export
 #'
@@ -74,7 +75,7 @@ setMethod('pathway',
 })
 
 # show method
-#' \code{show} displays the pathway object briefly   
+#' \code{show} displays the \code{\link{pathway}} object briefly   
 #' @param object An object of class \code{pathway-class}
 #' @examples
 #' #show method
@@ -98,12 +99,12 @@ setMethod('show', signature='pathway',
 # summary method
 setGeneric('summary', function(object, ...) standardGeneric('summary'))
 
-#' \code{summary} generates a pathway object summary including basic network properties.
+#' \code{summary} generates a \code{\link{pathway}} object summary including basic network properties.
 #'
 #' @export
 #' @rdname pathway-class 
 #' @aliases summary,pathway,ANY-method
-## @param object An object of class \code{pathway-class}
+## @param object An object of class \code{\link{pathway-class}}
 #' @examples
 #' #summary method
 #' data(hsa04020)
@@ -129,15 +130,15 @@ setMethod('summary', signature='pathway',
 setGeneric('pathway2igraph', function(object, ...) standardGeneric('pathway2igraph'))
 
 #' \code{pathway2igraph} converts a \code{\link{pathway}} object into an 
-#' \code{igraph} object with edge attribute \code{sign}
+#' \code{\link[igraph]{igraph}} object with edge attribute \code{sign}
 #'
 ##\link[pkg2:foo_Rd_file_name]{foo}
 #' @export
 #' @rdname pathway-class
 #' @aliases pathway2igraph pathway ANY-method     
-## @param object An object of class \code{pathway-class}
+## @param object An object of class \code{\link{pathway-class}}
 #' @examples
-#' # convert to igraph object
+#' # convert to \code{\link[igraph]{igraph}} object
 #' data(hsa04020)
 #' str(hsa04020)
 #' g <- pathway2igraph(hsa04020)
@@ -163,13 +164,13 @@ setMethod('pathway2igraph', signature='pathway',
 ##### analyze method - analyze pathway network properties
 setGeneric('analyze', function(object, ...) standardGeneric('analyze'))
 
-#' analyze pathway network properties
+#' analyze \code{\link{pathway}} network properties
 #'
 #' @export
 #' @describeIn pathway
 #' 
 #' @aliases analyze pathway ANY-method
-## @param object An object of class \code{pathway-class}
+## @param object An object of class \code{\link{pathway-class}}
 #' @return \code{analyze} returns a \code{data.frame} consisting of 
 #'   \describe{
 #'    \item{id}{pathway id,} 
@@ -190,7 +191,7 @@ setGeneric('analyze', function(object, ...) standardGeneric('analyze'))
 #'   \item Kunegis, J., A. Lommatzsch, and C. Bauckhage (2009). The slashdot zoo: Mining a social network with negative egdes. In Proceedings of the 18th international conference on World wide web, pp. 741-750. ACM Press.
 #' } 
 #' @examples
-#' # analyse pathway network properties
+#' # analyse \code{\link{pathway}} network properties
 #' data(hsa04020)
 #' summary(hsa04020)
 #' analyze(hsa04020)
@@ -230,14 +231,15 @@ setMethod('analyze', signature='pathway',
 setGeneric('get_genes', function(object, ...) standardGeneric('get_genes'))
 
 #' \code{get_genes} is a helper function that extracts the gene names in a 
-#' pathway and returns a vector of character containing gene names
+#' \code{\link{pathway}} and returns a \code{vector} containing \code{character}
+#' elements of gene names
 #'
 #' @export
 #' @describeIn pathway
 #' 
 #' @aliases get_genes pathway ANY-method 
 #' @examples
-#' # extract gene names from pathway
+#' # extract gene names from \code{\link{pathway}}
 #' get_genes(hsa04020)
 setMethod('get_genes', signature='pathway',
           definition = function(object){
@@ -247,27 +249,27 @@ setMethod('get_genes', signature='pathway',
 #' @exportMethod plot
 if (!isGeneric("plot")) setGeneric('plot')
 
-#' \code{plot} plots pathway as igraph object
+#' \code{plot} plots \code{\link{pathway}} as \code{\link[igraph]{igraph}} object
 #'
 #' @export 
 #' @rdname pathway-class
 #' @aliases plot,pathway,ANY-method
 #' 
-#' @param x pathway object
+#' @param x \code{\link{pathway}} object
 #' @param y missing (placeholder)
 #' @param highlight.genes vector of gene names or node id's, which should be highlighted in a different color, default is \code{NULL} so that no genes are highlighted
 #' @param gene.names character indicating whether the genes names should appear in a legend (\code{'legend'}), as vertex label (\code{'nodes'}), or should be omitted (\code{NA})
-#' @param main optional overall main title, default is \code{NULL}, which uses the pathway id
-#' @param asp a numeric constant, which gives the aspect ratio parameter for plot, default is 0.95
-#' @param vertex.size a numeric constant specifying the vertex size, default is 11
-#' @param vertex.color a character or numeric constant specifying the vertex color, default is 'khaki1'
-#' @param vertex.label.cex a numeric constant specifying the the vertex label size, default is 0.8,
-#' @param edge.width a numeric constant specifying the edge width, default is 2
-#' @param edge.color a character or numeric constant specifying the edge color, default is 'olivedrab4'
+#' @param main optional overall main title, default is \code{NULL}, which uses the \code{\link{pathway}} id
+#' @param asp a \code{numeric} constant, which gives the aspect ratio parameter for plot, default is 0.95
+#' @param vertex.size a \code{numeric} constant specifying the vertex size, default is 11
+#' @param vertex.color a \code{character} or \code{numeric} constant specifying the vertex color, default is 'khaki1'
+#' @param vertex.label.cex a \code{numeric} constant specifying the the vertex label size, default is 0.8,
+#' @param edge.width a \code{numeric} constant specifying the edge width, default is 2
+#' @param edge.color a \code{character} or \code{numeric} constant specifying the edge color, default is 'olivedrab4'
 #' @param ... further arguments specifying plotting options in \code{plot.igraph}
 #'
 #' @examples
-#' # plot pathway as igraph object
+#' # plot \code{\link{pathway}} as \code{\link[igraph]{igraph}} object
 #' plot(hsa04020)
 #' sample3 <- sample_genes(hsa04020, no = 3)
 #' plot(hsa04020, highlight.genes = sample3)
@@ -325,12 +327,14 @@ setMethod('plot', signature(x='pathway',y='missing'),
 #' @exportMethod sample_genes
 setGeneric('sample_genes', function(object, ...) standardGeneric('sample_genes'))
 
-#' \code{sample_genes} function randomly selects effect genes in pathway and returns a vector of length \code{no} with vertex id's of sampled genes 
+#' \code{sample_genes} function randomly selects effect genes in a 
+#' \code{\link{pathway}} and returns a \code{vector} of length \code{no} with 
+#' vertex id's of sampled genes 
 #'
 #' @export
 #' @describeIn pathway
 #'
-#' @param no a numeric constant specifying the number of genes to be sampled, default is 3
+#' @param no a \code{numeric} constant specifying the number of genes to be sampled, default is 3
 #' @aliases sample_genes pathway ANY-method 
 #' @examples
 #' # sample effect genes
@@ -342,7 +346,7 @@ setMethod('sample_genes', signature='pathway',
           definition = function(object, no=3){
             g <- pathway2igraph(object)
             if(igraph::vcount(g) < no) stop('number of sampled genes should be smaller 
-                               than the total number in the pathway')
+                               than total number of genes in the pathway')
 
             # sample a gene with high betweennes centrality
             sel1 <- sample(igraph::V(g), size=1, prob=igraph::betweenness(g))
@@ -359,8 +363,9 @@ setMethod('sample_genes', signature='pathway',
 setGeneric('gene_name_number', function(x, ...) standardGeneric('gene_name_number'))
 #' Function to get genes names and numbers from kegg (for internal use)
 #'
-#' This function extracts for a particular pathway all genes and the numbers
-#' they are represented with in the KEGG network from the corresponding KGML pathway file.
+#' This function extracts for a particular \code{\link{pathway}} all genes and 
+#' the numbers they are represented with in the KEGG network from the 
+#' corresponding KGML pathway file.
 #'
 #' @param x A \code{character} hsa identifier of the pathway for which gene 
 #' infomation should be extracted as used in KEGG database ('hsa00100').    
@@ -382,7 +387,7 @@ setMethod('gene_name_number', signature='character',
     if(grepl("^[0-9]{2,}" ,info[pos[1]-1]) == FALSE){
       if(pos[1] <= 2){
         cat("First gene in this pathway has incorrect hsa number. Please
-            check KEGG for this pathway.")
+            check the KEGG database for this pathway.")
       }      
       for(j in 2:pos[1]-1){
         check <- grepl("^[0-9]{2,}" ,info[pos[1]-j])
@@ -455,14 +460,14 @@ setValidity('pathway_info', function(object){
 setGeneric('pathway_info', function(x) standardGeneric('pathway_info'))
 #' Get information on genes in a pathway
 #'
-#' This function lists all genes formig a particular pathway. Start and end  
+#' This function lists all genes formig a particular \code{\link{pathway}}. Start and end  
 #' positions of these genes are extracted from the Ensemble database. The 
-#' database is accessed via the R-package \code{biomaRt}.
+#' database is accessed via the R-package \pkg{biomaRt}.
 #'
 #' @param x A \code{character} identifying the pathway for which gene infomation 
 #' should be extracted. Here KEGG IDs (format: 'hsa00100') are used.
 #' @return A \code{data.frame} including as many rows as genes appear in the 
-#' pathway. for each gene its name, the start and end point and the chromosome 
+#' \code{\link{pathway}}. for each gene its name, the start and end point and the chromosome 
 #' it lies on are given.
 #' @examples
 #' pathway_info("hsa04022") 
@@ -487,10 +492,10 @@ setMethod('pathway_info', signature='character',
    ret <- new('pathway_info', info=pathways)
    return(ret)
 })
-#' \code{show} Shows basic information on \code{pathway_info} object
+#' \code{show} Shows basic information on \code{\link{pathway_info}} object
 #'
 #' @param object An object of class \code{\link{pathway_info}}.
-#' @return \code{show} Basic information on \code{pathway_info} object.
+#' @return \code{show} Basic information on \code{\link{pathway_info}} object.
 ## @author Stefanie Friedrichs
 #' @examples
 #' # show method
@@ -509,10 +514,10 @@ setMethod('show', signature='pathway_info',
           })
 
 setGeneric('summary', function(object, ...) standardGeneric('summary'))
-#' \code{summary} Summarizes information on \code{pathway_info} object
+#' \code{summary} Summarizes information on \code{\link{pathway_info}} object
 #'
 ## @param object An object of class \code{\link{pathway_info}}.
-#' @return \code{summary} Summarized information on \code{pathway_info} object.
+#' @return \code{summary} Summarized information on \code{\link{pathway_info}} object.
 ## @author Stefanie Friedrichs
 #' @examples
 #' # summary method
@@ -532,15 +537,15 @@ setMethod('summary', signature='pathway_info',
 
 
 setGeneric('set_one', function(x, ...) standardGeneric('set_one'))
-#' Helper function to set matrix entries to 0/1/-1 only 
+#' Helper function to set \code{matrix} entries to 0/1/-1 only 
 #'
-#' This function sets all entries in a matrix bigger than 1 to 1 and all entries 
-#' smaller than -1 to -1. It is called by \code{get_network_matrix}.
+#' This function sets all entries in a \code{matrix} bigger than 1 to 1 and all entries 
+#' smaller than -1 to -1. It is called by \code{\link{get_network_matrix}}.
 #' (For internal use)
 #'
 #' @param x numeric \code{matrix} representing the network adjacency matrix. 
-#' @return A \code{matrix} representing the interaction network in the pathway
-#' with entries equal to 1, -1 or 0.
+#' @return A \code{matrix} representing the interaction network in the 
+#' \code{\link{pathway}} object with entries equal to 1, -1 or 0.
 #'
 #' @author Stefanie Friedrichs 
 #' @keywords internal
@@ -564,7 +569,7 @@ setGeneric('set_names', function(x, ...) standardGeneric('set_names'))
 #' rownames of the pathway's network matrix. The function 
 #' is called by \code{get_network_matrix}. (For internal use)
 #'
-#' @param x A \code{matrix} representing the networkmatrix. 
+#' @param x A \code{matrix} representing the network matrix. 
 #' @param nodes A \code{vector} of gene numbers to be replaced by names.   
 #' @param my_list A \code{data.frame} listing gene names and numbers. Output from 
 #' \code{gene_name_number}.  
@@ -585,19 +590,20 @@ setMethod('set_names', signature='matrix',
  
  
 setGeneric('get_network_matrix', function(object, ...) standardGeneric('get_network_matrix'))
-#' Function to calculate the network matrix
+#' Function to calculate the network \code{matrix} for a \code{\link{pathway}} object
 #'
-#' This function creates the networkmatrix representing the gene-gene interaction 
-#' structure within a particular pathway. In this process a KEGG kgml file is 
-#' downloaded and saved in the working directory. 
+#' This function creates the network matrix representing the gene-gene interaction 
+#' structure within a particular \code{\link{pathway}}. In this process a 
+#' KEGG kgml file is downloaded and saved in the working directory. 
 #'
-#' @param object A \code{pathway} object identifying the pathway for which gene 
+#' @param object A \code{\link{pathway}} object identifying the pathway for which gene 
 #' interaction infomation should be extracted. Here, KEGG IDs of format
 #' 'hsa00100' are used and information is downloaded from the KEGG database.    
 #' @param directed A \code{logic} argument, stating whether the network matrix 
 #' should be returned directed (\code{TRUE}) or undirected (\code{FALSE}). 
-#' @return The altered \code{pathway} object, in which the slots 'adj' and 
-#' 'sign' have been changed according to the downloaded information on the pathway. 
+#' @return The altered \code{\link{pathway}} object, in which the slots \code{'adj'} and 
+#' \code{'sign'} have been changed according to the downloaded information on the 
+#' \code{\link{pathway}}. 
 ## @examples
 ## get_network_matrix(pathway(id="hsa04022", adj=matrix(0), sign=as.vector(matrix(0)[matrix(0)!=0])), TRUE)
 #'

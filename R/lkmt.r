@@ -16,8 +16,8 @@
 #' @slot statistic A \code{vector} giving the value of the variance component
 #' test statistic.
 #' @slot df A \code{vector} containing the number of degrees of freedom.
-#' @slot p.value A \code{vector} giving the p-value calculated for the pathway
-#' in the variance component test.
+#' @slot p.value A \code{vector} giving the p-value calculated for the \
+#' code{\link{pathway}} object considered in the variance component test.
 #'
 #' For details on the variance component test see the references.
 #' @references
@@ -39,7 +39,7 @@ setValidity('lkmt', function(object){
 	valid <- TRUE
   if(!(class(object@GWASdata)=="GWASdata")){
 	  valid=FALSE
-	  msg <- c(msg, "no GWASdata object!")
+	  msg <- c(msg, "GWASdata object is missing!")
 	}
  	if(!is.matrix(object@kernel)){
 	  valid=FALSE
@@ -109,7 +109,7 @@ setMethod('summary', signature='lkmt',
           })
 
 
-#' A function to calculate the p-values for kernel-matrices. 
+#' A function to calculate the p-values for kernel matrices. 
 #'
 #' @param formula The formula to be used for the regression nullmodel.  
 #' @param kernel An object of class \code{kernel} including the pathway 
@@ -166,9 +166,9 @@ lkmt_test <- function(formula, kernel, GWASdata, method=c('satt','davies'), ...)
 }
 
 setGeneric('score_test', function(x1, x2, ...) standardGeneric('score_test'))
-#' Calculates the p-value for a kernelmatrix using Satterthwaite approximation
+#' Calculates the p-value for a kernel matrix using Satterthwaite approximation
 #'
-#' For parameter \code{"satt"} a pathways influence on the probability of 
+#' For parameter \code{'satt'} a pathways influence on the probability of 
 #' beeing a case is evaluated in the logistic kernel machine test and p-values 
 #' are determined using a Sattherthwaite Approximation as described by Dan Schaid.
 #'
@@ -191,7 +191,7 @@ setMethod('score_test', signature(x1 = 'matrix'),
                 stop("nullmodel should be a glm- or lm-object!")
         }
         if(is.null(x2$x)){
-                stop("The glm-object should have a design-matrix x!")
+                stop("The lm- or glm-object should have a design-matrix x!")
         }
         nas <- x2$na.action
         Y   <- x2$y
@@ -224,10 +224,10 @@ setMethod('score_test', signature(x1 = 'matrix'),
 setGeneric('davies_test', function(x1, x2, ...) standardGeneric('davies_test'))
 #' Calculates the p-value for a kernel matrix using davies method
 #'
-#' For parameter \code{"davies"} a pathways influence on the probability
+#' For parameter \code{'davies'} a pathways influence on the probability
 #' of beeing a case is evaluated using the p-value calculation method described 
-#' by Davies. Here the function \code{davies()} from package \code{CompQuadForm}
-#' is used.
+#' by Davies. Here the function \code{\link[CompQuadForm]{davies}} from package 
+#' \pkg{CompQuadForm} is used.
 #'
 ## @param x1 A \code{matrix} which is the
 ## similarity matrix calculated for the pathway to be tested.
@@ -249,7 +249,7 @@ setMethod('davies_test', signature(x1 = 'matrix'),
                 stop("nullmodel should be a glm- or lm-object!")
         }
         if(is.null(x2$x)){
-                stop("The glm-object should have a design-matrix x!")
+                stop("The lm- or glm-object should have a design-matrix x!")
         }
 
         nas <- x2$na.action

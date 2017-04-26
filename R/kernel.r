@@ -8,16 +8,16 @@
 #' @include pathway.r
 NULL
 
-#################################### kernel class definition #################
-#' An S4 class representing the kernel of a pathway
+#######  kernel class definition  ################
+#' An S4 class representing a kernel matrix calculated for a pathway
 #'
 #' @rdname kernel-class
 #'
 #' @slot type A \code{character} representing the kernel type: Use 
-#' \code{"lin"} for linear kernels, \code{"sia"} for size-adjusted 
-#' or \code{"net"} for network-based kernels.
-#' @slot kernel A kernel matrix of dimension equal to the number of individuals
-#' @slot pathway A pathway object
+#' \code{'lin'} for linear kernel, \code{'sia'} for the size-adjusted 
+#' or \code{'net'} for the network-based kernel.
+#' @slot kernel A kernel \code{matrix} of dimension equal to the number of individuals
+#' @slot pathway A \code{\link{pathway}} object
 #'
 #' @author Juliane Manitz
 #' @export
@@ -61,10 +61,10 @@ setValidity('kernel', function(object){
 #'
 #' @rdname lowrank_kernel-class
 #'
-#' @slot type character, kernel type: Use \code{"lin"} for linear kernels,
-#' \code{"sia"} for size-adjusted or \code{"net"} for network-based kernels.
-#' @slot kernel kernel matrix of dimension equal to individuals
-#' @slot pathway pathway object
+#' @slot type character, kernel type: Use \code{'lin'} for the linear kernel,
+#' \code{'sia'} for the size-adjusted or \code{'net'} for the network-based kernel.
+#' @slot kernel kernel \code{matrix} of dimension equal to individuals
+#' @slot pathway \code{\link{pathway}} object
 #'
 #' @details This kernel is used for predictions. If observations and knots are 
 #' equal, better construct a full-rank kernel of class \code{\link{kernel}}.
@@ -97,31 +97,32 @@ setValidity('lowrank_kernel', function(object){
 setGeneric('calc_kernel', function(object, ...) standardGeneric('calc_kernel'))
 #' Calculates the kernel-matrix for a pathway
 #'
-#' Uses individuals' genotypes to calculate a kernel-matrix for a specific 
-#' pathway. Each numeric value within this matrix is calculated
+#' Uses individuals' genotypes to create a \code{\link{kernel}} object including 
+#' the calculated kernel \code{matrix} for a specific \code{\link{pathway}}.
+#' Each numeric value within this \code{matrix} is calculated
 #' from two individuals' genotypevectors of the SNPs within 
-#' the pathway by a kernelfunction. It can be interpreted as the genetic 
-#' similiarity of the individuals. Association between the pathway and a 
+#' the \code{\link{pathway}} by a kernel function. It can be interpreted as the genetic 
+#' similiarity of the individuals. Association between the \code{\link{pathway}} and a 
 #' binary phenotype (case-control status) can be evaluated
-#' in the logistic kernel machine test, based on the kernelmatrix. 
+#' in the logistic kernel machine test, based on the \code{\link{kernel}} object. 
 #' Three kernel functions are available. 
 #'
 #' @param object \code{GWASdata} object containing the genotypes of the 
-#' individuals for which a kernel will be calculated.
-#' @param pathway object of the class \code{pathway} specifying the SNP set 
-#' for which a kernel will be calculated.
-#' @param type \code{character} indicating the kernel type: Use \code{"lin"}
-#'  for linear kernel, \code{"sia"} for size-adjusted or \code{"net"}
-#'  for network-based kernel.
-#' @param knots \code{GWASdata} object, if specified a low-rank kernel will be 
-#' computed.
-#' @param calculation \code{character} specifying if the kernel matrix is computed in 
-#' on CPU or GPU. 
-#' @param ... further arguments to be passed to kernel computations.
+#' individuals for which a \code{\link{kernel}} will be calculated.
+#' @param pathway object of the class \code{\link{pathway}} specifying the SNP set 
+#' for which a \code{\link{kernel}} will be calculated.
+#' @param type \code{character} indicating the \code{\link{kernel}} type: 
+#' Use \code{'lin'} to specify the linear kernel, \code{'sia'} for the 
+#' size-adjusted or \code{'net'} for the network-based kernel.
+#' @param knots \code{GWASdata} object, if specified a \code{\link{kernel}}  
+#' will be computed.
+#' @param calculation \code{character} specifying if the kernel \code{matrix} 
+#' is computed on CPU or GPU. 
+#' @param ... further arguments to be passed to \code{\link{kernel}} computations.
 #'
-#' @return Returns an object of class \code{kernel}, including the similarity 
-#' matrix of the pathway for the considered individuals.  \cr
-#' If \code{knots} are specified low-rank kernel of class \code{lowrank_kernel} 
+#' @return Returns an object of class \code{\link{kernel}}, including the similarity 
+#' \code{matrix} of the \code{\link{pathway}} for the considered individuals. \cr
+#' If \code{knots} are specified low-rank kernel of class a \code{lowrank_kernel} 
 #' will be returned, which is not necessarily quadratic and symmetric.
 #' @details
 #' Different types of kernels can be constructed:
@@ -129,9 +130,9 @@ setGeneric('calc_kernel', function(object, ...) standardGeneric('calc_kernel'))
 #'   \item \code{type='lin'} creates the linear kernel assuming additive SNP 
 #'effects to be evaluated in the logistic kernel machine test.
 #'   \item \code{type='sia'} calculates the size-adjusted kernel which takes 
-#' into consideration the numbers of SNPs and genes in a pathway to correct for 
-#' size bias.
-#'   \item \code{type='net'} calculates the network-based kernel. Here not only information on gene membership and gene/pathway size in number of SNPs is incorporated, but also the interaction structure of genes in the pathway.
+#' into consideration the numbers of SNPs and genes in a \code{\link{pathway}} 
+#' to correct for size bias.
+#'   \item \code{type='net'} calculates the network-based kernel. Here not only information on gene membership and gene/pathway size in number of SNPs is incorporated, but also the interaction structure of genes in the \code{\link{pathway}}.
 #' }
 #' For more details, check the references.
 #' @references
@@ -370,16 +371,16 @@ setMethod('net_kernel', signature(object = 'GWASdata'),
 ################################## helper function #############################
 
 setGeneric('rewire_network', function(object, ...) standardGeneric('rewire_network'))
-#' Rewires interactions in a pathway, which go through a gene not represented 
-#' by any SNPs in the considered GWAS dataset.   
+#' Rewires interactions in a \code{\link{pathway}}, which go through a gene not 
+#' represented by any SNPs in the considered \code{\link{GWASdata}} dataset.   
 #'
 #' @export
 #' @author Stefanie Friedrichs, Juliane Manitz
 #'
-#' @param object \code{pathway} object which's network matrix will be rewired
-#' @param x A \code{vector} of gene names, indicating which genes are not 
-#' represented by SNPs in the considered \code{GWASdata} and will be removed  
-#' @return A \code{pathway} object including the rewired network
+#' @param object \code{\link{pathway}} object which's network \code{matrix} will be rewired
+#' @param x A \code{vector} of gene names, indicating which genes are not represented
+#' by SNPs in the considered \code{\link{GWASdata}} object and will be removed  
+#' @return A \code{\link{pathway}} object including the rewired network \code{matrix}
 #'
 #' @name rewire_network
 #' @rdname rewire_network
@@ -459,8 +460,8 @@ setGeneric('get_ana', function(x, ...) standardGeneric('get_ana'))
 #'
 #' @param x \code{data.frame} with annotation information as returned from
 #' \code{get_anno}
-#' @param SNPset vector with SNPs to be analyzed
-#' @param pathway pathway object
+#' @param SNPset \code{vector} with SNPs to be analyzed
+#' @param pathway \code{pathway} object
 #' @return matrix ANA' for inner part of network kernel
 #' @keywords internal
 setMethod('get_ana', signature = 'data.frame',
@@ -499,16 +500,16 @@ setMethod('get_ana', signature = 'data.frame',
 })
 
 setGeneric('make_psd', function(x, ...) standardGeneric('make_psd'))
-#' Adjust network matrix to be positive semi-definite
+#' Adjust network \code{matrix} to be positive semi-definite
 #'
 #' @param x A \code{matrix} specifying the network adjacency matrix.
 #' @param eps A \code{numeric} value, setting the tolance for smallest 
 #' eigenvalue adjustment
-#' @return The matrix x, if it is positive definite and the closest positive 
-#' semi-definite matrix if x is not positive semi-definite.
+#' @return The \code{matrix} \code{x}, if it is positive definite and the closest
+#' positive semi-definite \code{matrix} if \code{x} is not positive semi-definite.
 #'
-#' @details For a matrix N, the closest positive semi-definite matrix is 
-#' calculated as N* = rho*N + (1+rho)*I, where I is the identity matrix
+#' @details For a \code{matrix} N, the closest positive semi-definite \code{matrix} is 
+#' calculated as N* = rho*N + (1+rho)*I, where I is the identity \code{matrix}
 #' and rho = 1/(1 - lambda) with lambda the smallest eigenvalue of N. 
 #' For more details check the references.
 #'
@@ -540,7 +541,7 @@ setMethod('make_psd', signature = 'matrix',
 
 #################################### basic methods for kernel #################
 # show method
-#' \code{show} displays the kernel object briefly
+#' \code{show} displays the \code{kernel} object briefly
 #' @param object An object of class \code{kernel}
 #'
 #' @examples
@@ -558,8 +559,8 @@ setMethod('show', signature('kernel'),
 # summary method
 setGeneric('summary', function(object) standardGeneric('summary'))
 
-#' \code{summary} generates a kernel object summary including the number of 
-#' individuals and genes for the pathway
+#' \code{summary} generates a \code{kernel} object summary including the number of 
+#' individuals and genes for the \code{\link{pathway}}
 #' @examples
 #' summary(net.kernel.hsa04020)
 #' @export
@@ -575,9 +576,9 @@ setMethod('summary', signature='kernel',
 
 # plot method
 if (!isGeneric("plot")) setGeneric('plot')
-#' \code{plot} creates an image plot of a kernel object
+#' \code{plot} creates an image plot of a \code{kernel} object
 #'
-#' @param x the \code{kernel object} to be plotted.
+#' @param x the \code{kernel} object to be plotted.
 #' @param y missing (placeholder).
 #' @param hclust \code{logical}, indicating whether a dendrogram should be added.
 #' @param ... further arguments to be passed to the function.
