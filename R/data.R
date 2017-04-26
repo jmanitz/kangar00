@@ -6,7 +6,7 @@
 #' @format A \code{data frame} with 50 rows and 3 variables:
 #' \describe{
 #'  \item{pheno}{includes the case-control status for each individual, coded as
-#'    1(case) or 0 (conrol)}
+#'    1(case) or 0 (control)}
 #'  \item{sex}{includes gender information for the 50 individuals, coded as 1 
 #'    (male) or 0 (female)}
 #'  \item{age}{numerical value giving the persons age}
@@ -24,7 +24,7 @@
 #' \describe{
 #'  \item{pathway}{includes KEGG identifiers of three example pathways}
 #'  \item{gene}{names of genes in the pathways}
-#'  \item{chr}{specifies the chromosom}
+#'  \item{chr}{specifies the chromosome}
 #'  \item{snp}{includes rs-numbers of example SNPs}
 #'  \item{position}{gives positions of example SNPs}
 #' }
@@ -47,16 +47,16 @@
 #' @source simulated data
 "geno"
 
-#' Example GWASdata object.
+#' Example \code{\link{GWASdata}} object.
 #'
 #' An object of type GWASdata containing the example files for 
 #' annotation, phenotypes and genotypes. 
 #'
-#' @format An object of class \code{GWASdata}:
+#' @format An object of class \code{\link{GWASdata}}:
 #' \describe{
 #'  \item{geno}{contains example genotypes}
-#'  \item{anno}{example annotation for threee pathways}
-#'  \item{pheno}{exemplary genotypes for the iondividuals listed in geno}
+#'  \item{anno}{example annotation for three pathways}
+#'  \item{pheno}{exemplary phenotypes for all 'genotyped' individuals}
 #'  \item{desc}{a description of the GWAS study, here 'example study'}
 #' }
 #' @usage data(gwas)
@@ -67,30 +67,32 @@
 #'
 #' An example of a kernel object.  
 #'
-#' @format An object of class \code{kernel} and type 'network' for the pathway 
+#' @format An object of class \code{\link{kernel}} and type 'network' for the pathway 
 #' hsa04020.
 #' \describe{
-#'  \item{type}{specifies which kernelfunction was used to calculate the kernel}
-#' \item{kernel}{includes the kernelmatrix calculated for the pathway}
-#' \item{pathway}{includes the pathway object of the pathway, for which the 
-#' kernelmatrix was calculated}
+#'  \item{type}{specifies which kernel function was used to calculate the kernel}
+#' \item{kernel}{includes the kernel matrix calculated for the pathway}
+#' \item{pathway}{includes the \code{\link{pathway}} object of the pathway, for which  
+#' the kernel matrix was calculated}
 #' }
 #' @usage data(net.kernel.hsa04020)
 #' @source simulated data and Ensembl extract
 "net.kernel.hsa04020"
 
-#' Example test result for the network-based kernel for pathway hsa04020.
+#' Example test result for the network-based \code{\link{kernel}} for 
+#' \code{\link{pathway}} hsa04020.
 #'
-#' An object of class \code{lkmt} containing exemplary test results for an 
+#' An object of class \code{\link{lkmt}} containing exemplary test results for an 
 #' application of the logistic kernel machine test, derived from the example data.  
 #'
-#' @format An object of class \code{lkmt} for the network-based kernel and 
-#' the pathway hsa04020.
+#' @format An object of class \code{\link{lkmt}} for the network-based  
+#' \code{\link{kernel}} and the \code{\link{pathway}} hsa04020.
 #' \describe{
-#'  \item{formular}{gives the formular defining the nullmodel used in the 
+#'  \item{formular}{gives a formular defining the nullmodel used in the 
 #' logistic kernel machine test}
-#' \item{kernel}{includes the \code{kernel} object of the pathway to be evaluated}
-#' \item{GWASdata}{gives the \code{GWASdata} object including the study data 
+#' \item{kernel}{includes the \code{\link{kernel}} object of the 
+#' \code{\link{pathway}} to be evaluated}
+#' \item{GWASdata}{gives the \code{\link{GWASdata}} object including the study data 
 #' considered in testing}
 #' \item{statistic}{gives the value of the test statistic}
 #' \item{df}{specifies the degrees of freedom}
@@ -100,29 +102,30 @@
 #' @source simulated data and Ensembl extract
 "lkmt.net.kernel.hsa04020"
 
-#' Example \code{pathway} object for pathway hsa04020. 
+#' Example \code{\link{pathway}} object for pathway hsa04020. 
 #'
-#' An object of class \code{pathway} for the pathway with KEGG identifier hsa04020.  
+#' An object of class \code{\link{pathway}} for the pathway with KEGG 
+#' identifier hsa04020.  
 #'
-#' @format A \code{pathway} object including 180 genes.
+#' @format A \code{\link{pathway}} object including 180 genes.
 #' \describe{
 #'  \item{id}{KEGG identifier of the example pathways}
-#'  \item{adj}{gives the quadratic adjacency matrix for the pathway and with 
-#' that the network topology. Matrix dimensionequal the number of genes in the 
+#'  \item{adj}{gives the quadratic adjacency \code{matrix} for the pathway and with 
+#' that the network topology. Matrix dimensions equal the number of genes in the 
 #' pathway}
-#'  \item{sign}{includes a vector of signs to distinguish activations and 
-#' inhibitions in the adjacency matrix }
+#'  \item{sign}{includes a \code{vector} of signs to distinguish activations and 
+#' inhibitions in the adjacency \code{matrix} }
 #' }
 #' @usage data(hsa04020)
 #' @source simulated data and Ensembl extract
 "hsa04020"
 
-#' Example \code{pathway_info} object for pathway hsa04022. 
+#' Example \code{\link{pathway_info}} object for \code{\link{pathway}} hsa04022. 
 #'
-#' An object of class \code{pathway_info} for the pathway with KEGG 
-#' identifier hsa04020.  
+#' An object of class \code{\link{pathway_info}} for the \code{\link{pathway}}
+#' with KEGG identifier hsa04020.  
 #'
-#' @format A \code{pathway_info} object including information on 163 genes.
+#' @format A \code{\link{pathway_info}} object including information on 163 genes.
 #' \describe{
 #'  \item{info}{a \code{data frame} including information on genes included in 
 #' pathway. Has columns 'pathway', 'gene_start', 'gene_end', 'chr', and 'gene'}
@@ -131,11 +134,11 @@
 #' @source Ensembl extract
 "hsa04022_info"
 
-#' Example \code{snp_info} object for SNP rs10243170. 
+#' Example \code{\link{snp_info}} object for SNP rs10243170. 
 #'
-#' An object of class \code{snp_info} for rs10243170. 
+#' An object of class \code{\link{snp_info}} for rs10243170. 
 #'
-#' @format A \code{snp_info} object including information on the SNP as 
+#' @format A \code{\link{snp_info}} object including information on the SNP as 
 #' extracted from the Ensembl database.
 #' \describe{
 #'  \item{info}{a \code{data frame} including the extracted information on the 

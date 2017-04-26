@@ -3,8 +3,8 @@ Type: Package
 Title: Kernel Approaches for Nonlinear Genetic Association Regression
 Version: 1.0
 Date: 2017-04-24
-Author: Stefanie Friedrichs [aut], Juliane Manitz [aut], Patricia Burger
-    [aut], Benjamin Hofner [aut], Ngoc Thuy Ha [aut], Saskia Freytag [ctb],
+Author: Juliane Manitz [aut], Stefanie Friedrichs [aut], Patricia Burger
+    [aut], Benjamin Hofner [aut], Ngoc Thuy Ha [ctb], Saskia Freytag [ctb],
     Heike Bickeboeller [ctb]
 Maintainer: Juliane Manitz <jmanitz@uni-goettingen.de>
 Description: Methods to extract information on pathways, genes and SNPs from
