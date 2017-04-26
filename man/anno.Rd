@@ -8,7 +8,7 @@
 \describe{
  \item{pathway}{includes KEGG identifiers of three example pathways}
  \item{gene}{names of genes in the pathways}
- \item{chr}{specifies the chromosom}
+ \item{chr}{specifies the chromosome}
  \item{snp}{includes rs-numbers of example SNPs}
  \item{position}{gives positions of example SNPs}
 }}

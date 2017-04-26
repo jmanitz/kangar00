@@ -48,8 +48,8 @@ test statistic.}
 
 \item{\code{df}}{A \code{vector} containing the number of degrees of freedom.}
 
-\item{\code{p.value}}{A \code{vector} giving the p-value calculated for the pathway
-in the variance component test.
+\item{\code{p.value}}{A \code{vector} giving the p-value calculated for the \
+code{\link{pathway}} object considered in the variance component test.
 
 For details on the variance component test see the references.}
 }}

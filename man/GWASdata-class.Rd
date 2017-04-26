@@ -22,14 +22,14 @@ GWASdata(object, ...)
 \S4method{GeneSNPsize}{GWASdata}(object)
 }
 \arguments{
-\item{object}{A \code{GWASdata} object.}
+\item{object}{A \code{\link{GWASdata}} object.}
 
 \item{...}{Further arguments can be added to the function.}
 
 \item{geno}{An object of any type, including the genotype information.}
 
 \item{anno}{A \code{data.frame} containing the annotation file for the 
-GWASdata object.}
+\code{GWASdata} object.}
 
 \item{pheno}{A \code{data.frame} specifying individual IDs, phenotypes and
 covariates to be included in the regression model.}
@@ -41,16 +41,19 @@ S4 class for an object representing a Genome-wide Assocaition Study.
 
 \code{'GWASdata'} is a GWASdata object constructor.
 
-\code{show} displays basic information on \code{GWASdata} object
+\code{show} displays basic information on \code{\link{GWASdata}} object
 
-\code{summary} summarizes the content of a \code{GWASdata} object and gives an overview about the information included in a \code{\link{GWASdata}} object. Summary statistics for phenotype and genotype data are calculated.
+\code{summary} summarizes the content of a \code{\link{GWASdata}} object 
+and gives an overview about the information included in a 
+\code{\link{GWASdata}} object. Summary statistics for phenotype and genotype 
+data are calculated.
 
-\code{GeneSNPsize} creates a \code{data.frame} of pathway
-names with numbers of snps and genes in each pathway.
+\code{GeneSNPsize} creates a \code{data.frame} of \code{\link{pathway}}
+names with numbers of snps and genes in each \code{\link{pathway}}.
 }
 \section{Methods (by generic)}{
 \itemize{
-\item \code{GeneSNPsize}: creates a \code{data.frame} of pathway names with numbers 
+\item \code{GeneSNPsize}: creates a \code{data.frame} of \code{\link{pathway}} names with numbers 
 of snps and genes in each pathway.
 }}
 
@@ -60,7 +63,7 @@ of snps and genes in each pathway.
 \item{\code{geno}}{An object of any type, including genotype information. The format
 needs to be one line per individual and on colum per SNP in minor-allele 
 coding (0,1,2). Other values between 0 and 2, as from impute dosages, are 
-allowed. Missing values must be imputed prior to creation of a GWAS object.}
+allowed. Missing values must be imputed prior to creation of a \code{GWASdata} object.}
 
 \item{\code{anno}}{A \code{data.frame} mapping SNPs to genes and genes to
 pathways. Needs to include the columns 'pathway' (pathway ID, e.g. hsa

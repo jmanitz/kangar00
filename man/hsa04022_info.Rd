@@ -3,8 +3,8 @@
 \docType{data}
 \name{hsa04022_info}
 \alias{hsa04022_info}
-\title{Example \code{pathway_info} object for pathway hsa04022.}
-\format{A \code{pathway_info} object including information on 163 genes.
+\title{Example \code{\link{pathway_info}} object for \code{\link{pathway}} hsa04022.}
+\format{A \code{\link{pathway_info}} object including information on 163 genes.
 \describe{
  \item{info}{a \code{data frame} including information on genes included in 
 pathway. Has columns 'pathway', 'gene_start', 'gene_end', 'chr', and 'gene'}
@@ -16,7 +16,7 @@ Ensembl extract
 data(hsa04022_info)
 }
 \description{
-An object of class \code{pathway_info} for the pathway with KEGG 
-identifier hsa04020.
+An object of class \code{\link{pathway_info}} for the \code{\link{pathway}}
+with KEGG identifier hsa04020.
 }
 \keyword{datasets}

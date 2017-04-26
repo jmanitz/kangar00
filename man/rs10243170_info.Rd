@@ -3,8 +3,8 @@
 \docType{data}
 \name{rs10243170_info}
 \alias{rs10243170_info}
-\title{Example \code{snp_info} object for SNP rs10243170.}
-\format{A \code{snp_info} object including information on the SNP as 
+\title{Example \code{\link{snp_info}} object for SNP rs10243170.}
+\format{A \code{\link{snp_info}} object including information on the SNP as 
 extracted from the Ensembl database.
 \describe{
  \item{info}{a \code{data frame} including the extracted information on the 
@@ -17,6 +17,6 @@ Ensembl extract
 data(rs10243170_info)
 }
 \description{
-An object of class \code{snp_info} for rs10243170.
+An object of class \code{\link{snp_info}} for rs10243170.
 }
 \keyword{datasets}

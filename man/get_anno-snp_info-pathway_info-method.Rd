@@ -9,27 +9,27 @@
 \S4method{get_anno}{snp_info,pathway_info}(object1, object2, ...)
 }
 \arguments{
-\item{object1}{A \code{snp_info} object with SNP information as returned by
-the \code{\link{snp_info}} function. The included \code{data frame} contains
-the columns "chr", "position" and "snp".}
+\item{object1}{A \code{\link{snp_info}} object with SNP information as returned
+by the \code{\link{snp_info}} function. The included \code{data frame} contains
+the columns 'chr', 'position' and 'snp'.}
 
-\item{object2}{A \code{pathway_info} object with information on genes
+\item{object2}{A \code{\link{pathway_info}} object with information on genes
 contained in pathways. It is created by the \code{\link{pathway_info}} 
 function and contains a \code{data frame} with columns 
-"pathway", "gene_start", gene_end", "chr", "gene".}
+'pathway', 'gene_start', 'gene_end', 'chr', 'gene'.}
 
 \item{...}{further arguments can be added.}
 }
 \value{
-A \code{data.frame} including mapping SNPs to genes and genes to
-pathways. It includes the columns "pathway", "gene", "chr", "snp" and 
-"position".
+A \code{data.frame} mapping SNPs to genes and genes to
+pathways. It includes the columns 'pathway', 'gene', 'chr', 'snp' and 
+'position'.
 }
 \description{
-A function to create the annotation for a GWASdata object. It combines a 
-\code{snp_info} and a \code{pathway_info} object into an annotation
- \code{data.frame} used for pathway analysis on GWAS. SNPs are assigned to
- pathways via gene membership.
+A function to create the annotation for a \code{\link{GWASdata}} object. 
+It combines a \code{\link{snp_info}} and a \code{\link{pathway_info}}
+object into an annotation \code{data.frame} used for \code{\link{pathway}} 
+analysis on GWAS. SNPs are assigned to pathways via gene membership.
 }
 \examples{
 data(hsa04022_info)

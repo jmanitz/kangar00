@@ -16,8 +16,9 @@ A \code{data.frame} listing the genes included in the pathway with
 their names as well as numbers used in KEGG database.
 }
 \description{
-This function extracts for a particular pathway all genes and the numbers
-they are represented with in the KEGG network from the corresponding KGML pathway file.
+This function extracts for a particular \code{\link{pathway}} all genes and 
+the numbers they are represented with in the KEGG network from the 
+corresponding KGML pathway file.
 }
 \author{
 Stefanie Friedrichs, Patricia Burger

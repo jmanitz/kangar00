@@ -5,7 +5,7 @@
 \alias{lkmt_test}
 \alias{score_test,matrix-method}
 \alias{davies_test,matrix-method}
-\title{A function to calculate the p-values for kernel-matrices.}
+\title{A function to calculate the p-values for kernel matrices.}
 \usage{
 lkmt_test(formula, kernel, GWASdata, method = c("satt", "davies"), ...)
 
@@ -51,16 +51,16 @@ in the variance component test.
 }
 }
 \description{
-A function to calculate the p-values for kernel-matrices.
+A function to calculate the p-values for kernel matrices.
 
-For parameter \code{"satt"} a pathways influence on the probability of 
+For parameter \code{'satt'} a pathways influence on the probability of 
 beeing a case is evaluated in the logistic kernel machine test and p-values 
 are determined using a Sattherthwaite Approximation as described by Dan Schaid.
 
-For parameter \code{"davies"} a pathways influence on the probability
+For parameter \code{'davies'} a pathways influence on the probability
 of beeing a case is evaluated using the p-value calculation method described 
-by Davies. Here the function \code{davies()} from package \code{CompQuadForm}
-is used.
+by Davies. Here the function \code{\link[CompQuadForm]{davies}} from package 
+\pkg{CompQuadForm} is used.
 }
 \examples{
 data(net.kernel.hsa04020)

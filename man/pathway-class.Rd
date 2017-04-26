@@ -54,15 +54,15 @@ pathway(object, ...)
 
 \item{...}{further arguments specifying plotting options in \code{plot.igraph}}
 
-\item{id}{A character repesenting the pathway id.}
+\item{id}{A \code{character} repesenting the \code{\link{pathway}} id.}
 
-\item{adj}{A matrix respresenting the network adjacency matrix  of dimension 
+\item{adj}{A \code{matrix} respresenting the network adjacency matrix of dimension 
 equaling the number of genes (1 interaction, 0 otherwise)}
 
-\item{sign}{A numeric vector indicating the interaction type for each link 
-(1 activation, -1 inhibition) in the interaction network for the pathway.}
+\item{sign}{A \code{numeric} \code{vector} indicating the interaction type for
+each link (1 activation, -1 inhibition) in the interaction network for the \code{\link{pathway}}.}
 
-\item{x}{pathway object}
+\item{x}{\code{\link{pathway}} object}
 
 \item{y}{missing (placeholder)}
 
@@ -70,21 +70,21 @@ equaling the number of genes (1 interaction, 0 otherwise)}
 
 \item{gene.names}{character indicating whether the genes names should appear in a legend (\code{'legend'}), as vertex label (\code{'nodes'}), or should be omitted (\code{NA})}
 
-\item{main}{optional overall main title, default is \code{NULL}, which uses the pathway id}
+\item{main}{optional overall main title, default is \code{NULL}, which uses the \code{\link{pathway}} id}
 
-\item{asp}{a numeric constant, which gives the aspect ratio parameter for plot, default is 0.95}
+\item{asp}{a \code{numeric} constant, which gives the aspect ratio parameter for plot, default is 0.95}
 
-\item{vertex.size}{a numeric constant specifying the vertex size, default is 11}
+\item{vertex.size}{a \code{numeric} constant specifying the vertex size, default is 11}
 
-\item{vertex.color}{a character or numeric constant specifying the vertex color, default is 'khaki1'}
+\item{vertex.color}{a \code{character} or \code{numeric} constant specifying the vertex color, default is 'khaki1'}
 
-\item{vertex.label.cex}{a numeric constant specifying the the vertex label size, default is 0.8,}
+\item{vertex.label.cex}{a \code{numeric} constant specifying the the vertex label size, default is 0.8,}
 
-\item{edge.width}{a numeric constant specifying the edge width, default is 2}
+\item{edge.width}{a \code{numeric} constant specifying the edge width, default is 2}
 
-\item{edge.color}{a character or numeric constant specifying the edge color, default is 'olivedrab4'}
+\item{edge.color}{a \code{character} or \code{numeric} constant specifying the edge color, default is 'olivedrab4'}
 
-\item{no}{a numeric constant specifying the number of genes to be sampled, default is 3}
+\item{no}{a \code{numeric} constant specifying the number of genes to be sampled, default is 3}
 }
 \value{
 \code{analyze} returns a \code{data.frame} consisting of 
@@ -104,23 +104,26 @@ equaling the number of genes (1 interaction, 0 otherwise)}
 \description{
 An S4 class to represent a gene-gene interaction network
 
-\code{'pathway'} is the pathway object constructor.
+\code{'pathway'} is the \code{\link{pathway}} object constructor.
 
-\code{show} displays the pathway object briefly
+\code{show} displays the \code{\link{pathway}} object briefly
 
-\code{summary} generates a pathway object summary including basic network properties.
+\code{summary} generates a \code{\link{pathway}} object summary including basic network properties.
 
 \code{pathway2igraph} converts a \code{\link{pathway}} object into an 
-\code{igraph} object with edge attribute \code{sign}
+\code{\link[igraph]{igraph}} object with edge attribute \code{sign}
 
-analyze pathway network properties
+analyze \code{\link{pathway}} network properties
 
 \code{get_genes} is a helper function that extracts the gene names in a 
-pathway and returns a vector of character containing gene names
+\code{\link{pathway}} and returns a \code{vector} containing \code{character}
+elements of gene names
 
-\code{plot} plots pathway as igraph object
+\code{plot} plots \code{\link{pathway}} as \code{\link[igraph]{igraph}} object
 
-\code{sample_genes} function randomly selects effect genes in pathway and returns a vector of length \code{no} with vertex id's of sampled genes
+\code{sample_genes} function randomly selects effect genes in a 
+\code{\link{pathway}} and returns a \code{vector} of length \code{no} with 
+vertex id's of sampled genes
 }
 \section{Methods (by generic)}{
 \itemize{
@@ -134,14 +137,15 @@ pathway and returns a vector of character containing gene names
 \section{Slots}{
 
 \describe{
-\item{\code{id}}{A character repesenting the pathway id, e.g. hsa00100 as used in 
-the KEGG database.}
+\item{\code{id}}{A \code{character} repesenting the \code{\link{pathway}} id, 
+e.g. hsa00100 as used in the KEGG database.}
 
-\item{\code{adj}}{A matrix respresenting the network adjacency matrix  of dimension 
+\item{\code{adj}}{A \code{matrix} respresenting the network adjacency matrix of dimension 
 equaling the number of genes (1 interaction, 0 otherwise)}
 
-\item{\code{sign}}{A numeric vector indicating the interaction type for each link 
-(1 activation, -1 inhibition) in the interaction network for the pathway.}
+\item{\code{sign}}{A \code{numeric} \code{vector} indicating the interaction type for 
+each link (1 activation, -1 inhibition) in the interaction network for the 
+\code{\link{pathway}}.}
 }}
 
 \examples{
@@ -153,18 +157,18 @@ hsa04020
 #summary method
 data(hsa04020)
 summary(hsa04020)
-# convert to igraph object
+# convert to \\code{\\link[igraph]{igraph}} object
 data(hsa04020)
 str(hsa04020)
 g <- pathway2igraph(hsa04020)
 str(g)
-# analyse pathway network properties
+# analyse \\code{\\link{pathway}} network properties
 data(hsa04020)
 summary(hsa04020)
 analyze(hsa04020)
-# extract gene names from pathway
+# extract gene names from \\code{\\link{pathway}}
 get_genes(hsa04020)
-# plot pathway as igraph object
+# plot \\code{\\link{pathway}} as \\code{\\link[igraph]{igraph}} object
 plot(hsa04020)
 sample3 <- sample_genes(hsa04020, no = 3)
 plot(hsa04020, highlight.genes = sample3)

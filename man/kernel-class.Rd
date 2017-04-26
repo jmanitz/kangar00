@@ -9,7 +9,7 @@
 \alias{summary,kernel,ANY-method}
 \alias{plot,kernel,missing-method}
 \alias{plot,kernel,ANY-method}
-\title{An S4 class representing the kernel of a pathway}
+\title{An S4 class representing a kernel matrix calculated for a pathway}
 \usage{
 \S4method{show}{kernel}(object)
 
@@ -20,7 +20,7 @@
 \arguments{
 \item{object}{An object of class \code{kernel}}
 
-\item{x}{the \code{kernel object} to be plotted.}
+\item{x}{the \code{kernel} object to be plotted.}
 
 \item{y}{missing (placeholder).}
 
@@ -29,25 +29,25 @@
 \item{...}{further arguments to be passed to the function.}
 }
 \description{
-An S4 class representing the kernel of a pathway
+An S4 class representing a kernel matrix calculated for a pathway
 
-\code{show} displays the kernel object briefly
+\code{show} displays the \code{kernel} object briefly
 
-\code{summary} generates a kernel object summary including the number of 
-individuals and genes for the pathway
+\code{summary} generates a \code{kernel} object summary including the number of 
+individuals and genes for the \code{\link{pathway}}
 
-\code{plot} creates an image plot of a kernel object
+\code{plot} creates an image plot of a \code{kernel} object
 }
 \section{Slots}{
 
 \describe{
 \item{\code{type}}{A \code{character} representing the kernel type: Use 
-\code{"lin"} for linear kernels, \code{"sia"} for size-adjusted 
-or \code{"net"} for network-based kernels.}
+\code{'lin'} for linear kernel, \code{'sia'} for the size-adjusted 
+or \code{'net'} for the network-based kernel.}
 
-\item{\code{kernel}}{A kernel matrix of dimension equal to the number of individuals}
+\item{\code{kernel}}{A kernel \code{matrix} of dimension equal to the number of individuals}
 
-\item{\code{pathway}}{A pathway object}
+\item{\code{pathway}}{A \code{\link{pathway}} object}
 }}
 
 \examples{

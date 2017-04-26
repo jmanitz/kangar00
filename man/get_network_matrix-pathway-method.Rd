@@ -4,12 +4,12 @@
 \name{get_network_matrix,pathway-method}
 \alias{get_network_matrix,pathway-method}
 \alias{get_network_matrix}
-\title{Function to calculate the network matrix}
+\title{Function to calculate the network \code{matrix} for a \code{\link{pathway}} object}
 \usage{
 \S4method{get_network_matrix}{pathway}(object, directed = TRUE)
 }
 \arguments{
-\item{object}{A \code{pathway} object identifying the pathway for which gene 
+\item{object}{A \code{\link{pathway}} object identifying the pathway for which gene 
 interaction infomation should be extracted. Here, KEGG IDs of format
 'hsa00100' are used and information is downloaded from the KEGG database.}
 
@@ -17,13 +17,14 @@ interaction infomation should be extracted. Here, KEGG IDs of format
 should be returned directed (\code{TRUE}) or undirected (\code{FALSE}).}
 }
 \value{
-The altered \code{pathway} object, in which the slots 'adj' and 
-'sign' have been changed according to the downloaded information on the pathway.
+The altered \code{\link{pathway}} object, in which the slots \code{'adj'} and 
+\code{'sign'} have been changed according to the downloaded information on the 
+\code{\link{pathway}}.
 }
 \description{
-This function creates the networkmatrix representing the gene-gene interaction 
-structure within a particular pathway. In this process a KEGG kgml file is 
-downloaded and saved in the working directory.
+This function creates the network matrix representing the gene-gene interaction 
+structure within a particular \code{\link{pathway}}. In this process a 
+KEGG kgml file is downloaded and saved in the working directory.
 }
 \author{
 Stefanie Friedrichs, Patricia Burger

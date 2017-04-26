@@ -3,7 +3,7 @@
 \docType{methods}
 \name{set_one,matrix-method}
 \alias{set_one,matrix-method}
-\title{Helper function to set matrix entries to 0/1/-1 only}
+\title{Helper function to set \code{matrix} entries to 0/1/-1 only}
 \usage{
 \S4method{set_one}{matrix}(x)
 }
@@ -11,12 +11,12 @@
 \item{x}{numeric \code{matrix} representing the network adjacency matrix.}
 }
 \value{
-A \code{matrix} representing the interaction network in the pathway
-with entries equal to 1, -1 or 0.
+A \code{matrix} representing the interaction network in the 
+\code{\link{pathway}} object with entries equal to 1, -1 or 0.
 }
 \description{
-This function sets all entries in a matrix bigger than 1 to 1 and all entries 
-smaller than -1 to -1. It is called by \code{get_network_matrix}.
+This function sets all entries in a \code{matrix} bigger than 1 to 1 and all entries 
+smaller than -1 to -1. It is called by \code{\link{get_network_matrix}}.
 (For internal use)
 }
 \author{

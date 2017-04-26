@@ -6,33 +6,35 @@
 \alias{read_geno}
 \alias{character}
 \title{read genotype data from file to one of several available objects, which 
-can be passed to a GWASdata object \code{GWASdata-class}.}
+can be passed to a GWASdata object \code{\link{GWASdata}}.}
 \usage{
 \S4method{read_geno}{character}(file.path, save.path = NULL, sep = " ",
   header = TRUE, use.fread = TRUE, use.big = FALSE, row.names = FALSE,
   ...)
 }
 \arguments{
-\item{file.path}{character, which contains the path to the data file to be read}
+\item{file.path}{\code{character} giving the path to the data file to be read}
 
-\item{save.path}{character, which contains the path for the backingfile}
+\item{save.path}{\code{character} containing the path for the backingfile}
 
-\item{sep}{character. A field delimeter. See \code{bigmemory::read.big.matrix} for
-details.}
+\item{sep}{\code{character}. A field delimeter. See 
+\code{\link[bigmemory]{read.big.matrix}} for details.}
 
-\item{header}{logical. Does the data set contain column names?}
+\item{header}{\code{logical}. Does the data set contain column names?}
 
-\item{use.fread}{logical. Should the dataset be read using the function \code{fread} from package data.table?}
+\item{use.fread}{\code{logical}. Should the dataset be read using the function 
+\code{\link[data.table]{fread}} \code{fread} from package \pkg{data.table}?}
 
-\item{use.big}{logical. Should the dataset be read using the function \code{read.big.matrix} from package bigmemory?}
+\item{use.big}{\code{logical}. Should the dataset be read using the function 
+\code{\link[bigmemory]{read.big.matrix}} from package \pkg{bigmemory}?}
 
-\item{row.names}{logical. Does the dataset include rownames?}
+\item{row.names}{\code{logical}. Does the dataset include rownames?}
 
-\item{...}{further arguments to be passed to \code{bigmemory::read.big.matrix}.}
+\item{...}{further arguments to be passed to \code{read_geno}.}
 }
 \description{
 read genotype data from file to one of several available objects, which 
-can be passed to a GWASdata object \code{GWASdata-class}.
+can be passed to a GWASdata object \code{\link{GWASdata}}.
 }
 \details{
 If the data set contains rownames specified, set option \code{has.row.names = TRUE}.

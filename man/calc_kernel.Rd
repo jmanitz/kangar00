@@ -23,37 +23,38 @@
 }
 \arguments{
 \item{object}{\code{GWASdata} object containing the genotypes of the 
-individuals for which a kernel will be calculated.}
+individuals for which a \code{\link{kernel}} will be calculated.}
 
-\item{pathway}{object of the class \code{pathway} specifying the SNP set 
-for which a kernel will be calculated.}
+\item{pathway}{object of the class \code{\link{pathway}} specifying the SNP set 
+for which a \code{\link{kernel}} will be calculated.}
 
-\item{knots}{\code{GWASdata} object, if specified a low-rank kernel will be 
-computed.}
+\item{knots}{\code{GWASdata} object, if specified a \code{\link{kernel}}
+will be computed.}
 
-\item{type}{\code{character} indicating the kernel type: Use \code{"lin"}
-for linear kernel, \code{"sia"} for size-adjusted or \code{"net"}
-for network-based kernel.}
+\item{type}{\code{character} indicating the \code{\link{kernel}} type: 
+Use \code{'lin'} to specify the linear kernel, \code{'sia'} for the 
+size-adjusted or \code{'net'} for the network-based kernel.}
 
-\item{calculation}{\code{character} specifying if the kernel matrix is computed in 
-on CPU or GPU.}
+\item{calculation}{\code{character} specifying if the kernel \code{matrix} 
+is computed on CPU or GPU.}
 
-\item{...}{further arguments to be passed to kernel computations.}
+\item{...}{further arguments to be passed to \code{\link{kernel}} computations.}
 }
 \value{
-Returns an object of class \code{kernel}, including the similarity 
-matrix of the pathway for the considered individuals.  \cr
-If \code{knots} are specified low-rank kernel of class \code{lowrank_kernel} 
+Returns an object of class \code{\link{kernel}}, including the similarity 
+\code{matrix} of the \code{\link{pathway}} for the considered individuals. \cr
+If \code{knots} are specified low-rank kernel of class a \code{lowrank_kernel} 
 will be returned, which is not necessarily quadratic and symmetric.
 }
 \description{
-Uses individuals' genotypes to calculate a kernel-matrix for a specific 
-pathway. Each numeric value within this matrix is calculated
+Uses individuals' genotypes to create a \code{\link{kernel}} object including 
+the calculated kernel \code{matrix} for a specific \code{\link{pathway}}.
+Each numeric value within this \code{matrix} is calculated
 from two individuals' genotypevectors of the SNPs within 
-the pathway by a kernelfunction. It can be interpreted as the genetic 
-similiarity of the individuals. Association between the pathway and a 
+the \code{\link{pathway}} by a kernel function. It can be interpreted as the genetic 
+similiarity of the individuals. Association between the \code{\link{pathway}} and a 
 binary phenotype (case-control status) can be evaluated
-in the logistic kernel machine test, based on the kernelmatrix. 
+in the logistic kernel machine test, based on the \code{\link{kernel}} object. 
 Three kernel functions are available.
 }
 \details{
@@ -62,9 +63,9 @@ Different types of kernels can be constructed:
   \item \code{type='lin'} creates the linear kernel assuming additive SNP 
 effects to be evaluated in the logistic kernel machine test.
   \item \code{type='sia'} calculates the size-adjusted kernel which takes 
-into consideration the numbers of SNPs and genes in a pathway to correct for 
-size bias.
-  \item \code{type='net'} calculates the network-based kernel. Here not only information on gene membership and gene/pathway size in number of SNPs is incorporated, but also the interaction structure of genes in the pathway.
+into consideration the numbers of SNPs and genes in a \code{\link{pathway}} 
+to correct for size bias.
+  \item \code{type='net'} calculates the network-based kernel. Here not only information on gene membership and gene/pathway size in number of SNPs is incorporated, but also the interaction structure of genes in the \code{\link{pathway}}.
 }
 For more details, check the references.
 }

@@ -8,7 +8,7 @@
 \S4method{set_names}{matrix}(x, nodes, my_list)
 }
 \arguments{
-\item{x}{A \code{matrix} representing the networkmatrix.}
+\item{x}{A \code{matrix} representing the network matrix.}
 
 \item{nodes}{A \code{vector} of gene numbers to be replaced by names.}
 

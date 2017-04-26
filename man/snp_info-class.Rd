@@ -17,11 +17,12 @@ snp_info(x, ...)
 \S4method{summary}{snp_info}(object)
 }
 \arguments{
-\item{x}{A character vector of SNP rsnumbers for which positions will be extracted.}
+\item{x}{A \code{character} \code{vector} of SNP rsnumbers for which 
+positions will be extracted.}
 
 \item{...}{further arguments can be added.}
 
-\item{object}{An object of class \code{\link{snp_info}}.}
+\item{object}{An \code{object} of class \code{\link{snp_info}}.}
 }
 \value{
 A \code{data.frame} including the SNP positions with columns
@@ -29,20 +30,20 @@ A \code{data.frame} including the SNP positions with columns
 will not be listed in the returned \code{snp_info} object, SNPs with multiple
 positions  will appear several times.
 
-\code{show} Basic information on \code{snp_info} object.
+\code{show} Basic information on \code{\link{snp_info}} object.
 
-\code{summary} Summarized information on \code{snp_info} object.
+\code{summary} Summarized information on \code{\link{snp_info}} object.
 }
 \description{
 An S4 class for an object assigning SNP positions to rs-numbers (for internal use)
 
-This function gives for a vector of SNP identifiers the position of each SNP 
+This function gives for a \code{vector} of SNP identifiers the position of each SNP 
 as extracted from the Ensemble database. The database is accessed via the
-R-package \code{biomaRt}.
+R-package \pkg{biomaRt}.
 
-\code{show} Shows basic information on \code{snp_info} object
+\code{show} Shows basic information on \code{\link{snp_info}} object
 
-\code{summary} Summarizes information on \code{snp_info} object
+\code{summary} Summarizes information on \code{\link{snp_info}} object
 }
 \section{Slots}{
 

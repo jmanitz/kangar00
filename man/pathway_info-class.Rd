@@ -26,23 +26,23 @@ should be extracted. Here KEGG IDs (format: 'hsa00100') are used.}
 }
 \value{
 A \code{data.frame} including as many rows as genes appear in the 
-pathway. for each gene its name, the start and end point and the chromosome 
+\code{\link{pathway}}. for each gene its name, the start and end point and the chromosome 
 it lies on are given.
 
-\code{show} Basic information on \code{pathway_info} object.
+\code{show} Basic information on \code{\link{pathway_info}} object.
 
-\code{summary} Summarized information on \code{pathway_info} object.
+\code{summary} Summarized information on \code{\link{pathway_info}} object.
 }
 \description{
 An S4 class for an object assigning genes to pathways
 
-This function lists all genes formig a particular pathway. Start and end  
+This function lists all genes formig a particular \code{\link{pathway}}. Start and end  
 positions of these genes are extracted from the Ensemble database. The 
-database is accessed via the R-package \code{biomaRt}.
+database is accessed via the R-package \pkg{biomaRt}.
 
-\code{show} Shows basic information on \code{pathway_info} object
+\code{show} Shows basic information on \code{\link{pathway_info}} object
 
-\code{summary} Summarizes information on \code{pathway_info} object
+\code{summary} Summarizes information on \code{\link{pathway_info}} object
 }
 \section{Slots}{
 

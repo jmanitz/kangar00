@@ -11,9 +11,9 @@
 \item{x}{\code{data.frame} with annotation information as returned from
 \code{get_anno}}
 
-\item{SNPset}{vector with SNPs to be analyzed}
+\item{SNPset}{\code{vector} with SNPs to be analyzed}
 
-\item{pathway}{pathway object}
+\item{pathway}{\code{pathway} object}
 }
 \value{
 matrix ANA' for inner part of network kernel

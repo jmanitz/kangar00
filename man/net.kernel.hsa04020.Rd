@@ -4,13 +4,13 @@
 \name{net.kernel.hsa04020}
 \alias{net.kernel.hsa04020}
 \title{Example network-based kernel matrix for pathway hsa04020.}
-\format{An object of class \code{kernel} and type 'network' for the pathway 
+\format{An object of class \code{\link{kernel}} and type 'network' for the pathway 
 hsa04020.
 \describe{
- \item{type}{specifies which kernelfunction was used to calculate the kernel}
-\item{kernel}{includes the kernelmatrix calculated for the pathway}
-\item{pathway}{includes the pathway object of the pathway, for which the 
-kernelmatrix was calculated}
+ \item{type}{specifies which kernel function was used to calculate the kernel}
+\item{kernel}{includes the kernel matrix calculated for the pathway}
+\item{pathway}{includes the \code{\link{pathway}} object of the pathway, for which  
+the kernel matrix was calculated}
 }}
 \source{
 simulated data and Ensembl extract

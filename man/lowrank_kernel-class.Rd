@@ -15,12 +15,12 @@ equal, better construct a full-rank kernel of class \code{\link{kernel}}.
 \section{Slots}{
 
 \describe{
-\item{\code{type}}{character, kernel type: Use \code{"lin"} for linear kernels,
-\code{"sia"} for size-adjusted or \code{"net"} for network-based kernels.}
+\item{\code{type}}{character, kernel type: Use \code{'lin'} for the linear kernel,
+\code{'sia'} for the size-adjusted or \code{'net'} for the network-based kernel.}
 
-\item{\code{kernel}}{kernel matrix of dimension equal to individuals}
+\item{\code{kernel}}{kernel \code{matrix} of dimension equal to individuals}
 
-\item{\code{pathway}}{pathway object}
+\item{\code{pathway}}{\code{\link{pathway}} object}
 }}
 
 \examples{

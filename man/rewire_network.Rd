@@ -4,23 +4,23 @@
 \name{rewire_network}
 \alias{rewire_network}
 \alias{rewire_network,pathway-method}
-\title{Rewires interactions in a pathway, which go through a gene not represented 
-by any SNPs in the considered GWAS dataset.}
+\title{Rewires interactions in a \code{\link{pathway}}, which go through a gene not 
+represented by any SNPs in the considered \code{\link{GWASdata}} dataset.}
 \usage{
 \S4method{rewire_network}{pathway}(object, x)
 }
 \arguments{
-\item{object}{\code{pathway} object which's network matrix will be rewired}
+\item{object}{\code{\link{pathway}} object which's network \code{matrix} will be rewired}
 
-\item{x}{A \code{vector} of gene names, indicating which genes are not 
-represented by SNPs in the considered \code{GWASdata} and will be removed}
+\item{x}{A \code{vector} of gene names, indicating which genes are not represented
+by SNPs in the considered \code{\link{GWASdata}} object and will be removed}
 }
 \value{
-A \code{pathway} object including the rewired network
+A \code{\link{pathway}} object including the rewired network \code{matrix}
 }
 \description{
-Rewires interactions in a pathway, which go through a gene not represented 
-by any SNPs in the considered GWAS dataset.
+Rewires interactions in a \code{\link{pathway}}, which go through a gene not 
+represented by any SNPs in the considered \code{\link{GWASdata}} dataset.
 }
 \examples{
 \dontrun{ 

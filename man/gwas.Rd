@@ -3,12 +3,12 @@
 \docType{data}
 \name{gwas}
 \alias{gwas}
-\title{Example GWASdata object.}
-\format{An object of class \code{GWASdata}:
+\title{Example \code{\link{GWASdata}} object.}
+\format{An object of class \code{\link{GWASdata}}:
 \describe{
  \item{geno}{contains example genotypes}
- \item{anno}{example annotation for threee pathways}
- \item{pheno}{exemplary genotypes for the iondividuals listed in geno}
+ \item{anno}{example annotation for three pathways}
+ \item{pheno}{exemplary phenotypes for all 'genotyped' individuals}
  \item{desc}{a description of the GWAS study, here 'example study'}
 }}
 \source{

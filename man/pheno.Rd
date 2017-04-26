@@ -7,7 +7,7 @@
 \format{A \code{data frame} with 50 rows and 3 variables:
 \describe{
  \item{pheno}{includes the case-control status for each individual, coded as
-   1(case) or 0 (conrol)}
+   1(case) or 0 (control)}
  \item{sex}{includes gender information for the 50 individuals, coded as 1 
    (male) or 0 (female)}
  \item{age}{numerical value giving the persons age}

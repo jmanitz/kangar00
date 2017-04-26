@@ -5,7 +5,7 @@
 \alias{make_psd,matrix-method}
 \alias{make_psd}
 \alias{matrix}
-\title{Adjust network matrix to be positive semi-definite}
+\title{Adjust network \code{matrix} to be positive semi-definite}
 \usage{
 \S4method{make_psd}{matrix}(x, eps = sqrt(.Machine$double.eps))
 }
@@ -16,15 +16,15 @@
 eigenvalue adjustment}
 }
 \value{
-The matrix x, if it is positive definite and the closest positive 
-semi-definite matrix if x is not positive semi-definite.
+The \code{matrix} \code{x}, if it is positive definite and the closest
+positive semi-definite \code{matrix} if \code{x} is not positive semi-definite.
 }
 \description{
-Adjust network matrix to be positive semi-definite
+Adjust network \code{matrix} to be positive semi-definite
 }
 \details{
-For a matrix N, the closest positive semi-definite matrix is 
-calculated as N* = rho*N + (1+rho)*I, where I is the identity matrix
+For a \code{matrix} N, the closest positive semi-definite \code{matrix} is 
+calculated as N* = rho*N + (1+rho)*I, where I is the identity \code{matrix}
 and rho = 1/(1 - lambda) with lambda the smallest eigenvalue of N. 
 For more details check the references.
 }
