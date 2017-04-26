@@ -2,11 +2,11 @@ Package: kangar00
 Type: Package
 Title: Kernel Approaches for Nonlinear Genetic Association Regression
 Version: 1.0
-Date: 2017-04-24
-Author: Juliane Manitz [aut], Stefanie Friedrichs [aut], Patricia Burger
-    [aut], Benjamin Hofner [aut], Ngoc Thuy Ha [ctb], Saskia Freytag [ctb],
+Date: 2017-04-26
+Author: Juliane Manitz [aut], Stefanie Friedrichs [aut], Patricia Burger [aut], 
+    Benjamin Hofner [aut], Ngoc Thuy Ha [aut], Saskia Freytag [ctb],
     Heike Bickeboeller [ctb]
-Maintainer: Juliane Manitz <jmanitz@uni-goettingen.de>
+Maintainer: Juliane Manitz <r@manitz.org>
 Description: Methods to extract information on pathways, genes and SNPs from
     online databases. It provides functions for data preparation and evaluation
     of genetic influence on a binary outcome using the logistic kernel machine
