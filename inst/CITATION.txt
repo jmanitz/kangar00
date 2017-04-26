@@ -1,0 +1,89 @@
+year <- sub(".*(2[[:digit:]]{3})-.*", "\\1", meta$Date)
+vers <- meta$Version
+
+citEntry(entry="Manual",
+         title = "{kangar00}: Kernel Approaches for Nonlinear Genetic Association Regression",
+         author = personList(as.person("Juliane Manitz"),
+                             as.person("Stefanie Friedrichs"),
+							 as.person("Patricia Burger"),
+							 as.person("Benjamin Hofner"),
+                             as.person("Ngoc Thuy Ha"),
+							 as.person("Saskia Freytag"),
+                             as.person("Heike Bickeboeller")),
+                             
+         year = year,
+         note = paste("{R} package version", vers),
+         url = "https://CRAN.R-project.org/package=kangar00",
+         header = "To cite the package 'kangar00' itself use:",
+         textVersion = paste(
+             "J. Manitz, S. Friedrichs, P. Burger, B. Hofner, N.T. Ha, S. Freytag, H. Bickeboeller (",
+             year, "). kangar00: Kernel Approaches for Nonlinear Genetic Association Regression, ",
+             paste("R package version", vers),
+             ", https://CRAN.R-project.org/package=kangar00", ".", sep = ""
+             )
+         )	 
+
+citEntry(entry="Article",
+         title = "A Novel Kernel for Correcting Size Bias in the Logistic Kernel Machine Test with an Application to Rheumatoid Arthritis.",
+         author = personList(as.person("Saskia Freytag"),
+                             as.person("Heike Bickeboeller"),
+                             as.person("Christopher I Amos"),
+							 as.person("Thomas Kneib"),
+                             as.person("Martin Schlather")),
+         journal      = "Human Heredity",
+         year         = "2012",
+         volume       = "74",
+         pages        = "97--108",
+         header = "The size-adjusted kernel function is introduced in:",
+         textVersion = paste(
+             "S. Freytag, H. Bickeboeller, C.I. Amos, T. Kneib, M. Schlather (2012).",
+             "A Novel Kernel for Correcting Size Bias in the Logistic Kernel Machine Test with an Application to Rheumatoid Arthritis.",
+             "Human Heredity, 74, 97-108."
+             )
+		)
+
+citEntry(entry="Article",
+         title = "A Network-Based Kernel Machine Test for the Identifcation of Risk Pathways in Genome-Wide Association Studies.",
+         author = personList(as.person("Saskia Freytag"),
+							 as.person("Juliane Manitz"),
+							 as.person("Martin Schlather"),
+							 as.person("Thomas Kneib"),
+							 as.person("Christopher I Amos"),
+							 as.person("Angela Risch"),
+							 as.person("Jenny Chang-Claude"),
+							 as.person("Joachim Heinrich"),
+                             as.person("Heike Bickeboeller")),							                             
+         journal      = "Human Heredity",
+         year         = "2013",
+         volume       = "76",
+         pages        = "64--75",
+         header = "The network-based kernel function is introduced in:",
+         textVersion = paste(
+             "S. Freytag, J. Manitz, M. Schlather, T. Kneib, C.I. Amos, A. Risch, J. Chang-Claude, J. Heinrich, H. Bickeboeller (2013).",
+             "A Network-Based Kernel Machine Test for the Identifcation of Risk Pathways in Genome-Wide Association Studies.",
+             "Human Heredity, 76, 64-75."
+             )
+		)
+		
+citEntry(entry="Article",
+         title = "Pathway-Based Kernel Boosting for the Analysis of Genome-Wide Association Studies.",
+         author = personList(as.person("Stefanei Friedrichs"),
+							 as.person("Juliane Manitz"),
+                             as.person("Patricia Burger"),
+							 as.person("Christopher I Amos"),
+							 as.person("Angela Risch"),
+							 as.person("Jenny Chang-Claude"),
+							 as.person("Heinrich E. Wichmann"),
+							 as.person("Thomas Kneib"),
+                             as.person("Heike Bickeboeller"),
+							 as.person("Benjamin Hofner")),
+         journal      = "Computational and Mathematical Methods in Medicine",
+         header = "The kernel boosting method is introduced in:",
+         textVersion = paste(
+             "S. Friedrichs, J. Manitz, P. Burger, C.I. Amos, A. Risch, J.C. Chang-Claude, H.E. Wichmann, T. Kneib, H. Bickeboeller, and B. Hofner (2017)",
+             "Pathway-Based Kernel Boosting for the Analysis of Genome-Wide Association Studies.",
+             "Submitted to \emph{Computational and Mathematical Methods in Medicine}"
+             )
+		)
+		
+citFooter('\nUse ', sQuote('toBibtex(citation("mboost"))'), ' to extract BibTeX references.')
