@@ -79,7 +79,7 @@ will return a `pathway_info` object containing a data frame of the form
 |hsa04710 | 26120026  | 26125127 | 12|BHLHE41| 
 |hsa04710 |   ...     |    ...   | ...| ...  |
 
-listing informatin on all genes KEGG assigned to Circadian rhythm.
+listing information on all genes KEGG assigned to Circadian rhythm.
 
 ### Pathway object
 
@@ -107,7 +107,7 @@ the corresponding pathway. It includes entries equal to $1$ (representing an
 activation interaction), $-1$ (denoting an inhibiting interaction) or $0$ 
 (no interaction). 
 
-A networkmatrix can be created using the function `get_network_matrix()`. Gene
+A network matrix can be created using the function `get_network_matrix()`. Gene
 interaction information for a specific pathway is extracted from the KEGG
 database. It is accessed via the function `retrieveKGML()` from the `KEGGgraph`
  package. An internet connection is required for this step. 
@@ -117,7 +117,7 @@ pathw_complete <- get_network_matrix(pathw, directed=FALSE)
 ``` 
 will download the KEGG XML file for the pathway with ID 'hsa04710' and save 
 it in the working directory. The function will convert the data into a
-networkmatrix and add it to the given pathway object. The expanded pathway 
+network matrix and add it to the given pathway object. The expanded pathway 
 object will be returned. The user can specify whether the gene-interaction 
 matrix should be given directed (directed=TRUE) or undirected (directed=FALSE).
 
@@ -127,7 +127,7 @@ matrix should be given directed (directed=TRUE) or undirected (directed=FALSE).
 Kangar00 offers a function to download positions of the SNPs available in 
 your GWAS dataset from the Ensembl database.
  
-*  `snp_info()` will take a vector of rsnumbers and give the corresponding base 
+*  `snp_info()` will take a vector of rs-numbers and give the corresponding base 
    pair positions.
    
 *  Positions are extracted from the Ensembl database and thus equal the current 
@@ -155,7 +155,7 @@ To define SNP sets representing a pathway, the function `get_anno()` can be used
    including a data frame listing all SNPs to be annotated. This data frame 
    must include the columns 'chr', 'position' and 'rsnumber', giving for each SNP 
    the chromosome it lies on, its base pair position on the chromosome and the 
-   rsnumber identifier, respectively.
+   rs-numbers identifier, respectively.
    See also the output description of `snp_info()`.
 
 *  For annotation the package `sqldf` is used.
@@ -215,9 +215,9 @@ my_gwas <- GWASdata(pheno=pheno, geno=geno, anno=anno, desc="study xy")
 
 ```
 
-# Calculation of Kernelmatrices
+# Calculation of Kernel Matrices
 
-Once a `GWASdata` object is created, we can start to calculate kernelmatrices to
+Once a `GWASdata` object is created, we can start to calculate kernel matrices to
 test a pathways influence on disease risk. `Kangar00` offers three different
 kernel functions to compute a similarity matrix for the individuals in analysis. 
 They will be explained in the following.
@@ -283,7 +283,7 @@ the model. It is defined as
 $$ K = Z A N A^t Z^t      (4)$$  
 where matrix $A$ maps SNPs to genes, $N$ represents the underlying network 
 structure, and $Z$ is the genotype matrix. 
-The network based kernelmatrix for a pathway can be calculated with the function
+The network based kernel matrix for a pathway can be calculated with the function
  `kernel_net()`. Following arguments are needed 
 
 *   A `GWASdata` object containing the genotype information.
@@ -300,14 +300,14 @@ will return a quadratic `matrix` of dimension equal to the number of individuals
 in the `GWASdata` object.
 
 
- Alternatively, kernelmatrices can be calculated using the function `calc_kernel()`.
+ Alternatively, kernel matrices can be calculated using the function `calc_kernel()`.
 Here the kernel type is specified via an additional argument `type`. It can be 
 set to lin, sia or net. 
 
 ```
 K <- calc_kernel(gwas, p, type='lin', parallel='none')
 ```
-This function will simply call the suitable kernelfunction as described above 
+This function will simply call the suitable kernel function as described above 
 and therefore has the same output. 
 
 
@@ -317,8 +317,8 @@ and therefore has the same output.
 A pathways influence on the probability of being a case is evaluated in a 
 variance component test. The test statistic is
 $$ Q = \frac{1}{2} ( y - \mu)^t K ( y - \mu)  (5)$$
-with $\mu$ the vector of nullmodel estimators given by $\mu_i = logit^{-1} 
-(x_i^t \beta)$ for an individual $i$ and $K$ a kernelmatrix of the pathway to be
+with $\mu$ the vector of null model estimators given by $\mu_i = logit^{-1} 
+(x_i^t \beta)$ for an individual $i$ and $K$ a kernel matrix of the pathway to be
  tested. $Q$ follows a mixture of $X^2$ distributions which 
  can be approximated using the Satterthwaite procedure (Schaid 2012) or
  Davies method as implemented in the R package `QuadCompForm` (Davies 1980). 
@@ -327,13 +327,13 @@ with $\mu$ the vector of nullmodel estimators given by $\mu_i = logit^{-1}
 In `kangar00` the logistic kernel machine test can be applied to a SNP set 
 defining a pathway with the function `lkmt`. It needs the following arguments
 
-*    A formular specifying the nullmodel to be used in the test. The dependent 
+*    A formula specifying the null model to be used in the test. The dependent 
      variable is the case control status of the individual (in the example 
      denoted as 'pheno') and is explained by an intercept and optional 
      covariates. 
      
-*    A linear, size-adjusted or network kernelmatrix calculated by one of the
-     kernelfunctions `kernel_lin()`, `kernel_sia()` or `kernel_net()`. 
+*    A linear, size-adjusted or network kernel matrix calculated by one of the
+     kernel functions `kernel_lin()`, `kernel_sia()` or `kernel_net()`. 
 
 *    A  `GWASdata` object including the genotype based on which the test
      should be performed.
@@ -346,9 +346,9 @@ defining a pathway with the function `lkmt`. It needs the following arguments
 pval_net <- lkmt(pheno ~ 1+sex+age, K_mat, my_gwas, method='satt')
 ```
 will return an object of type `lkmt` giving the test result for the pathway 
-on which the kernelmatrix 'K_mat' was calculated. The `GWASdata` object 
-'my_gwas' has to be the same as used to calculate the kernelmatrix. 
- The formular above would for example fit for a phenotype file of the
+on which the kernel matrix 'K_mat' was calculated. The `GWASdata` object 
+'my_gwas' has to be the same as used to calculate the kernel matrix. 
+ The formula above would for example fit for a phenotype file of the
  following format (IDs in first column are always required in phenotype file)
 
 |  ID |pheno|sex|age|smoker| 
@@ -358,7 +358,7 @@ on which the kernelmatrix 'K_mat' was calculated. The `GWASdata` object
 | ind3|  1  | 1 | 56|  1   |
 | ... | ... |...|...| ...  |
 
-note, that the columns to be used in the model are specified in the formular
+note, that the columns to be used in the model are specified in the formula
 given to the `lkmt()` function and not all covariates have to be used.  
 
 
