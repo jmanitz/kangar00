@@ -5,6 +5,9 @@ r: bioc-release
 repos:
   CRAN: https://cloud.r-project.org
   
+r_github_packages:
+  - jimhester/covr
+  
 after_failure:
   - ./travis-tool.sh dump_logs
 
