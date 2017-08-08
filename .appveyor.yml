@@ -9,9 +9,6 @@ install:
   - ps: Bootstrap
   # Install maven and dependencies
   #- ps: .\dev\appveyor-install-dependencies.ps1
-  # Required package for R unit tests
-  - cmd: R -e "install.packages(c('rmarkdown','knitr','methods','KEGGgraph','biomaRt','bigmemory','sqldf','CompQuadForm','data.table','lattice','igraph'), repos='http://cran.us.r-project.org')"
-  - cmd: R -e "packageVersion('rmarkdown'); packageVersion('knitr'); packageVersion('methods'); packageVersion('KEGGgraph'); packageVersion('biomaRt'); packageVersion('bigmemory'); packageVersion('sqldf'); packageVersion('CompQuadForm'); packageVersion('data.table'); packageVersion('lattice'); packageVersion('igraph')"
 
 environment:
   global:
@@ -22,7 +19,30 @@ build_script:
   - R -e  "0" --args --bootstrap-packrat
 
 test_script:
+  - travis-tool.sh install_deps
+  - travis-tool.sh install_bioc KEGGgraph biomaRt  
   - travis-tool.sh run_tests
 
 cache:
   - packages -> appveyor.yml    # or any other file
+  
+on_failure:
+  - travis-tool.sh dump_logs
+  ## push complete mboost.Rcheck folder as artifact
+  - appveyor PushArtifact mboost.Rcheck
+
+artifacts:
+  - path: '*.Rcheck\**\*.log'
+    name: Logs
+
+  - path: '*.Rcheck\**\*.out'
+    name: Logs
+
+  - path: '*.Rcheck\**\*.fail'
+    name: Logs
+
+  - path: '*.Rcheck\**\*.Rout'
+    name: Logs
+
+  - path: '*_*.tar.gz'
+    name: Bits  
