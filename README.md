@@ -8,3 +8,28 @@
 
 Methods to extract information on pathways, genes and SNPs from online databases. It provides functions for data preparation and evaluation of genetic influence on a binary outcome using the logistic kernel machine test (LKMT). Three different kernel functions are offered to analyze genotype information in this variance component test: A linear kernel, a size-adjusted kernel and a network based kernel.
 
+## Citation
+
+To cite the package 'kangar00' itself use:
+
+- J. Manitz, S. Friedrichs, P. Burger, B. Hofner, N.T. Ha, S. Freytag, H. Bickeboeller (2017). kangar00: Kernel Approaches for
+  Nonlinear Genetic Association Regression, R package version 1.0, https://CRAN.R-project.org/package=kangar00.
+
+The size-adjusted kernel function is introduced in:
+
+- S. Freytag, H. Bickeboeller, C.I. Amos, T. Kneib, M. Schlather (2012). A Novel Kernel for Correcting Size Bias in the Logistic Kernel
+  Machine Test with an Application to Rheumatoid Arthritis. Human Heredity, 74, 97-108.
+
+The network-based kernel function is introduced in:
+
+- S. Freytag, J. Manitz, M. Schlather, T. Kneib, C.I. Amos, A. Risch, J. Chang-Claude, J. Heinrich, H. Bickeboeller (2013). A
+  Network-Based Kernel Machine Test for the Identifcation of Risk Pathways in Genome-Wide Association Studies. Human Heredity, 76,
+  64-75.
+
+The kernel boosting method is introduced in:
+
+- S. Friedrichs, J. Manitz, P. Burger, C.I. Amos, A. Risch, J.C. Chang-Claude, H.E. Wichmann, T. Kneib, H. Bickeboeller, and B. Hofner
+  (2017). Pathway-Based Kernel Boosting for the Analysis of Genome-Wide Association Studies. Submitted to Computational and
+  Mathematical Methods in Medicine.
+
+Use 'toBibtex(citation("kangar00"))' in R to extract BibTeX references.
