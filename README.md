@@ -29,7 +29,7 @@ The network-based kernel function is introduced in:
 The kernel boosting method is introduced in:
 
 - S. Friedrichs, J. Manitz, P. Burger, C.I. Amos, A. Risch, J.C. Chang-Claude, H.E. Wichmann, T. Kneib, H. Bickeboeller, and B. Hofner
-  (2017). Pathway-Based Kernel Boosting for the Analysis of Genome-Wide Association Studies. Submitted to Computational and
-  Mathematical Methods in Medicine.
+  (2017). Pathway-Based Kernel Boosting for the Analysis of Genome-Wide Association Studies. 
+  Computational and Mathematical Methods in Medicine, 2017(6742763), 1-17. doi:10.1155/2017/6742763.
 
 Use `toBibtex(citation("kangar00"))` in R to extract BibTeX references.
