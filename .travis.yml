@@ -1,3 +1,17 @@
 language: r
 cache: packages
 r: bioc-release
+
+repos:
+  CRAN: https://cloud.r-project.org
+  
+after_failure:
+  - ./travis-tool.sh dump_logs
+
+after_success:
+  - Rscript -e 'library(covr); coveralls()'
+
+notifications:
+  email:
+    on_success: change
+    on_failure: change
