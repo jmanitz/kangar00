@@ -65,7 +65,7 @@ citEntry(entry="Article",
              )
 		)
 		
-citEntry(entry="Unpublished",
+citEntry(entry="Article",
          title = "Pathway-Based Kernel Boosting for the Analysis of Genome-Wide Association Studies.",
          author = personList(as.person("Stefanei Friedrichs"),
 							 as.person("Juliane Manitz"),
@@ -73,17 +73,21 @@ citEntry(entry="Unpublished",
 							 as.person("Christopher I Amos"),
 							 as.person("Angela Risch"),
 							 as.person("Jenny Chang-Claude"),
-							 as.person("Heinrich E. Wichmann"),
+							 as.person("Heinz-Erich Wichmann"),
 							 as.person("Thomas Kneib"),
                              as.person("Heike Bickeboeller"),
 							 as.person("Benjamin Hofner")),
-         year   = "2017",							 
-         note   = "Submitted to Computational and Mathematical Methods in Medicine",
+         year   = "2017",	
+         volume = "2017",
+         issue  = "6742763",
+         pages  = "1-17",
+         doi    = "10.1155/2017/6742763",
+         journal= "Computational and Mathematical Methods in Medicine",
          header = "The kernel boosting method is introduced in:",
          textVersion = paste(
              "S. Friedrichs, J. Manitz, P. Burger, C.I. Amos, A. Risch, J.C. Chang-Claude, H.E. Wichmann, T. Kneib, H. Bickeboeller, and B. Hofner (2017).",
              "Pathway-Based Kernel Boosting for the Analysis of Genome-Wide Association Studies.",
-             "Submitted to Computational and Mathematical Methods in Medicine."
+             "Computational and Mathematical Methods in Medicine, 2017(6742763), 1-17. doi:10.1155/2017/6742763."
              )
 		)
 		
