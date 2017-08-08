@@ -1,7 +1,7 @@
 # kangar00
 
 [![Build Status (Linux)](https://travis-ci.org/jmanitz/kangar00.svg?branch=master)](https://travis-ci.org/jmanitz/kangar00)
-[![Build status (Windows)](https://ci.appveyor.com/api/projects/status/yh1pcxmpxu03pur7?svg=true)](https://ci.appveyor.com/project/jmanitz/kangar00/branch/master)
+[![Build status (Windows)](https://ci.appveyor.com/api/projects/status/github/jmanitz/kangar00?branch=master&svg=true)](https://ci.appveyor.com/project/jmanitz/kangar00/branch/master)
 [![CRAN Status Badge](http://www.r-pkg.org/badges/version/kangar00)](https://CRAN.R-project.org/package=kangar00)
 [![Coverage Status](https://coveralls.io/repos/github/jmanitz/kangar00/badge.svg?branch=master)](https://coveralls.io/github/jmanitz/kangar00?branch=master)
 [![](http://cranlogs.r-pkg.org/badges/kangar00)](https://CRAN.R-project.org/package=kangar00)
