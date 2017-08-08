@@ -8,7 +8,7 @@ init:
 install:
   - ps: Bootstrap
   # Install maven and dependencies
-  #- ps: .\dev\appveyor-install-dependencies.ps1
+  - ps: .\dev\appveyor-install-dependencies.ps1
   # Required package for R unit tests
   - cmd: R -e "install.packages(c('rmarkdown','knitr'), repos='http://cran.us.r-project.org')"
   - cmd: R -e "packageVersion('rmarkdown'); packageVersion('knitr')"
