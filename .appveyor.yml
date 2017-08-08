@@ -6,7 +6,12 @@ init:
         Invoke-WebRequest http://raw.github.com/krlmlr/r-appveyor/master/scripts/appveyor-tool.ps1 -OutFile "..\appveyor-tool.ps1"
         Import-Module '..\appveyor-tool.ps1'
 install:
-  ps: Bootstrap
+  # ps: Bootstrap
+  # Install maven and dependencies
+  - ps: .\dev\appveyor-install-dependencies.ps1
+  # Required package for R unit tests
+  - cmd: R -e "install.packages(c('methods', 'KEGGgraph', 'biomaRt', 'bigmemory', 'sqldf','CompQuadForm','data.table','lattice','igraph'), repos='http://cran.us.r-project.org')"
+  - cmd: R -e "packageVersion('methods'); packageVersion('KEGGgraph'); packageVersion('tbiomaRt'); packageVersion('bigmemory'); packageVersion('sqldf'); packageVersion('CompQuadForm'); packageVersion('data.table'); packageVersion('lattice'); packageVersion('igraph')"
 
 environment:
   global:
