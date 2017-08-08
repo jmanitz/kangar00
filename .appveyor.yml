@@ -10,8 +10,8 @@ install:
   # Install maven and dependencies
   #- ps: .\dev\appveyor-install-dependencies.ps1
   # Required package for R unit tests
-  - cmd: R -e "install.packages(c('methods', 'KEGGgraph', 'biomaRt', 'bigmemory', 'sqldf','CompQuadForm','data.table','lattice','igraph'), repos='http://cran.us.r-project.org')"
-  - cmd: R -e "packageVersion('methods'); packageVersion('KEGGgraph'); packageVersion('tbiomaRt'); packageVersion('bigmemory'); packageVersion('sqldf'); packageVersion('CompQuadForm'); packageVersion('data.table'); packageVersion('lattice'); packageVersion('igraph')"
+  - cmd: R -e "install.packages(c('rmarkdown','knitr'), repos='http://cran.us.r-project.org')"
+  - cmd: R -e "packageVersion('rmarkdown'); packageVersion('knitr')"
 
 environment:
   global:
