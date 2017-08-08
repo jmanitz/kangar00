@@ -10,7 +10,7 @@ Methods to extract information on pathways, genes and SNPs from online databases
 
 ## Citation
 
-To cite the package 'kangar00' itself use:
+To cite the package `kangar00` itself use:
 
 - J. Manitz, S. Friedrichs, P. Burger, B. Hofner, N.T. Ha, S. Freytag, H. Bickeboeller (2017). kangar00: Kernel Approaches for
   Nonlinear Genetic Association Regression, R package version 1.0, https://CRAN.R-project.org/package=kangar00.
@@ -32,4 +32,4 @@ The kernel boosting method is introduced in:
   (2017). Pathway-Based Kernel Boosting for the Analysis of Genome-Wide Association Studies. Submitted to Computational and
   Mathematical Methods in Medicine.
 
-Use 'toBibtex(citation("kangar00"))' in R to extract BibTeX references.
+Use `toBibtex(citation("kangar00"))` in R to extract BibTeX references.
