@@ -24,4 +24,3 @@ corresponding KGML pathway file.
 Stefanie Friedrichs, Patricia Burger
 }
 \keyword{internal}
-

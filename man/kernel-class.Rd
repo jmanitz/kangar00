@@ -2,13 +2,13 @@
 % Please edit documentation in R/kernel.r
 \docType{class}
 \name{kernel-class}
-\alias{kernel}
 \alias{kernel-class}
-\alias{plot,kernel,ANY-method}
-\alias{plot,kernel,missing-method}
+\alias{kernel}
 \alias{show,kernel-method}
-\alias{summary,kernel,ANY-method}
 \alias{summary,kernel-method}
+\alias{summary,kernel,ANY-method}
+\alias{plot,kernel,missing-method}
+\alias{plot,kernel,ANY-method}
 \title{An S4 class representing a kernel matrix calculated for a pathway}
 \usage{
 \S4method{show}{kernel}(object)
@@ -49,6 +49,7 @@ or \code{'net'} for the network-based kernel.}
 
 \item{\code{pathway}}{A \code{\link{pathway}} object}
 }}
+
 \examples{
 data(gwas)
 data(hsa04020)
@@ -62,4 +63,3 @@ plot(net_kernel, hclust=TRUE)
 \author{
 Juliane Manitz
 }
-

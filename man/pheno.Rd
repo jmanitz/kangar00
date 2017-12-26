@@ -31,4 +31,3 @@ data(anno)
 gwas <- new('GWASdata', pheno=pheno, geno=geno, anno=anno, desc="some study") 
 }
 \keyword{datasets}
-

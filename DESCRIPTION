@@ -1,8 +1,8 @@
 Package: kangar00
 Type: Package
 Title: Kernel Approaches for Nonlinear Genetic Association Regression
-Version: 1.1
-Date: 2017-08-07
+Version: 1.2
+Date: 2017-12-26
 Author: Juliane Manitz [aut], Stefanie Friedrichs [aut], Patricia Burger [aut],
     Benjamin Hofner [aut], Ngoc Thuy Ha [aut], Saskia Freytag [ctb],
     Heike Bickeboeller [ctb]
@@ -24,7 +24,7 @@ Depends:
     R (>= 3.1.0)
 Imports:
     methods,
-    KEGGgraph,
+    KEGGgraph (>= 1.37.0),
     biomaRt,
     bigmemory,
     sqldf,
@@ -38,4 +38,4 @@ Suggests:
     rmarkdown
 VignetteBuilder: knitr
 NeedsCompilation: no
-RoxygenNote: 5.0.1
+RoxygenNote: 6.0.1

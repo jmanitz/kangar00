@@ -33,4 +33,3 @@ summary(hsa04020_rewired)
 \author{
 Juliane Manitz, Stefanie Friedrichs
 }
-

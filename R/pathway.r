@@ -66,11 +66,13 @@ setGeneric('pathway', function(object, ...) standardGeneric('pathway'))
 #'
 #' @examples
 #' # pathway object constructor
-#' pathway(id="hsa04022", adj=matrix(0), sign=as.vector(matrix(0)[matrix(0)!=0]))
+#' pathway(id="hsa04022")
 #' 
 #' @rdname pathway-class
 setMethod('pathway',
-       definition = function(id, adj, sign){
+       definition = function(id, adj=matrix(0), sign=NULL){
+       # extract sign from matrix values if missing sign
+       if(is.null(sign)) sign <- as.vector(adj[adj!=0])
        ## create GWASdata object
        new('pathway', id=id, adj=adj, sign=sign)
 })
@@ -605,7 +607,7 @@ setGeneric('get_network_matrix', function(object, ...) standardGeneric('get_netw
 #' should return directed (\code{TRUE}) or undirected (\code{FALSE}) links. 
 #' @return \code{get_network_matrix} returns the modified \code{\link{pathway}} object, where the slots \code{adj} and \code{sign} are altered according to the downloaded information in the KEGG kgml file. 
 ## @examples
-## get_network_matrix(pathway(id="hsa04022", adj=matrix(0), sign=as.vector(matrix(0)[matrix(0)!=0])), TRUE)
+## get_network_matrix(pathway(id="hsa04020", adj=matrix(0), sign=as.vector(matrix(0)[matrix(0)!=0])), TRUE)
 #'
 #' @author Stefanie Friedrichs, Patricia Burger, Juliane Manitz
 #' @export 

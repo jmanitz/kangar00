@@ -29,4 +29,3 @@ is called by \code{get_network_matrix}. (For internal use)
 Stefanie Friedrichs
 }
 \keyword{internal}
-

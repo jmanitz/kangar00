@@ -2,9 +2,9 @@
 % Please edit documentation in R/lkmt.r
 \docType{methods}
 \name{lkmt_test}
-\alias{davies_test,matrix-method}
 \alias{lkmt_test}
 \alias{score_test,matrix-method}
+\alias{davies_test,matrix-method}
 \title{A function to calculate the p-values for kernel matrices.}
 \usage{
 lkmt_test(formula, kernel, GWASdata, method = c("satt", "davies"), ...)
@@ -67,9 +67,6 @@ data(net.kernel.hsa04020)
 data(gwas)
 lkmt_test(pheno ~ sex + age, net.kernel.hsa04020, gwas, method='satt')
 }
-\author{
-Stefanie Friedrichs, Juliane Manitz
-}
 \references{
 For details on the variance component test 
 \itemize{
@@ -88,4 +85,6 @@ Building on Mathematical and Statistical Foundations. Hum Hered 2010, 70:109-31
      chi-2 random variables. J R Stat Soc Ser C 1980, 29:323-333.
 }
 }
-
+\author{
+Stefanie Friedrichs, Juliane Manitz
+}

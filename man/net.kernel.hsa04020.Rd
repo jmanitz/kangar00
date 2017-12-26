@@ -32,4 +32,3 @@ all(abs(net.kernel.hsa04020@kernel - net_kernel@kernel) < sqrt(.Machine$double.e
 
 }
 \keyword{datasets}
-

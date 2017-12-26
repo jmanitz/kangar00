@@ -2,28 +2,35 @@
 % Please edit documentation in R/pathway.r
 \docType{methods}
 \name{pathway}
-\alias{ANY-method}
-\alias{analyze}
-\alias{analyze,pathway-method}
-\alias{get_genes}
-\alias{get_genes,pathway-method}
 \alias{pathway}
 \alias{pathway,ANY-method}
-\alias{pathway2igraph}
-\alias{pathway2igraph,pathway-method}
-\alias{plot,pathway,ANY-method}
-\alias{plot,pathway,missing-method}
-\alias{sample_genes}
-\alias{sample_genes,pathway-method}
-\alias{show,pathway,ANY-method}
 \alias{show,pathway-method}
-\alias{summary,pathway,ANY-method}
+\alias{show,pathway,ANY-method}
 \alias{summary,pathway-method}
+\alias{summary,pathway,ANY-method}
+\alias{pathway2igraph,pathway-method}
+\alias{pathway2igraph}
+\alias{pathway}
+\alias{ANY-method}
+\alias{analyze,pathway-method}
+\alias{analyze}
+\alias{pathway}
+\alias{ANY-method}
+\alias{get_genes,pathway-method}
+\alias{get_genes}
+\alias{pathway}
+\alias{ANY-method}
+\alias{plot,pathway,missing-method}
+\alias{plot,pathway,ANY-method}
+\alias{sample_genes,pathway-method}
+\alias{sample_genes}
+\alias{pathway}
+\alias{ANY-method}
 \title{An S4 class to represent a gene-gene interaction network}
 \usage{
 pathway(object, ...)
 
-\S4method{pathway}{ANY}(id, adj, sign)
+\S4method{pathway}{ANY}(id, adj = matrix(0), sign = NULL)
 
 \S4method{show}{pathway}(object)
 
@@ -132,6 +139,7 @@ elements of gene names
 
 \item \code{sample_genes}: 
 }}
+
 \section{Slots}{
 
 \describe{
@@ -145,9 +153,10 @@ equaling the number of genes (1 interaction, 0 otherwise)}
 each link (1 activation, -1 inhibition) in the interaction network for the 
 \code{\link{pathway}}.}
 }}
+
 \examples{
 # pathway object constructor
-pathway(id="hsa04022", adj=matrix(0), sign=as.vector(matrix(0)[matrix(0)!=0]))
+pathway(id="hsa04022")
 
 # convert to igraph object
 data(hsa04020)
@@ -175,9 +184,6 @@ sample5 <- sample_genes(hsa04020, no = 5)
 plot(hsa04020, highlight.genes = sample5)
 
 }
-\author{
-Juliane Manitz, Stefanie Friedrichs, Patricia Burger
-}
 \references{
 Details to the computation and interpretation can be found in:
 \itemize{
@@ -185,4 +191,6 @@ Details to the computation and interpretation can be found in:
   \item Kunegis, J., A. Lommatzsch, and C. Bauckhage (2009). The slashdot zoo: Mining a social network with negative egdes. In Proceedings of the 18th international conference on World wide web, pp. 741-750. ACM Press.
 }
 }
-
+\author{
+Juliane Manitz, Stefanie Friedrichs, Patricia Burger
+}

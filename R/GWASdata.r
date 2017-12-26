@@ -433,10 +433,10 @@ setMethod('GeneSNPsize', signature='GWASdata',
 #' @slot info A \code{data.frame} including information on SNP positions
 #' 
 #' @author Stefanie Friedrichs
-#' @examples
-#' # snp_info
-#' snp_info("rs10243170")
-#' data(rs10243170_info) 
+## @examples
+## # compare with package data
+## snp_info("rs10243170")
+## data(rs10243170_info) 
 #' @export snp_info
 #' @import methods
 #' @seealso \code{\link{pathway_info}}, \code{\link{get_anno}}

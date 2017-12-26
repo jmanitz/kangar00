@@ -24,4 +24,3 @@ snp_info("rs10243170")
 
 }
 \keyword{datasets}
-
