@@ -150,11 +150,10 @@ setGeneric('calc_kernel', function(object, ...) standardGeneric('calc_kernel'))
 #' @examples
 #' data(gwas)
 #' data(hsa04020)
-#' data(gwas)
+#' lin_kernel <- calc_kernel(gwas, hsa04020, knots=NULL, type='lin', calculation='cpu')
+#' summary(lin_kernel)
 #' net_kernel <- calc_kernel(gwas, hsa04020, knots=NULL, type='net', calculation='cpu')
-#' show(net_kernel)
 #' summary(net_kernel)
-#' plot(net_kernel, hclust=TRUE)
 #' 
 #' @author Stefanie Friedrichs, Juliane Manitz
 #' @rdname calc_kernel
@@ -555,12 +554,7 @@ setMethod('make_psd', signature = 'matrix',
 #' @param object An object of class \code{kernel}
 #'
 #' @examples
-#' data(gwas)
-#' data(hsa04020)
-#' data(gwas)
-#' net_kernel <- calc_kernel(gwas, hsa04020, knots=NULL, type='net', calculation='cpu')
 #' show(net_kernel)
-#'
 #' @export
 #' @rdname kernel-class
 setMethod('show', signature('kernel'),
@@ -577,13 +571,13 @@ setGeneric('summary', function(object) standardGeneric('summary'))
 #' individuals and genes for the \code{\link{pathway}}
 #' @examples
 #' summary(net_kernel)
-#'
 #' @export
 #' @rdname kernel-class
 #' @aliases summary,kernel,ANY-method
 setMethod('summary', signature='kernel',
           definition = function(object){
-              cat('An object of class ', class(object), ' of type ', object@type,' for pathway ', object@pathway@id, ' with values: \n\n',sep='')
+              cat('An object of class ', class(object), ' of type ', object@type,' for pathway ', object@pathway@id, ' with values: \n',sep='')
+	      print(summary(as.vector(object@kernel)))
               cat(paste('\nNumber of Individuals:',dim(object@kernel)[1]),'\n')
               cat(paste('The pathway contains',dim(object@pathway@adj)[1],'genes.\n'))#,'genes and', SNPno[2], 'SNPs.\n'))
               invisible(NULL)
@@ -602,7 +596,6 @@ if (!isGeneric("plot")) setGeneric('plot')
 #' @export
 #' @rdname kernel-class
 #' @examples
-#' summary(net_kernel)
 #' plot(net_kernel, hclust=TRUE)
 #'
 #' @aliases plot,kernel,ANY-method

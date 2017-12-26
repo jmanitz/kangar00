@@ -54,14 +54,7 @@ data(gwas)
 data(hsa04020)
 net_kernel <- calc_kernel(gwas, hsa04020, knots=NULL, type='net', calculation='cpu')
 
-data(gwas)
-data(hsa04020)
-data(gwas)
-net_kernel <- calc_kernel(gwas, hsa04020, knots=NULL, type='net', calculation='cpu')
 show(net_kernel)
-
-summary(net_kernel)
-
 summary(net_kernel)
 plot(net_kernel, hclust=TRUE)
 

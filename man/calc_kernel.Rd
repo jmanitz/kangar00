@@ -80,11 +80,10 @@ For more details, check the references.
 \examples{
 data(gwas)
 data(hsa04020)
-data(gwas)
+lin_kernel <- calc_kernel(gwas, hsa04020, knots=NULL, type='lin', calculation='cpu')
+summary(lin_kernel)
 net_kernel <- calc_kernel(gwas, hsa04020, knots=NULL, type='net', calculation='cpu')
-show(net_kernel)
 summary(net_kernel)
-plot(net_kernel, hclust=TRUE)
 
 }
 \author{
