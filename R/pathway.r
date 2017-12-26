@@ -440,7 +440,7 @@ setMethod('gene_name_number', signature='character',
 #' @slot info A \code{data.frame} including information on genes contained in 
 #' pathways with columns 'pathway', 'gene_start', 'gene_end', 'chr' and 'gene'.
 #'
-#' @author Stefanie Friedrichs
+#' @author Stefanie Friedrichs, Juliane Manitz
 pathway_info <- setClass('pathway_info', slots=c(info='data.frame'))
 
 setValidity('pathway_info', function(object){  
@@ -470,9 +470,9 @@ setGeneric('pathway_info', function(x) standardGeneric('pathway_info'))
 #' \code{\link{pathway}}. for each gene its name, the start and end point and the chromosome 
 #' it lies on are given.
 #'
-## @author Stefanie Friedrichs
 #' @import biomaRt  
 #' @export
+#' @seealso \code{\link{snp_info}}, \code{\link{get_anno}}
 #' @rdname pathway_info-class
 setMethod('pathway_info', signature='character', 
          definition = function(x){              
@@ -495,7 +495,6 @@ setMethod('pathway_info', signature='character',
 #'
 #' @param object An object of class \code{\link{pathway_info}}.
 #' @return \code{show} Basic information on \code{\link{pathway_info}} object.
-## @author Stefanie Friedrichs
 #' @examples
 #' info <- pathway_info('hsa04020') 
 #' show(info)
@@ -518,11 +517,6 @@ setGeneric('summary', function(object, ...) standardGeneric('summary'))
 #'
 ## @param object An object of class \code{\link{pathway_info}}.
 #' @return \code{summary} Summarized information on \code{\link{pathway_info}} object.
-## @author Stefanie Friedrichs
-#' @examples
-#' # summary method
-#' data(hsa04022_info)
-#' summary(hsa04022_info)
 #' @export
 #' @rdname pathway_info-class
 #' @aliases summary,pathway_info,ANY-method
@@ -613,6 +607,7 @@ setGeneric('get_network_matrix', function(object, ...) standardGeneric('get_netw
 #' @importFrom KEGGgraph parseKGML2Graph
 #' @importFrom KEGGgraph nodes
 #' @importFrom KEGGgraph parseKGML2DataFrame
+## @rdname pathway-class
 #' @aliases get_network_matrix
 setMethod('get_network_matrix', signature='pathway', 
           definition = function(object, directed=TRUE){    

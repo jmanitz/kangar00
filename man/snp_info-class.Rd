@@ -54,6 +54,7 @@ R-package \pkg{biomaRt}.
 # snp_info
 data(rs10243170_info) 
 snp_info(c("rs234"))
+snp_info(c("rs10243170"))
 
 # show
 data(rs10243170_info)
@@ -64,5 +65,8 @@ summary(rs10243170_info)
 }
 \author{
 Stefanie Friedrichs
+}
+\seealso{
+\code{\link{pathway_info}}, \code{\link{get_anno}}
 }
 

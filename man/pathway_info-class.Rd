@@ -55,11 +55,11 @@ info <- pathway_info('hsa04020')
 show(info)
 summary(info)
 
-# summary method
-data(hsa04022_info)
-summary(hsa04022_info)
 }
 \author{
-Stefanie Friedrichs
+Stefanie Friedrichs, Juliane Manitz
+}
+\seealso{
+\code{\link{snp_info}}, \code{\link{get_anno}}
 }
 

@@ -439,6 +439,7 @@ setMethod('GeneSNPsize', signature='GWASdata',
 #' data(rs10243170_info) 
 #' @export snp_info
 #' @import methods
+#' @seealso \code{\link{pathway_info}}, \code{\link{get_anno}}
 snp_info <- setClass('snp_info', slots=c(info='data.frame'))
 
 setValidity('snp_info', function(object){  
@@ -469,6 +470,7 @@ setGeneric('snp_info', function(x, ...) standardGeneric('snp_info'))
 #' positions  will appear several times.
 #' @examples
 #' snp_info(c("rs234"))
+#' snp_info(c("rs10243170"))
 #'
 ## @author Stefanie Friedrichs
 #' @import biomaRt
@@ -549,15 +551,16 @@ setGeneric('get_anno', function(object1, object2, ...) standardGeneric('get_anno
 #' 'position'.
 #' 
 #' @examples
-#' data(hsa04022_info)
-#' data(rs10243170_info)
-#' get_anno(rs10243170_info, hsa04022_info)
+#' hsa_info_ex <- pathway_info('hsa04020')
+#' snp_info_ex <- snp_info(c("rs10243170"))
+#' get_anno(snp_info_ex, hsa_info_ex)
 #'
 #' @author Stefanie Friedrichs, Saskia Freytag, Ngoc-Thuy Ha
 #' @seealso \code{\link{snp_info}}, \code{\link{pathway_info}}
+## @rdname snp_info-methods
+#' @aliases get_anno
 #' @import sqldf
 #' @export
-#' @aliases get_anno
 setMethod('get_anno', signature=c('snp_info','pathway_info'),
           definition <- function(object1, object2, ...) {
           
