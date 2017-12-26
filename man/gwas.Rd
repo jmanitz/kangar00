@@ -22,3 +22,4 @@ An object of type GWASdata containing the example files for
 annotation, phenotypes and genotypes.
 }
 \keyword{datasets}
+

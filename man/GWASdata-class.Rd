@@ -4,11 +4,10 @@
 \name{GWASdata}
 \alias{GWASdata}
 \alias{GWASdata,ANY-method}
+\alias{GeneSNPsize}
+\alias{GeneSNPsize,GWASdata-method}
 \alias{show,GWASdata-method}
 \alias{summary,GWASdata-method}
-\alias{GeneSNPsize,GWASdata-method}
-\alias{GeneSNPsize}
-\alias{GWASdata}
 \title{S4 class for an object representing a Genome-wide Assocaition Study.}
 \usage{
 GWASdata(object, ...)
@@ -56,7 +55,6 @@ names with numbers of snps and genes in each \code{\link{pathway}}.
 \item \code{GeneSNPsize}: creates a \code{data.frame} of \code{\link{pathway}} names with numbers 
 of snps and genes in each pathway.
 }}
-
 \section{Slots}{
 
 \describe{
@@ -76,7 +74,6 @@ pack.years. Note: IDs have to be in the first column!}
 
 \item{\code{desc}}{A \code{character} giving the GWAS description, e.g. name of study.}
 }}
-
 \examples{
 data(pheno)
 data(geno)
@@ -96,3 +93,4 @@ GeneSNPsize(gwas)
 \author{
 Juliane Manitz, Stefanie Friedrichs
 }
+

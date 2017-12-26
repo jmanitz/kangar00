@@ -2,8 +2,8 @@
 % Please edit documentation in R/kernel.r
 \docType{class}
 \name{lowrank_kernel-class}
-\alias{lowrank_kernel-class}
 \alias{lowrank_kernel}
+\alias{lowrank_kernel-class}
 \title{An S4 class to represent a low-rank kernel for a SNPset at specified knots}
 \description{
 An S4 class to represent a low-rank kernel for a SNPset at specified knots
@@ -22,7 +22,6 @@ equal, better construct a full-rank kernel of class \code{\link{kernel}}.
 
 \item{\code{pathway}}{\code{\link{pathway}} object}
 }}
-
 \examples{
 data(gwas)
 calc_kernel(gwas, hsa04020, knots=gwas, type='lin', calculation='cpu') 
@@ -34,3 +33,4 @@ calc_kernel(gwas, hsa04020, knots = gwas2, type='net', calculation='cpu')
 \author{
 Juliane Manitz
 }
+

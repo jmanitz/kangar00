@@ -20,3 +20,4 @@ data(rs10243170_info)
 An object of class \code{\link{snp_info}} for rs10243170.
 }
 \keyword{datasets}
+

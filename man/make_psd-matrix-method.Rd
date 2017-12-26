@@ -2,8 +2,8 @@
 % Please edit documentation in R/kernel.r
 \docType{methods}
 \name{make_psd,matrix-method}
-\alias{make_psd,matrix-method}
 \alias{make_psd}
+\alias{make_psd,matrix-method}
 \alias{matrix}
 \title{Adjust network \code{matrix} to be positive semi-definite}
 \usage{
@@ -28,11 +28,12 @@ calculated as N* = rho*N + (1+rho)*I, where I is the identity \code{matrix}
 and rho = 1/(1 - lambda) with lambda the smallest eigenvalue of N. 
 For more details check the references.
 }
+\author{
+Juliane Manitz, Saskia Freytag, Stefanie Friedrichs
+}
 \references{
 \itemize{
  \item Freytag S, Manitz J, Schlather M, Kneib T, Amos CI, Risch A, Chang-Claude J, Heinrich J, Bickeboeller H: A network-based kernel machine test for the identification of risk pathways in genome-wide association studies. Hum Hered. 2013, 76(2):64-75.
 }
 }
-\author{
-Juliane Manitz, Saskia Freytag, Stefanie Friedrichs
-}
+

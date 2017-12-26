@@ -2,8 +2,8 @@
 % Please edit documentation in R/pathway.r
 \docType{methods}
 \name{get_network_matrix,pathway-method}
-\alias{get_network_matrix,pathway-method}
 \alias{get_network_matrix}
+\alias{get_network_matrix,pathway-method}
 \title{Function to calculate the network \code{matrix} for a \code{\link{pathway}} object}
 \usage{
 \S4method{get_network_matrix}{pathway}(object, directed = TRUE)
@@ -29,3 +29,4 @@ KEGG kgml file is downloaded and saved in the working directory.
 \author{
 Stefanie Friedrichs, Patricia Burger
 }
+

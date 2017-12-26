@@ -20,3 +20,4 @@ An object of class \code{\link{pathway_info}} for the \code{\link{pathway}}
 with KEGG identifier hsa04020.
 }
 \keyword{datasets}
+

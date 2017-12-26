@@ -23,3 +23,4 @@ A dataset containing simulated example phenotypes for 50 individuals
 row names include the identifiers of 50 example individuals.
 }
 \keyword{datasets}
+

@@ -2,9 +2,9 @@
 % Please edit documentation in R/GWASdata.r
 \docType{methods}
 \name{snp_info}
+\alias{show,snp_info-method}
 \alias{snp_info}
 \alias{snp_info,character-method}
-\alias{show,snp_info-method}
 \alias{summary,snp_info-method}
 \title{An S4 class for an object assigning SNP positions to rs-numbers (for internal use)}
 \usage{
@@ -50,7 +50,6 @@ R-package \pkg{biomaRt}.
 \describe{
 \item{\code{info}}{A \code{data.frame} including information on SNP positions}
 }}
-
 \examples{
 # snp_info
 data(rs10243170_info) 
@@ -66,3 +65,4 @@ summary(rs10243170_info)
 \author{
 Stefanie Friedrichs
 }
+

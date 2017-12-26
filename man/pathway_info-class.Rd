@@ -4,10 +4,10 @@
 \name{pathway_info}
 \alias{pathway_info}
 \alias{pathway_info,character-method}
-\alias{show,pathway_info-method}
 \alias{show,pathway_info,ANY-method}
-\alias{summary,pathway_info-method}
+\alias{show,pathway_info-method}
 \alias{summary,pathway_info,ANY-method}
+\alias{summary,pathway_info-method}
 \title{An S4 class for an object assigning genes to pathways}
 \usage{
 pathway_info(x)
@@ -50,7 +50,6 @@ database is accessed via the R-package \pkg{biomaRt}.
 \item{\code{info}}{A \code{data.frame} including information on genes contained in 
 pathways with columns 'pathway', 'gene_start', 'gene_end', 'chr' and 'gene'.}
 }}
-
 \examples{
 pathway_info("hsa04022") 
 
@@ -64,3 +63,4 @@ summary(hsa04022_info)
 \author{
 Stefanie Friedrichs
 }
+

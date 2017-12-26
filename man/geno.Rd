@@ -21,3 +21,4 @@ Column names give the rs-numbers of 4056 example SNPs, row names the
 identifiers of 50 example individuals.
 }
 \keyword{datasets}
+

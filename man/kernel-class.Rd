@@ -2,13 +2,13 @@
 % Please edit documentation in R/kernel.r
 \docType{class}
 \name{kernel-class}
-\alias{kernel-class}
 \alias{kernel}
-\alias{show,kernel-method}
-\alias{summary,kernel-method}
-\alias{summary,kernel,ANY-method}
-\alias{plot,kernel,missing-method}
+\alias{kernel-class}
 \alias{plot,kernel,ANY-method}
+\alias{plot,kernel,missing-method}
+\alias{show,kernel-method}
+\alias{summary,kernel,ANY-method}
+\alias{summary,kernel-method}
 \title{An S4 class representing a kernel matrix calculated for a pathway}
 \usage{
 \S4method{show}{kernel}(object)
@@ -49,13 +49,24 @@ or \code{'net'} for the network-based kernel.}
 
 \item{\code{pathway}}{A \code{\link{pathway}} object}
 }}
-
 \examples{
-data(net.kernel.hsa04020)
-show(net.kernel.hsa04020)
-summary(net.kernel.hsa04020)
-plot(net.kernel.hsa04020)
+data(gwas)
+data(hsa04020)
+net_kernel <- calc_kernel(gwas, hsa04020, knots=NULL, type='net', calculation='cpu')
+
+data(gwas)
+data(hsa04020)
+data(gwas)
+net_kernel <- calc_kernel(gwas, hsa04020, knots=NULL, type='net', calculation='cpu')
+show(net_kernel)
+
+summary(net_kernel)
+
+summary(net_kernel)
+plot(net_kernel, hclust=TRUE)
+
 }
 \author{
 Juliane Manitz
 }
+

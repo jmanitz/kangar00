@@ -482,12 +482,13 @@ setMethod('pathway_info', signature='character',
    #ensembl <- useMart("ensembl", dataset="hsapiens_gene_ensembl")  
    ensembl <- useMart(biomart="ENSEMBL_MART_ENSEMBL",
               dataset="hsapiens_gene_ensembl",host = "jul2015.archive.ensembl.org") 
-   info    <- na.omit(getBM(attributes=c("start_position","end_position",
+   info    <- stats::na.omit(getBM(attributes=c("start_position","end_position",
               "chromosome_name","hgnc_symbol"), filters=c("hgnc_symbol"),
               values=g, mart=ensembl))
 #   info$chromosome_name <- as.numeric(info$chromosome_name)
 #   info                 <- stats::na.omit(info)
 #   pathways             <- cbind(rep(paste(x,sep=""),length(info[,1])),info)
+   pathways             <- data.frame(pathway=x, info)
    colnames(pathways)   <- c("pathway","gene_start","gene_end","chr","gene") 
    ret <- new('pathway_info', info=pathways)
    return(ret)

@@ -23,3 +23,4 @@ smaller than -1 to -1. It is called by \code{\link{get_network_matrix}}.
 Stefanie Friedrichs
 }
 \keyword{internal}
+

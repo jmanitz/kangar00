@@ -29,3 +29,4 @@ An object of class \code{\link{lkmt}} containing exemplary test results for an
 application of the logistic kernel machine test, derived from the example data.
 }
 \keyword{datasets}
+

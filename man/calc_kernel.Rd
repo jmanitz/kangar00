@@ -5,8 +5,8 @@
 \alias{calc_kernel}
 \alias{calc_kernel,GWASdata-method}
 \alias{lin_kernel,GWASdata-method}
-\alias{sia_kernel,GWASdata-method}
 \alias{net_kernel,GWASdata-method}
+\alias{sia_kernel,GWASdata-method}
 \title{Calculates the kernel-matrix for a pathway}
 \usage{
 \S4method{calc_kernel}{GWASdata}(object, pathway, knots = NULL,
@@ -77,12 +77,18 @@ For more details, check the references.
 
 \item \code{GWASdata}: Calculates a network-based kernel
 }}
-
 \examples{
 data(gwas)
 data(hsa04020)
-calc_kernel(gwas, hsa04020, knots = NULL, type='net', calculation='cpu')
+data(gwas)
+net_kernel <- calc_kernel(gwas, hsa04020, knots=NULL, type='net', calculation='cpu')
+show(net_kernel)
+summary(net_kernel)
+plot(net_kernel, hclust=TRUE)
 
+}
+\author{
+Stefanie Friedrichs, Juliane Manitz
 }
 \references{
 \itemize{
@@ -94,6 +100,4 @@ calc_kernel(gwas, hsa04020, knots = NULL, type='net', calculation='cpu')
 \seealso{
 \code{\link{kernel-class}},\code{\link{pathway}}
 }
-\author{
-Stefanie Friedrichs, Juliane Manitz
-}
+

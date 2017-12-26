@@ -2,30 +2,23 @@
 % Please edit documentation in R/pathway.r
 \docType{methods}
 \name{pathway}
+\alias{ANY-method}
+\alias{analyze}
+\alias{analyze,pathway-method}
+\alias{get_genes}
+\alias{get_genes,pathway-method}
 \alias{pathway}
 \alias{pathway,ANY-method}
-\alias{show,pathway-method}
-\alias{show,pathway,ANY-method}
-\alias{summary,pathway-method}
-\alias{summary,pathway,ANY-method}
-\alias{pathway2igraph,pathway-method}
 \alias{pathway2igraph}
-\alias{pathway}
-\alias{ANY-method}
-\alias{analyze,pathway-method}
-\alias{analyze}
-\alias{pathway}
-\alias{ANY-method}
-\alias{get_genes,pathway-method}
-\alias{get_genes}
-\alias{pathway}
-\alias{ANY-method}
-\alias{plot,pathway,missing-method}
+\alias{pathway2igraph,pathway-method}
 \alias{plot,pathway,ANY-method}
-\alias{sample_genes,pathway-method}
+\alias{plot,pathway,missing-method}
 \alias{sample_genes}
-\alias{pathway}
-\alias{ANY-method}
+\alias{sample_genes,pathway-method}
+\alias{show,pathway,ANY-method}
+\alias{show,pathway-method}
+\alias{summary,pathway,ANY-method}
+\alias{summary,pathway-method}
 \title{An S4 class to represent a gene-gene interaction network}
 \usage{
 pathway(object, ...)
@@ -133,7 +126,6 @@ vertex id's of sampled genes
 
 \item \code{sample_genes}: 
 }}
-
 \section{Slots}{
 
 \describe{
@@ -147,7 +139,6 @@ equaling the number of genes (1 interaction, 0 otherwise)}
 each link (1 activation, -1 inhibition) in the interaction network for the 
 \code{\link{pathway}}.}
 }}
-
 \examples{
 pathway(id="hsa04022", adj=matrix(0), sign=as.vector(matrix(0)[matrix(0)!=0]))
 
@@ -157,18 +148,18 @@ hsa04020
 #summary method
 data(hsa04020)
 summary(hsa04020)
-# convert to \\code{\\link[igraph]{igraph}} object
+# convert to igraph object
 data(hsa04020)
 str(hsa04020)
 g <- pathway2igraph(hsa04020)
 str(g)
-# analyse \\code{\\link{pathway}} network properties
+# analyse pathway network properties
 data(hsa04020)
 summary(hsa04020)
 analyze(hsa04020)
-# extract gene names from \\code{\\link{pathway}}
+# extract gene names from pathway object
 get_genes(hsa04020)
-# plot \\code{\\link{pathway}} as \\code{\\link[igraph]{igraph}} object
+# plot pathway as igraph object
 plot(hsa04020)
 sample3 <- sample_genes(hsa04020, no = 3)
 plot(hsa04020, highlight.genes = sample3)
@@ -179,6 +170,9 @@ plot(hsa04020, highlight.genes = sample3)
 sample5 <- sample_genes(hsa04020, no = 5)
 plot(hsa04020, highlight.genes = sample5)
 }
+\author{
+Juliane Manitz
+}
 \references{
 Details to the computation and interpretation can be found in:
 \itemize{
@@ -186,6 +180,4 @@ Details to the computation and interpretation can be found in:
   \item Kunegis, J., A. Lommatzsch, and C. Bauckhage (2009). The slashdot zoo: Mining a social network with negative egdes. In Proceedings of the 18th international conference on World wide web, pp. 741-750. ACM Press.
 }
 }
-\author{
-Juliane Manitz
-}
+

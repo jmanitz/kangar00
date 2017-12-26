@@ -2,9 +2,9 @@
 % Please edit documentation in R/GWASdata.r
 \docType{methods}
 \name{read_geno,character-method}
-\alias{read_geno,character-method}
-\alias{read_geno}
 \alias{character}
+\alias{read_geno}
+\alias{read_geno,character-method}
 \title{read genotype data from file to one of several available objects, which 
 can be passed to a GWASdata object \code{\link{GWASdata}}.}
 \usage{
@@ -45,3 +45,4 @@ path <- system.file("extdata", "geno.txt", package = "kangar00")
 geno <- read_geno(path, save.path = getwd(), sep = " ", use.fread = FALSE, row.names = FALSE)
 }
 }
+

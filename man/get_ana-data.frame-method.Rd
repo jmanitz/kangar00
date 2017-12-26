@@ -25,3 +25,4 @@ Produce middle part of network kernel (for internal use)
 Juliane Manitz, Saskia Freytag, Stefanie Friedrichs
 }
 \keyword{internal}
+

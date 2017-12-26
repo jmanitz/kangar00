@@ -21,4 +21,15 @@ data(net.kernel.hsa04020)
 \description{
 An example of a kernel object.
 }
+\examples{
+data(net.kernel.hsa04020)
+# derivation 
+data(gwas)
+data(hsa04020)
+net_kernel <- calc_kernel(gwas, hsa04020, knots=NULL, type='net', calculation='cpu')
+# are the value differences smaller than machine epsilon?
+abs(net.kernel.hsa04020@kernel - net_kernel@kernel) < 1e-10 
+
+}
 \keyword{datasets}
+

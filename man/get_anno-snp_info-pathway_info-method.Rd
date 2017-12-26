@@ -2,8 +2,8 @@
 % Please edit documentation in R/GWASdata.r
 \docType{methods}
 \name{get_anno,snp_info,pathway_info-method}
-\alias{get_anno,snp_info,pathway_info-method}
 \alias{get_anno}
+\alias{get_anno,snp_info,pathway_info-method}
 \title{Annotates SNPs via genes to pathways}
 \usage{
 \S4method{get_anno}{snp_info,pathway_info}(object1, object2, ...)
@@ -37,9 +37,10 @@ data(rs10243170_info)
 get_anno(rs10243170_info, hsa04022_info)
 
 }
-\seealso{
-\code{\link{snp_info}}, \code{\link{pathway_info}}
-}
 \author{
 Stefanie Friedrichs, Saskia Freytag, Ngoc-Thuy Ha
 }
+\seealso{
+\code{\link{snp_info}}, \code{\link{pathway_info}}
+}
+

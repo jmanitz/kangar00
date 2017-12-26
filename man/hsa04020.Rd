@@ -24,3 +24,4 @@ An object of class \code{\link{pathway}} for the pathway with KEGG
 identifier hsa04020.
 }
 \keyword{datasets}
+
