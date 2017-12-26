@@ -13,13 +13,13 @@
 should return directed (\code{TRUE}) or undirected (\code{FALSE}) links.}
 }
 \value{
-\code{get_network_matrix} returns the modified \code{\link{pathway}} object, where the slots \code{'adj'} and \code{'sign'} are altered according to the downloaded information in the KEGG kgml file.
+\code{get_network_matrix} returns the modified \code{\link{pathway}} object, where the slots \code{adj} and \code{sign} are altered according to the downloaded information in the KEGG kgml file.
 }
 \description{
 \code{get_network_matrix} creates the adjacency matrix representing the gene-gene interaction structure within a particular \code{\link{pathway}}. Note that a 
 KEGG kgml file is downloaded and saved in the working directory.
 }
 \author{
-Juliane Manitz, Stefanie Friedrichs, Patricia Burger
+Stefanie Friedrichs, Patricia Burger, Juliane Manitz
 }
 

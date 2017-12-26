@@ -18,7 +18,7 @@ contained in pathways. It is created by the \code{\link{pathway_info}}
 function and contains a \code{data frame} with columns 
 'pathway', 'gene_start', 'gene_end', 'chr', 'gene'.}
 
-\item{...}{further arguments can be added.}
+\item{...}{further argdata(hsa04020)}
 }
 \value{
 A \code{data.frame} mapping SNPs to genes and genes to

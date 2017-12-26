@@ -141,6 +141,9 @@
 #' pathway. Has columns 'pathway', 'gene_start', 'gene_end', 'chr', and 'gene'}
 #' }
 #' @usage data(hsa04022_info)
+#' @examples
+#' pathway_info('hsa04020')
+#'
 #' @source Ensembl extract
 "hsa04022_info"
 
@@ -155,5 +158,8 @@
 #' SNP. Columns given are 'chr', 'position', and 'rsnumber'}
 #' }
 #' @usage data(rs10243170_info)
+#' @examples
+#' snp_info("rs10243170")
+#'
 #' @source Ensembl extract
 "rs10243170_info"

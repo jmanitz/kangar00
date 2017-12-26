@@ -19,5 +19,9 @@ data(hsa04022_info)
 An object of class \code{\link{pathway_info}} for the \code{\link{pathway}}
 with KEGG identifier hsa04020.
 }
+\examples{
+pathway_info('hsa04020')
+
+}
 \keyword{datasets}
 
