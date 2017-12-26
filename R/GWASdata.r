@@ -469,7 +469,7 @@ setGeneric('snp_info', function(x, ...) standardGeneric('snp_info'))
 #' will not be listed in the returned \code{snp_info} object, SNPs with multiple
 #' positions  will appear several times.
 #' @examples
-#' snp_info("rs234")
+## snp_info("rs234")
 #' snp_info("rs10243170")
 #'
 ## @author Stefanie Friedrichs
@@ -515,7 +515,7 @@ setGeneric('summary', function(object, ...) standardGeneric('summary'))
 #' @param object An \code{object} of class \code{\link{snp_info}}.
 #' @return \code{summary} Summarized information on \code{\link{snp_info}} object.
 #' @examples
-#' summary(snp_info("rs10243170"))
+#' summary(rs10243170_info)
 ## @author Stefanie Friedrichs
 #' @export
 #' @rdname snp_info-class
