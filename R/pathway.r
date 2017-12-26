@@ -605,6 +605,7 @@ setGeneric('get_network_matrix', function(object, ...) standardGeneric('get_netw
 #' @param object A \code{\link{pathway}} object identifying the pathway for which gene interaction infomation should be extracted. Here, KEGG IDs of format 'hsa00100' are used and information is downloaded from the KEGG database.    
 #' @param directed A \code{logical} argument, stating whether the network matrix 
 #' should return directed (\code{TRUE}) or undirected (\code{FALSE}) links. 
+#' @param method Download method to be used for downloading files, passed to via \code{KEGGgraph::retrieveKGML} to \code{utils::download.file} function. Currently supports \code{'auto'} (default), \code{'internal'}, \code{'wininet'} (Windows only), \code{'libcurl'}, \code{'wget'} and \code{'curl'}. 
 #' @return \code{get_network_matrix} returns the modified \code{\link{pathway}} object, where the slots \code{adj} and \code{sign} are altered according to the downloaded information in the KEGG kgml file. 
 #' @examples
 #' get_network_matrix(pathway(id="hsa04020"), directed=TRUE)
@@ -619,11 +620,11 @@ setGeneric('get_network_matrix', function(object, ...) standardGeneric('get_netw
 #' @rdname get_network_matrix
 #' @aliases get_network_matrix,pathway-method
 setMethod('get_network_matrix', signature='pathway', 
-          definition = function(object, directed=TRUE){    
+          definition = function(object, directed=TRUE, method='auto'){    
       
       x <- object@id      
       retrieveKGML(substr(x,4,nchar(x)), organism="hsa",
-                   destfile=paste(x,".xml",sep=""), method="internal")
+                   destfile=paste(x,".xml",sep=""), method=method)
       liste     <- gene_name_number(x)
       pathgraph <- parseKGML2Graph(paste(x,".xml",sep=""), expandGenes=TRUE)
           

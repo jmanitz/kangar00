@@ -24,7 +24,7 @@ Depends:
     R (>= 3.1.0)
 Imports:
     methods,
-    KEGGgraph (>= 1.37.0),
+    KEGGgraph (>= 1.37.2),
     biomaRt,
     bigmemory,
     sqldf,
