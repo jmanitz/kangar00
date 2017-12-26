@@ -24,11 +24,13 @@ equal, better construct a full-rank kernel of class \code{\link{kernel}}.
 }}
 \examples{
 data(gwas)
-calc_kernel(gwas, hsa04020, knots=gwas, type='lin', calculation='cpu') 
-\dontrun{
-gwas2 <- new('GWASdata', pheno=pheno[1:10,], geno=geno[1:10,], anno=anno, desc=" study 2")
-calc_kernel(gwas, hsa04020, knots = gwas2, type='net', calculation='cpu')
-}
+data(hsa04020)
+square <- calc_kernel(gwas, hsa04020, knots=gwas, type='lin', calculation='cpu')
+dim(square@kernel)
+
+gwas2 <- new('GWASdata', pheno=pheno[1:10,], geno=geno[1:10,], anno=anno, desc="study 2")
+low_rank <- calc_kernel(gwas, hsa04020, knots = gwas2, type='net', calculation='cpu')
+dim(low_rank@kernel)
 }
 \author{
 Juliane Manitz
