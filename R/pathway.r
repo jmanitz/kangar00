@@ -606,8 +606,8 @@ setGeneric('get_network_matrix', function(object, ...) standardGeneric('get_netw
 #' @param directed A \code{logical} argument, stating whether the network matrix 
 #' should return directed (\code{TRUE}) or undirected (\code{FALSE}) links. 
 #' @return \code{get_network_matrix} returns the modified \code{\link{pathway}} object, where the slots \code{adj} and \code{sign} are altered according to the downloaded information in the KEGG kgml file. 
-## @examples
-## get_network_matrix(pathway(id="hsa04020", adj=matrix(0), sign=as.vector(matrix(0)[matrix(0)!=0])), TRUE)
+#' @examples
+#' get_network_matrix(pathway(id="hsa04020"), directed=TRUE)
 #'
 #' @author Stefanie Friedrichs, Patricia Burger, Juliane Manitz
 #' @export 
