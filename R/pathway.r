@@ -138,7 +138,7 @@ setGeneric('pathway2igraph', function(object, ...) standardGeneric('pathway2igra
 #' @aliases pathway2igraph pathway ANY-method     
 ## @param object An object of class \code{\link{pathway-class}}
 #' @examples
-#' # convert to \code{\link[igraph]{igraph}} object
+#' # convert to igraph object
 #' data(hsa04020)
 #' str(hsa04020)
 #' g <- pathway2igraph(hsa04020)
@@ -191,7 +191,7 @@ setGeneric('analyze', function(object, ...) standardGeneric('analyze'))
 #'   \item Kunegis, J., A. Lommatzsch, and C. Bauckhage (2009). The slashdot zoo: Mining a social network with negative egdes. In Proceedings of the 18th international conference on World wide web, pp. 741-750. ACM Press.
 #' } 
 #' @examples
-#' # analyse \code{\link{pathway}} network properties
+#' # analyse pathway network properties
 #' data(hsa04020)
 #' summary(hsa04020)
 #' analyze(hsa04020)
@@ -239,7 +239,7 @@ setGeneric('get_genes', function(object, ...) standardGeneric('get_genes'))
 #' 
 #' @aliases get_genes pathway ANY-method 
 #' @examples
-#' # extract gene names from \code{\link{pathway}}
+#' # extract gene names from pathway object
 #' get_genes(hsa04020)
 setMethod('get_genes', signature='pathway',
           definition = function(object){
@@ -269,7 +269,7 @@ if (!isGeneric("plot")) setGeneric('plot')
 #' @param ... further arguments specifying plotting options in \code{plot.igraph}
 #'
 #' @examples
-#' # plot \code{\link{pathway}} as \code{\link[igraph]{igraph}} object
+#' # plot pathway as igraph object
 #' plot(hsa04020)
 #' sample3 <- sample_genes(hsa04020, no = 3)
 #' plot(hsa04020, highlight.genes = sample3)
@@ -482,12 +482,12 @@ setMethod('pathway_info', signature='character',
    #ensembl <- useMart("ensembl", dataset="hsapiens_gene_ensembl")  
    ensembl <- useMart(biomart="ENSEMBL_MART_ENSEMBL",
               dataset="hsapiens_gene_ensembl",host = "jul2015.archive.ensembl.org") 
-   info    <- getBM(attributes=c("start_position","end_position",
+   info    <- na.omit(getBM(attributes=c("start_position","end_position",
               "chromosome_name","hgnc_symbol"), filters=c("hgnc_symbol"),
-              values=g, mart=ensembl)
-   info$chromosome_name <- as.numeric(as.character(info$chromosome_name))
-   info                 <- stats::na.omit(info)
-   pathways             <- cbind(rep(paste(x,sep=""),length(info[,1])),info)
+              values=g, mart=ensembl))
+#   info$chromosome_name <- as.numeric(info$chromosome_name)
+#   info                 <- stats::na.omit(info)
+#   pathways             <- cbind(rep(paste(x,sep=""),length(info[,1])),info)
    colnames(pathways)   <- c("pathway","gene_start","gene_end","chr","gene") 
    ret <- new('pathway_info', info=pathways)
    return(ret)
