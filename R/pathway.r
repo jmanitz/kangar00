@@ -469,8 +469,6 @@ setGeneric('pathway_info', function(x) standardGeneric('pathway_info'))
 #' @return A \code{data.frame} including as many rows as genes appear in the 
 #' \code{\link{pathway}}. for each gene its name, the start and end point and the chromosome 
 #' it lies on are given.
-#' @examples
-#' pathway_info("hsa04022") 
 #'
 ## @author Stefanie Friedrichs
 #' @import biomaRt  
@@ -499,9 +497,10 @@ setMethod('pathway_info', signature='character',
 #' @return \code{show} Basic information on \code{\link{pathway_info}} object.
 ## @author Stefanie Friedrichs
 #' @examples
-#' # show method
-#' data(hsa04022_info)
-#' hsa04022_info
+#' info <- pathway_info('hsa04020') 
+#' show(info)
+#' summary(info)
+#'
 #' @export
 #' @rdname pathway_info-class
 #' @aliases show,pathway_info,ANY-method

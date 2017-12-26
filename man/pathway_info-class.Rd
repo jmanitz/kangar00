@@ -51,11 +51,10 @@ database is accessed via the R-package \pkg{biomaRt}.
 pathways with columns 'pathway', 'gene_start', 'gene_end', 'chr' and 'gene'.}
 }}
 \examples{
-pathway_info("hsa04022") 
+info <- pathway_info('hsa04020') 
+show(info)
+summary(info)
 
-# show method
-data(hsa04022_info)
-hsa04022_info
 # summary method
 data(hsa04022_info)
 summary(hsa04022_info)
