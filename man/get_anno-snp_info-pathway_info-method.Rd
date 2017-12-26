@@ -32,9 +32,9 @@ object into an annotation \code{data.frame} used for \code{\link{pathway}}
 analysis on GWAS. SNPs are assigned to pathways via gene membership.
 }
 \examples{
-hsa_info_ex <- pathway_info('hsa04020')
-snp_info_ex <- snp_info("rs10243170")
-get_anno(snp_info_ex, hsa_info_ex)
+data(hsa04022_info)  # pathway_info('hsa04020')
+data(rs10243170_info)# snp_info("rs10243170")
+get_anno(rs10243170_info, hsa04022_info)
 
 }
 \seealso{

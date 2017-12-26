@@ -549,9 +549,9 @@ setGeneric('get_anno', function(object1, object2, ...) standardGeneric('get_anno
 #' 'position'.
 #' 
 #' @examples
-#' hsa_info_ex <- pathway_info('hsa04020')
-#' snp_info_ex <- snp_info("rs10243170")
-#' get_anno(snp_info_ex, hsa_info_ex)
+#' data(hsa04022_info)  # pathway_info('hsa04020')
+#' data(rs10243170_info)# snp_info("rs10243170")
+#' get_anno(rs10243170_info, hsa04022_info)
 #'
 #' @author Stefanie Friedrichs, Saskia Freytag, Ngoc-Thuy Ha
 #' @seealso \code{\link{snp_info}}, \code{\link{pathway_info}}
