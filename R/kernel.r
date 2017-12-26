@@ -384,7 +384,7 @@ setGeneric('rewire_network', function(object, ...) standardGeneric('rewire_netwo
 #' represented by any SNPs in the considered \code{\link{GWASdata}} dataset.   
 #'
 #' @export
-#' @author Stefanie Friedrichs, Juliane Manitz
+#' @author Juliane Manitz, Stefanie Friedrichs
 #'
 #' @param object \code{\link{pathway}} object which's network \code{matrix} will be rewired
 #' @param x A \code{vector} of gene names, indicating which genes are not represented
@@ -395,12 +395,12 @@ setGeneric('rewire_network', function(object, ...) standardGeneric('rewire_netwo
 #' @rdname rewire_network
 #' @aliases rewire_network,pathway-method
 #' @examples
+#' \dontrun{
 #' data(hsa04020)
 #' summary(hsa04020)
 #' hsa04020_rewired <- rewire_network(hsa04020, x=c('ADCY3', 'CALML3','GNAQ'))
 #' summary(hsa04020_rewired)
-#' 
-## @references TODO Newman?   
+#' }
 setMethod('rewire_network', signature(object = 'pathway'),
           definition = function(object, x) {
           

@@ -23,13 +23,14 @@ Rewires interactions in a \code{\link{pathway}}, which go through a gene not
 represented by any SNPs in the considered \code{\link{GWASdata}} dataset.
 }
 \examples{
+\dontrun{
 data(hsa04020)
 summary(hsa04020)
 hsa04020_rewired <- rewire_network(hsa04020, x=c('ADCY3', 'CALML3','GNAQ'))
 summary(hsa04020_rewired)
-
+}
 }
 \author{
-Stefanie Friedrichs, Juliane Manitz
+Juliane Manitz, Stefanie Friedrichs
 }
 

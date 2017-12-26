@@ -52,16 +52,12 @@ R-package \pkg{biomaRt}.
 }}
 \examples{
 # snp_info
+snp_info("rs10243170")
 data(rs10243170_info) 
-snp_info(c("rs234"))
-snp_info(c("rs10243170"))
+snp_info("rs234")
+snp_info("rs10243170")
 
-# show
-data(rs10243170_info)
-rs10243170_info
-# summary
-data(rs10243170_info)
-summary(rs10243170_info)
+summary(snp_info("rs10243170"))
 }
 \author{
 Stefanie Friedrichs

@@ -22,5 +22,13 @@ data(pheno)
 A dataset containing simulated example phenotypes for 50 individuals 
 row names include the identifiers of 50 example individuals.
 }
+\examples{
+data(pheno)
+head(pheno)
+# create gwas object
+data(geno)
+data(anno)
+gwas <- new('GWASdata', pheno=pheno, geno=geno, anno=anno, desc="some study") 
+}
 \keyword{datasets}
 

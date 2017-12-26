@@ -20,5 +20,13 @@ A matrix containing example genotypes for 4056 SNPs of 50 individuals.
 Column names give the rs-numbers of 4056 example SNPs, row names the 
 identifiers of 50 example individuals.
 }
+\examples{
+data(geno)
+head(geno)
+# create gwas object
+data(pheno)
+data(anno)
+gwas <- new('GWASdata', pheno=pheno, geno=geno, anno=anno, desc="some study") 
+}
 \keyword{datasets}
 

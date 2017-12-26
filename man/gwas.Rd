@@ -21,5 +21,12 @@ data(gwas)
 An object of type GWASdata containing the example files for 
 annotation, phenotypes and genotypes.
 }
+\examples{
+# create gwas object
+data(pheno)
+data(geno)
+data(anno)
+gwas <- new('GWASdata', pheno=pheno, geno=geno, anno=anno, desc="some study") 
+}
 \keyword{datasets}
 

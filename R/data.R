@@ -12,6 +12,13 @@
 #'  \item{age}{numerical value giving the persons age}
 #' }
 #' @usage data(pheno)
+#' @examples
+#' data(pheno)
+#' head(pheno)
+#' # create gwas object
+#' data(geno)
+#' data(anno)
+#' gwas <- new('GWASdata', pheno=pheno, geno=geno, anno=anno, desc="some study") 
 #' @source simulated data
 "pheno"
 
@@ -29,6 +36,13 @@
 #'  \item{position}{gives positions of example SNPs}
 #' }
 #' @usage data(anno)
+#' @examples
+#' data(anno)
+#' head(anno)
+#' # create gwas object
+#' data(pheno)
+#' data(geno)
+#' gwas <- new('GWASdata', pheno=pheno, geno=geno, anno=anno, desc="some study") 
 #' @source simulated data
 "anno"
 
@@ -44,6 +58,13 @@
 #' corresponding SNP and individual.
 #' }
 #' @usage data(geno)
+#' @examples
+#' data(geno)
+#' head(geno)
+#' # create gwas object
+#' data(pheno)
+#' data(anno)
+#' gwas <- new('GWASdata', pheno=pheno, geno=geno, anno=anno, desc="some study") 
 #' @source simulated data
 "geno"
 
@@ -60,6 +81,12 @@
 #'  \item{desc}{a description of the GWAS study, here 'example study'}
 #' }
 #' @usage data(gwas)
+#' @examples
+#' # create gwas object
+#' data(pheno)
+#' data(geno)
+#' data(anno)
+#' gwas <- new('GWASdata', pheno=pheno, geno=geno, anno=anno, desc="some study") 
 #' @source simulated data
 "gwas"
 

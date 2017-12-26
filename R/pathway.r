@@ -600,7 +600,7 @@ setGeneric('get_network_matrix', function(object, ...) standardGeneric('get_netw
 #' \code{get_network_matrix} creates the adjacency matrix representing the gene-gene interaction structure within a particular \code{\link{pathway}}. Note that a 
 #' KEGG kgml file is downloaded and saved in the working directory. 
 #'
-## @param object A \code{\link{pathway}} object identifying the pathway for which gene interaction infomation should be extracted. Here, KEGG IDs of format 'hsa00100' are used and information is downloaded from the KEGG database.    
+#' @param object A \code{\link{pathway}} object identifying the pathway for which gene interaction infomation should be extracted. Here, KEGG IDs of format 'hsa00100' are used and information is downloaded from the KEGG database.    
 #' @param directed A \code{logical} argument, stating whether the network matrix 
 #' should return directed (\code{TRUE}) or undirected (\code{FALSE}) links. 
 #' @return \code{get_network_matrix} returns the modified \code{\link{pathway}} object, where the slots \code{adj} and \code{sign} are altered according to the downloaded information in the KEGG kgml file. 
@@ -613,8 +613,9 @@ setGeneric('get_network_matrix', function(object, ...) standardGeneric('get_netw
 #' @importFrom KEGGgraph parseKGML2Graph
 #' @importFrom KEGGgraph nodes
 #' @importFrom KEGGgraph parseKGML2DataFrame
-## @rdname pathway-class
-#' @aliases get_network_matrix
+#' @name get_network_matrix
+#' @rdname get_network_matrix
+#' @aliases get_network_matrix,pathway-method
 setMethod('get_network_matrix', signature='pathway', 
           definition = function(object, directed=TRUE){    
       

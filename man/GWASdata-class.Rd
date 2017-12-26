@@ -75,19 +75,15 @@ pack.years. Note: IDs have to be in the first column!}
 \item{\code{desc}}{A \code{character} giving the GWAS description, e.g. name of study.}
 }}
 \examples{
+# create gwas data object
 data(pheno)
 data(geno)
 data(anno)
 gwas <- new('GWASdata', pheno=pheno, geno=geno, anno=anno, desc="some study") 
-# show method
-data(gwas) 
+# show and summary methods
 gwas
-# summary method
-data(gwas) 
 summary(gwas)
-
 # SNPs and genes in pathway
-data(gwas) 
 GeneSNPsize(gwas)
 }
 \author{

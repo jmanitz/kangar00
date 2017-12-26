@@ -33,7 +33,7 @@ analysis on GWAS. SNPs are assigned to pathways via gene membership.
 }
 \examples{
 hsa_info_ex <- pathway_info('hsa04020')
-snp_info_ex <- snp_info(c("rs10243170"))
+snp_info_ex <- snp_info("rs10243170")
 get_anno(snp_info_ex, hsa_info_ex)
 
 }

@@ -24,6 +24,7 @@ NULL
 #' pack.years. Note: IDs have to be in the first column!
 #' @slot desc A \code{character} giving the GWAS description, e.g. name of study.  
 #' @examples
+#' # create gwas data object
 #' data(pheno)
 #' data(geno)
 #' data(anno)
@@ -349,8 +350,7 @@ setMethod("read_geno",
 #' \code{show} displays basic information on \code{\link{GWASdata}} object
 #' @param object A \code{\link{GWASdata}} object.
 #' @examples
-#' # show method
-#' data(gwas) 
+#' # show and summary methods
 #' gwas
 ## @author Juliane Manitz
 #' @export
@@ -380,10 +380,9 @@ setGeneric('summary', function(object, ...) standardGeneric('summary'))
 #' data are calculated.
 #'
 #' @examples
-#' # summary method
-#' data(gwas) 
+## # summary method
+## data(gwas) 
 #' summary(gwas)
-#'
 #' @export
 #' @rdname GWASdata-class
 setMethod('summary', signature='GWASdata',
@@ -416,7 +415,7 @@ setGeneric('GeneSNPsize', function(object, ...) standardGeneric('GeneSNPsize'))
 #' @aliases GeneSNPsize GWASdata
 #' @examples
 #' # SNPs and genes in pathway
-#' data(gwas) 
+## data(gwas) 
 #' GeneSNPsize(gwas)
 setMethod('GeneSNPsize', signature='GWASdata',
           definition <- function(object){
@@ -436,6 +435,7 @@ setMethod('GeneSNPsize', signature='GWASdata',
 #' @author Stefanie Friedrichs
 #' @examples
 #' # snp_info
+#' snp_info("rs10243170")
 #' data(rs10243170_info) 
 #' @export snp_info
 #' @import methods
@@ -469,8 +469,8 @@ setGeneric('snp_info', function(x, ...) standardGeneric('snp_info'))
 #' will not be listed in the returned \code{snp_info} object, SNPs with multiple
 #' positions  will appear several times.
 #' @examples
-#' snp_info(c("rs234"))
-#' snp_info(c("rs10243170"))
+#' snp_info("rs234")
+#' snp_info("rs10243170")
 #'
 ## @author Stefanie Friedrichs
 #' @import biomaRt
@@ -494,10 +494,10 @@ setMethod('snp_info', signature='character',
 #'
 ## @param object An \code{object} of class \code{\link{snp_info}}.
 #' @return \code{show} Basic information on \code{\link{snp_info}} object.
-#' @examples
-#' # show
-#' data(rs10243170_info)
-#' rs10243170_info
+## @examples
+## # show
+## data(rs10243170_info)
+## rs10243170_info
 ## @author Stefanie Friedrichs
 #' @export
 #' @rdname snp_info-class
@@ -515,9 +515,7 @@ setGeneric('summary', function(object, ...) standardGeneric('summary'))
 #' @param object An \code{object} of class \code{\link{snp_info}}.
 #' @return \code{summary} Summarized information on \code{\link{snp_info}} object.
 #' @examples
-#' # summary
-#' data(rs10243170_info)
-#' summary(rs10243170_info)
+#' summary(snp_info("rs10243170"))
 ## @author Stefanie Friedrichs
 #' @export
 #' @rdname snp_info-class
@@ -552,7 +550,7 @@ setGeneric('get_anno', function(object1, object2, ...) standardGeneric('get_anno
 #' 
 #' @examples
 #' hsa_info_ex <- pathway_info('hsa04020')
-#' snp_info_ex <- snp_info(c("rs10243170"))
+#' snp_info_ex <- snp_info("rs10243170")
 #' get_anno(snp_info_ex, hsa_info_ex)
 #'
 #' @author Stefanie Friedrichs, Saskia Freytag, Ngoc-Thuy Ha

@@ -22,5 +22,13 @@ data(anno)
 A dataset containing an annotation example for 4056 SNPs in three different 
 pathways.
 }
+\examples{
+data(anno)
+head(anno)
+# create gwas object
+data(pheno)
+data(geno)
+gwas <- new('GWASdata', pheno=pheno, geno=geno, anno=anno, desc="some study") 
+}
 \keyword{datasets}
 
