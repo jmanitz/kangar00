@@ -528,6 +528,12 @@ setGeneric('make_psd', function(x, ...) standardGeneric('make_psd'))
 #' \itemize{
 #'  \item Freytag S, Manitz J, Schlather M, Kneib T, Amos CI, Risch A, Chang-Claude J, Heinrich J, Bickeboeller H: A network-based kernel machine test for the identification of risk pathways in genome-wide association studies. Hum Hered. 2013, 76(2):64-75.
 #' }
+#' @examples
+#' set.seed(2345)
+#' m <- matrix(data=sample(size=25, c(0,0,1), replace=TRUE),5,5)
+#' m <- m + t(m)
+#' min(eigen(m, only.values = TRUE, symmetric = TRUE)$values)
+#' round(make_psd(m),2)
 #'
 #' @export
 ## @rdname make_psd

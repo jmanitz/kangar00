@@ -111,7 +111,7 @@
 #' data(hsa04020)
 #' net_kernel <- calc_kernel(gwas, hsa04020, knots=NULL, type='net', calculation='cpu')
 #' # are the value differences smaller than machine epsilon?
-#' abs(net.kernel.hsa04020@kernel - net_kernel@kernel) < 1e-10 
+#' all(abs(net.kernel.hsa04020@kernel - net_kernel@kernel) < sqrt(.Machine$double.eps))
 #' 
 #' @source simulated data and Ensembl extract
 "net.kernel.hsa04020"

@@ -28,6 +28,14 @@ calculated as N* = rho*N + (1+rho)*I, where I is the identity \code{matrix}
 and rho = 1/(1 - lambda) with lambda the smallest eigenvalue of N. 
 For more details check the references.
 }
+\examples{
+set.seed(2345)
+m <- matrix(data=sample(size=25, c(0,0,1), replace=TRUE),5,5)
+m <- m + t(m)
+min(eigen(m, only.values = TRUE, symmetric = TRUE)$values)
+round(make_psd(m),2)
+
+}
 \author{
 Juliane Manitz, Saskia Freytag, Stefanie Friedrichs
 }
