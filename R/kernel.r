@@ -19,6 +19,11 @@ NULL
 #' @slot kernel A kernel \code{matrix} of dimension equal to the number of individuals
 #' @slot pathway A \code{\link{pathway}} object
 #'
+#' @examples
+#' data(gwas)
+#' data(hsa04020)
+#' net_kernel <- calc_kernel(gwas, hsa04020, knots=NULL, type='net', calculation='cpu')
+#'
 #' @author Juliane Manitz
 #' @export
 #' @import methods
@@ -145,8 +150,12 @@ setGeneric('calc_kernel', function(object, ...) standardGeneric('calc_kernel'))
 #' @examples
 #' data(gwas)
 #' data(hsa04020)
-#' calc_kernel(gwas, hsa04020, knots = NULL, type='net', calculation='cpu')
-#'
+#' data(gwas)
+#' net_kernel <- calc_kernel(gwas, hsa04020, knots=NULL, type='net', calculation='cpu')
+#' show(net_kernel)
+#' summary(net_kernel)
+#' plot(net_kernel, hclust=TRUE)
+#' 
 #' @author Stefanie Friedrichs, Juliane Manitz
 #' @rdname calc_kernel
 #' @name calc_kernel
@@ -545,8 +554,12 @@ setMethod('make_psd', signature = 'matrix',
 #' @param object An object of class \code{kernel}
 #'
 #' @examples
-#' data(net.kernel.hsa04020)
-#' show(net.kernel.hsa04020)
+#' data(gwas)
+#' data(hsa04020)
+#' data(gwas)
+#' net_kernel <- calc_kernel(gwas, hsa04020, knots=NULL, type='net', calculation='cpu')
+#' show(net_kernel)
+#'
 #' @export
 #' @rdname kernel-class
 setMethod('show', signature('kernel'),
@@ -562,7 +575,8 @@ setGeneric('summary', function(object) standardGeneric('summary'))
 #' \code{summary} generates a \code{kernel} object summary including the number of 
 #' individuals and genes for the \code{\link{pathway}}
 #' @examples
-#' summary(net.kernel.hsa04020)
+#' summary(net_kernel)
+#'
 #' @export
 #' @rdname kernel-class
 #' @aliases summary,kernel,ANY-method
@@ -587,7 +601,9 @@ if (!isGeneric("plot")) setGeneric('plot')
 #' @export
 #' @rdname kernel-class
 #' @examples
-#' plot(net.kernel.hsa04020)
+#' summary(net_kernel)
+#' plot(net_kernel, hclust=TRUE)
+#'
 #' @aliases plot,kernel,ANY-method
 setMethod('plot', signature(x='kernel',y='missing'),
           function(x, y=NA, hclust=FALSE, ...){
