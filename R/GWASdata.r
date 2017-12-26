@@ -545,7 +545,7 @@ setGeneric('get_anno', function(object1, object2, ...) standardGeneric('get_anno
 #' contained in pathways. It is created by the \code{\link{pathway_info}} 
 #' function and contains a \code{data frame} with columns 
 #' 'pathway', 'gene_start', 'gene_end', 'chr', 'gene'.
-#' @param ... further arguments can be added.
+#' @param ... further argdata(hsa04020)
 #' @return A \code{data.frame} mapping SNPs to genes and genes to
 #' pathways. It includes the columns 'pathway', 'gene', 'chr', 'snp' and 
 #' 'position'.

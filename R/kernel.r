@@ -395,10 +395,11 @@ setGeneric('rewire_network', function(object, ...) standardGeneric('rewire_netwo
 #' @rdname rewire_network
 #' @aliases rewire_network,pathway-method
 #' @examples
-#' \dontrun{ 
 #' data(hsa04020)
-#' rewire_network(hsa04020, c("PHKB", "ORAI2"))
-#' }
+#' summary(hsa04020)
+#' hsa04020_rewired <- rewire_network(hsa04020, x=c('ADCY3', 'CALML3','GNAQ'))
+#' summary(hsa04020_rewired)
+#' 
 ## @references TODO Newman?   
 setMethod('rewire_network', signature(object = 'pathway'),
           definition = function(object, x) {

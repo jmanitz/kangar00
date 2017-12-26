@@ -16,7 +16,7 @@
 #' each link (1 activation, -1 inhibition) in the interaction network for the 
 #' \code{\link{pathway}}.
 #' 
-#' @author Juliane Manitz
+#' @author Juliane Manitz, Stefanie Friedrichs, Patricia Burger
 #'
 #' @export
 #' @import methods
@@ -54,7 +54,7 @@ setValidity('pathway', function(object){
 
 # pathway object constructor
 setGeneric('pathway', function(object, ...) standardGeneric('pathway'))
-#' \code{'pathway'} is the \code{\link{pathway}} object constructor.
+#' \code{pathway} is the \code{\link{pathway}} object constructor.
 #'
 #' @param id A \code{character} repesenting the \code{\link{pathway}} id.  
 #' @param adj A \code{matrix} respresenting the network adjacency matrix of dimension 
@@ -65,6 +65,7 @@ setGeneric('pathway', function(object, ...) standardGeneric('pathway'))
 #' @export
 #'
 #' @examples
+#' # pathway object constructor
 #' pathway(id="hsa04022", adj=matrix(0), sign=as.vector(matrix(0)[matrix(0)!=0]))
 #' 
 #' @rdname pathway-class
@@ -77,10 +78,10 @@ setMethod('pathway',
 # show method
 #' \code{show} displays the \code{\link{pathway}} object briefly   
 #' @param object An object of class \code{pathway-class}
-#' @examples
-#' #show method
-#' data(hsa04020)
-#' hsa04020
+## @examples
+## #show method
+## data(hsa04020)
+## hsa04020
 #' @export
 #' @rdname pathway-class
 #' @aliases show,pathway,ANY-method
@@ -105,10 +106,10 @@ setGeneric('summary', function(object, ...) standardGeneric('summary'))
 #' @rdname pathway-class 
 #' @aliases summary,pathway,ANY-method
 ## @param object An object of class \code{\link{pathway-class}}
-#' @examples
-#' #summary method
-#' data(hsa04020)
-#' summary(hsa04020)
+## @examples
+## #summary method
+## data(hsa04020)
+## summary(hsa04020)
 #' @aliases summary,pathway,ANY-method
 setMethod('summary', signature='pathway',
           definition = function(object){
@@ -133,18 +134,21 @@ setGeneric('pathway2igraph', function(object, ...) standardGeneric('pathway2igra
 #' \code{\link[igraph]{igraph}} object with edge attribute \code{sign}
 #'
 ##\link[pkg2:foo_Rd_file_name]{foo}
-#' @export
-#' @rdname pathway-class
-#' @aliases pathway2igraph pathway ANY-method     
 ## @param object An object of class \code{\link{pathway-class}}
+#'
+#' @return \code{pathway2igraph} returns an unweighted \code{\link[igraph]{igraph}} object with edge attribute \code{sign}
+#'
 #' @examples
 #' # convert to igraph object
 #' data(hsa04020)
 #' str(hsa04020)
 #' g <- pathway2igraph(hsa04020)
 #' str(g)
-setMethod('pathway2igraph', signature='pathway',
-          definition = function(object){
+#'
+#' @export
+#' @rdname pathway-class
+#' @aliases pathway2igraph pathway ANY-method     
+setMethod('pathway2igraph', signature='pathway', definition = function(object){
     # define adjacency matrix
     net <- object@adj
     net[net!=0] <- object@sign
@@ -191,10 +195,11 @@ setGeneric('analyze', function(object, ...) standardGeneric('analyze'))
 #'   \item Kunegis, J., A. Lommatzsch, and C. Bauckhage (2009). The slashdot zoo: Mining a social network with negative egdes. In Proceedings of the 18th international conference on World wide web, pp. 741-750. ACM Press.
 #' } 
 #' @examples
-#' # analyse pathway network properties
+#' # analyze pathway network properties
 #' data(hsa04020)
 #' summary(hsa04020)
 #' analyze(hsa04020)
+#'
 setMethod('analyze', signature='pathway',
           definition = function(object, ...){
               # define graph
@@ -234,6 +239,8 @@ setGeneric('get_genes', function(object, ...) standardGeneric('get_genes'))
 #' \code{\link{pathway}} and returns a \code{vector} containing \code{character}
 #' elements of gene names
 #'
+#' @return \code{get_genes} returns a character vector of gene names extracted from adjacency matrix rownames.
+#'
 #' @export
 #' @describeIn pathway
 #' 
@@ -241,6 +248,7 @@ setGeneric('get_genes', function(object, ...) standardGeneric('get_genes'))
 #' @examples
 #' # extract gene names from pathway object
 #' get_genes(hsa04020)
+#'
 setMethod('get_genes', signature='pathway',
           definition = function(object){
               return(rownames(object@adj))
@@ -327,8 +335,10 @@ setMethod('plot', signature(x='pathway',y='missing'),
 #' @exportMethod sample_genes
 setGeneric('sample_genes', function(object, ...) standardGeneric('sample_genes'))
 
-#' \code{sample_genes} function randomly selects effect genes in a 
-#' \code{\link{pathway}} and returns a \code{vector} of length \code{no} with 
+#' \code{sample_genes} function randomly selects effect gene in a 
+#' \code{\link{pathway}} according the betweenness centrality and (no -1) neighors
+#'
+#' @return \code{sample_genes} returns a \code{vector} of length \code{no} with 
 #' vertex id's of sampled genes 
 #'
 #' @export
@@ -342,6 +352,7 @@ setGeneric('sample_genes', function(object, ...) standardGeneric('sample_genes')
 #' plot(hsa04020, highlight.genes = sample3)
 #' sample5 <- sample_genes(hsa04020, no = 5)
 #' plot(hsa04020, highlight.genes = sample5)
+#'
 setMethod('sample_genes', signature='pathway',
           definition = function(object, no=3){
             g <- pathway2igraph(object)
@@ -586,22 +597,17 @@ setMethod('set_names', signature='matrix',
 setGeneric('get_network_matrix', function(object, ...) standardGeneric('get_network_matrix'))
 #' Function to calculate the network \code{matrix} for a \code{\link{pathway}} object
 #'
-#' This function creates the network matrix representing the gene-gene interaction 
-#' structure within a particular \code{\link{pathway}}. In this process a 
+#' \code{get_network_matrix} creates the adjacency matrix representing the gene-gene interaction structure within a particular \code{\link{pathway}}. Note that a 
 #' KEGG kgml file is downloaded and saved in the working directory. 
 #'
-#' @param object A \code{\link{pathway}} object identifying the pathway for which gene 
-#' interaction infomation should be extracted. Here, KEGG IDs of format
-#' 'hsa00100' are used and information is downloaded from the KEGG database.    
-#' @param directed A \code{logic} argument, stating whether the network matrix 
-#' should be returned directed (\code{TRUE}) or undirected (\code{FALSE}). 
-#' @return The altered \code{\link{pathway}} object, in which the slots \code{'adj'} and 
-#' \code{'sign'} have been changed according to the downloaded information on the 
-#' \code{\link{pathway}}. 
+## @param object A \code{\link{pathway}} object identifying the pathway for which gene interaction infomation should be extracted. Here, KEGG IDs of format 'hsa00100' are used and information is downloaded from the KEGG database.    
+#' @param directed A \code{logical} argument, stating whether the network matrix 
+#' should return directed (\code{TRUE}) or undirected (\code{FALSE}) links. 
+#' @return \code{get_network_matrix} returns the modified \code{\link{pathway}} object, where the slots \code{adj} and \code{sign} are altered according to the downloaded information in the KEGG kgml file. 
 ## @examples
 ## get_network_matrix(pathway(id="hsa04022", adj=matrix(0), sign=as.vector(matrix(0)[matrix(0)!=0])), TRUE)
 #'
-#' @author Stefanie Friedrichs, Patricia Burger
+#' @author Stefanie Friedrichs, Patricia Burger, Juliane Manitz
 #' @export 
 #' @importFrom KEGGgraph retrieveKGML
 #' @importFrom KEGGgraph parseKGML2Graph
