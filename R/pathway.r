@@ -543,58 +543,6 @@ setMethod('summary', signature='pathway_info',
           })
 
 
-setGeneric('set_one', function(x, ...) standardGeneric('set_one'))
-#' Helper function to set \code{matrix} entries to 0/1/-1 only 
-#'
-#' This function sets all entries in a \code{matrix} bigger than 1 to 1 and all entries 
-#' smaller than -1 to -1. It is called by \code{\link{get_network_matrix}}.
-#' (For internal use)
-#'
-#' @param x numeric \code{matrix} representing the network adjacency matrix. 
-#' @return A \code{matrix} representing the interaction network in the 
-#' \code{\link{pathway}} object with entries equal to 1, -1 or 0.
-#'
-#' @author Stefanie Friedrichs 
-#' @seealso \code{\link{get_network_matrix}}
-#' @keywords internal
-setMethod('set_one', signature='matrix', 
-          definition = function(x){       
-  if(length(x[x>1])>0){ 
-     print("Edge values greater than 1 set to 1!")
-     x[x>1] <- 1}
-  if(length(x[x < (-1)])>0){
-     print("Edge values smaller than -1 set to -1!")
-     x[x<(-1)] <- -1}
-  return(x)
-})
-
-
-setGeneric('set_names', function(x, ...) standardGeneric('set_names'))
-#' Helper function to translate gene numbers to names  
-#'
-#' This function exchanges the numbers used for genes in KEGG download KGML files
-#' with the corresponding gene names. Names are set to be the column names and 
-#' rownames of the pathway's network matrix. The function 
-#' is called by \code{\link{get_network_matrix}}. (For internal use)
-#'
-#' @param x A \code{matrix} representing the network matrix. 
-#' @param nodes A \code{vector} of gene numbers to be replaced by names.   
-#' @param my_list A \code{data.frame} listing gene names and numbers. Output from 
-#' \code{gene_name_number}.  
-#' @return A \code{matrix} representing the interaction network in the pathway
-#' with gene names as rownames and columnnames. 
-#'
-#' @author Stefanie Friedrichs
-#' @keywords internal
-setMethod('set_names', signature='matrix', 
-          definition = function(x, nodes, my_list){
-    name <- substr(nodes,5,nchar(nodes)) 
-    for(i in 1:length(name)){ 
-      name[i] <- my_list[my_list[,1]==name[i],2] 
-    }
-    colnames(x) <- rownames(x) <- name
-    return(x)
-})
  
  
 setGeneric('get_network_matrix', function(object, ...) standardGeneric('get_network_matrix'))
@@ -720,3 +668,57 @@ setMethod('get_network_matrix', signature='pathway',
          return(object)
       }                       
 })
+
+setGeneric('set_one', function(x, ...) standardGeneric('set_one'))
+#' Helper function to set \code{matrix} entries to 0/1/-1 only 
+#'
+#' This function sets all entries in a \code{matrix} bigger than 1 to 1 and all entries 
+#' smaller than -1 to -1. It is called by \code{\link{get_network_matrix}}.
+#' (For internal use)
+#'
+#' @param x numeric \code{matrix} representing the network adjacency matrix. 
+#' @return A \code{matrix} representing the interaction network in the 
+#' \code{\link{pathway}} object with entries equal to 1, -1 or 0.
+#'
+#' @author Stefanie Friedrichs 
+#' @seealso \code{\link{get_network_matrix}}
+#' @keywords internal
+setMethod('set_one', signature='matrix', 
+          definition = function(x){       
+  if(length(x[x>1])>0){ 
+     print("Edge values greater than 1 set to 1!")
+     x[x>1] <- 1}
+  if(length(x[x < (-1)])>0){
+     print("Edge values smaller than -1 set to -1!")
+     x[x<(-1)] <- -1}
+  return(x)
+})
+
+
+setGeneric('set_names', function(x, ...) standardGeneric('set_names'))
+#' Helper function to translate gene numbers to names  
+#'
+#' This function exchanges the numbers used for genes in KEGG download KGML files
+#' with the corresponding gene names. Names are set to be the column names and 
+#' rownames of the pathway's network matrix. The function 
+#' is called by \code{\link{get_network_matrix}}. (For internal use)
+#'
+#' @param x A \code{matrix} representing the network matrix. 
+#' @param nodes A \code{vector} of gene numbers to be replaced by names.   
+#' @param my_list A \code{data.frame} listing gene names and numbers. Output from 
+#' \code{gene_name_number}.  
+#' @return A \code{matrix} representing the interaction network in the pathway
+#' with gene names as rownames and columnnames. 
+#'
+#' @author Stefanie Friedrichs
+#' @keywords internal
+setMethod('set_names', signature='matrix', 
+          definition = function(x, nodes, my_list){
+    name <- substr(nodes,5,nchar(nodes)) 
+    for(i in 1:length(name)){ 
+      name[i] <- my_list[my_list[,1]==name[i],2] 
+    }
+    colnames(x) <- rownames(x) <- name
+    return(x)
+})
+
