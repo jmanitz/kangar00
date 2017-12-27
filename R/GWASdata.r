@@ -469,8 +469,7 @@ setGeneric('snp_info', function(x, ...) standardGeneric('snp_info'))
 #' will not be listed in the returned \code{snp_info} object, SNPs with multiple
 #' positions  will appear several times.
 #' @examples
-## snp_info("rs234")
-#' rs_ex <- snp_info("rs10243170")
+#' data(rs10243170_info) # snp_info("rs10243170")
 #'
 ## @author Stefanie Friedrichs
 #' @import biomaRt
@@ -495,9 +494,7 @@ setMethod('snp_info', signature='character',
 ## @param object An \code{object} of class \code{\link{snp_info}}.
 #' @return \code{show} Basic information on \code{\link{snp_info}} object.
 #' @examples
-#' show(rs_ex)
-## data(rs10243170_info)
-## rs10243170_info
+#' rs10243170_info
 ## @author Stefanie Friedrichs
 #' @export
 #' @rdname snp_info-class
@@ -515,7 +512,7 @@ setGeneric('summary', function(object, ...) standardGeneric('summary'))
 #' @param object An \code{object} of class \code{\link{snp_info}}.
 #' @return \code{summary} Summarized information on \code{\link{snp_info}} object.
 #' @examples
-#' summary(rs_ex)
+#' summary(rs10243170_info)
 ## @author Stefanie Friedrichs
 #' @export
 #' @rdname snp_info-class

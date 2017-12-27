@@ -52,10 +52,10 @@ R-package \pkg{biomaRt}.
 }}
 
 \examples{
-rs_ex <- snp_info("rs10243170")
+data(rs10243170_info) # snp_info("rs10243170")
 
-show(rs_ex)
-summary(rs_ex)
+rs10243170_info
+summary(rs10243170_info)
 }
 \seealso{
 \code{\link{pathway_info}}, \code{\link{get_anno}}
