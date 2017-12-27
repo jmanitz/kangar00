@@ -509,7 +509,7 @@ setMethod('pathway_info', signature='character',
 #' @param object An object of class \code{\link{pathway_info}}.
 #' @return \code{show} Basic information on \code{\link{pathway_info}} object.
 #' @examples
-#' info <- pathway_info('hsa04020') 
+#' data(hsa04022_info) # pathway_info('hsa04020') 
 #' show(info)
 #' summary(info)
 #'

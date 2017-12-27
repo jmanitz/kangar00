@@ -169,8 +169,9 @@
 #' }
 #' @usage data(hsa04022_info)
 #' @examples
+#' \dontrun{
 #' pathway_info('hsa04020')
-#'
+#' }
 #' @source Ensembl extract
 "hsa04022_info"
 

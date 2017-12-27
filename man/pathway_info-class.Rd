@@ -52,7 +52,7 @@ pathways with columns 'pathway', 'gene_start', 'gene_end', 'chr' and 'gene'.}
 }}
 
 \examples{
-info <- pathway_info('hsa04020') 
+data(hsa04022_info) # pathway_info('hsa04020') 
 show(info)
 summary(info)
 
