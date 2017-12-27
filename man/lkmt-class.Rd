@@ -55,9 +55,15 @@ For details on the variance component test see the references.}
 }}
 
 \examples{
-# show method
-data(lkmt.net.kernel.hsa04020)
-lkmt.net.kernel.hsa04020
+data(hsa04020)
+data(gwas)
+# compute kernel
+net_kernel <- calc_kernel(gwas, hsa04020, knots=NULL, type='net', calculation='cpu')
+# perform LKMT 
+res <- lkmt_test(pheno ~ sex + age, net_kernel, gwas, method='satt')
+# show and summary methods
+show(res)
+summary(res)
 # summary method
 summary(lkmt.net.kernel.hsa04020)
 }

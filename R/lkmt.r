@@ -64,9 +64,17 @@ setValidity('lkmt', function(object){
 #' @param object An object of class \code{lkmt}.
 #' @return \code{show} Basic information on \code{lkmt} object.
 #' @examples
-#' # show method
-#' data(lkmt.net.kernel.hsa04020)
-#' lkmt.net.kernel.hsa04020
+#' data(hsa04020)
+#' data(gwas)
+#' # compute kernel
+#' net_kernel <- calc_kernel(gwas, hsa04020, knots=NULL, type='net', calculation='cpu')
+#' # perform LKMT 
+#' res <- lkmt_test(pheno ~ sex + age, net_kernel, gwas, method='satt')
+#' # show and summary methods
+#' show(res)
+#' summary(res)
+## data(lkmt.net.kernel.hsa04020)
+## lkmt.net.kernel.hsa04020
 ## @author Juliane Manitz
 #' @export
 #' @rdname lkmt-class
@@ -142,9 +150,10 @@ setMethod('summary', signature='lkmt',
 #' \item  Liu D, Lin X, Ghosh D: Semiparametric regression of multidimensional genetic pathway data: least-squares kernel machines and linear mixed models. Biometrics 2007, 63(4):1079-88.
 #' }
 #' @examples
-#' data(net.kernel.hsa04020)
+#' data(hsa04020)
 #' data(gwas)
-#' lkmt_test(pheno ~ sex + age, net.kernel.hsa04020, gwas, method='satt')
+#' net_kernel <- calc_kernel(gwas, hsa04020, knots=NULL, type='net', calculation='cpu')
+#' lkmt_test(pheno ~ sex + age, net_kernel, gwas, method='satt')
 #' @author Stefanie Friedrichs, Juliane Manitz
 #' @export
 #' @rdname lkmt_test
@@ -168,9 +177,9 @@ lkmt_test <- function(formula, kernel, GWASdata, method=c('satt','davies'), ...)
 setGeneric('score_test', function(x1, x2, ...) standardGeneric('score_test'))
 #' Calculates the p-value for a kernel matrix using Satterthwaite approximation
 #'
-#' For parameter \code{'satt'} a pathways influence on the probability of 
+#' For parameter \code{'satt'} a pathway's influence on the probability of 
 #' beeing a case is evaluated in the logistic kernel machine test and p-values 
-#' are determined using a Sattherthwaite Approximation as described by Dan Schaid.
+#' are determined using a Sattherthwaite approximation as described by Dan Schaid.
 #'
 #' @param x1 A \code{\link{matrix}} which is the
 #' similarity matrix calculated for the pathway to be tested.

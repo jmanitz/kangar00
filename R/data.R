@@ -136,6 +136,11 @@
 #' \item{p.value}{includes teh p-value resulting from the test}
 #' }
 #' @usage data(lkmt.net.kernel.hsa04020)
+#' @examples
+#' data(hsa04020)
+#' data(gwas)
+#' net_kernel <- calc_kernel(gwas, hsa04020, knots=NULL, type='net', calculation='cpu')
+#' lkmt_test(pheno ~ sex + age, net_kernel, gwas, method='satt')
 #' @source simulated data and Ensembl extract
 "lkmt.net.kernel.hsa04020"
 

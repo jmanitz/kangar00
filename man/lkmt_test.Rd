@@ -53,9 +53,9 @@ in the variance component test.
 \description{
 A function to calculate the p-values for kernel matrices.
 
-For parameter \code{'satt'} a pathways influence on the probability of 
+For parameter \code{'satt'} a pathway's influence on the probability of 
 beeing a case is evaluated in the logistic kernel machine test and p-values 
-are determined using a Sattherthwaite Approximation as described by Dan Schaid.
+are determined using a Sattherthwaite approximation as described by Dan Schaid.
 
 For parameter \code{'davies'} a pathways influence on the probability
 of beeing a case is evaluated using the p-value calculation method described 
@@ -63,9 +63,10 @@ by Davies. Here the function \code{\link[CompQuadForm]{davies}} from package
 \pkg{CompQuadForm} is used.
 }
 \examples{
-data(net.kernel.hsa04020)
+data(hsa04020)
 data(gwas)
-lkmt_test(pheno ~ sex + age, net.kernel.hsa04020, gwas, method='satt')
+net_kernel <- calc_kernel(gwas, hsa04020, knots=NULL, type='net', calculation='cpu')
+lkmt_test(pheno ~ sex + age, net_kernel, gwas, method='satt')
 }
 \references{
 For details on the variance component test 

@@ -614,7 +614,7 @@ setGeneric('get_network_matrix', function(object, ...) standardGeneric('get_netw
 #' @author Stefanie Friedrichs, Patricia Burger, Juliane Manitz
 #' @export 
 #' @name get_network_matrix
-#' @rdname get_network_matrix
+## @rdname get_network_matrix
 #' @aliases get_network_matrix,pathway-method
 #' @importFrom KEGGgraph retrieveKGML
 #' @importFrom KEGGgraph parseKGML2Graph

@@ -28,4 +28,10 @@ data(lkmt.net.kernel.hsa04020)
 An object of class \code{\link{lkmt}} containing exemplary test results for an 
 application of the logistic kernel machine test, derived from the example data.
 }
+\examples{
+data(hsa04020)
+data(gwas)
+net_kernel <- calc_kernel(gwas, hsa04020, knots=NULL, type='net', calculation='cpu')
+lkmt_test(pheno ~ sex + age, net_kernel, gwas, method='satt')
+}
 \keyword{datasets}
