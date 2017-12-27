@@ -187,7 +187,8 @@
 #' }
 #' @usage data(rs10243170_info)
 #' @examples
+#' \dontrun{
 #' snp_info("rs10243170")
-#'
+#' }
 #' @source Ensembl extract
 "rs10243170_info"

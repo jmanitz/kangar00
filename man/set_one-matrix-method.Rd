@@ -19,6 +19,9 @@ This function sets all entries in a \code{matrix} bigger than 1 to 1 and all ent
 smaller than -1 to -1. It is called by \code{\link{get_network_matrix}}.
 (For internal use)
 }
+\seealso{
+\code{\link{get_network_matrix}}
+}
 \author{
 Stefanie Friedrichs
 }

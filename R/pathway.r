@@ -555,6 +555,7 @@ setGeneric('set_one', function(x, ...) standardGeneric('set_one'))
 #' \code{\link{pathway}} object with entries equal to 1, -1 or 0.
 #'
 #' @author Stefanie Friedrichs 
+#' @seealso \code{\link{get_network_matrix}}
 #' @keywords internal
 setMethod('set_one', signature='matrix', 
           definition = function(x){       
@@ -574,7 +575,7 @@ setGeneric('set_names', function(x, ...) standardGeneric('set_names'))
 #' This function exchanges the numbers used for genes in KEGG download KGML files
 #' with the corresponding gene names. Names are set to be the column names and 
 #' rownames of the pathway's network matrix. The function 
-#' is called by \code{get_network_matrix}. (For internal use)
+#' is called by \code{\link{get_network_matrix}}. (For internal use)
 #'
 #' @param x A \code{matrix} representing the network matrix. 
 #' @param nodes A \code{vector} of gene numbers to be replaced by names.   
@@ -612,13 +613,13 @@ setGeneric('get_network_matrix', function(object, ...) standardGeneric('get_netw
 #'
 #' @author Stefanie Friedrichs, Patricia Burger, Juliane Manitz
 #' @export 
+#' @name get_network_matrix
+#' @rdname get_network_matrix
+#' @aliases get_network_matrix,pathway-method
 #' @importFrom KEGGgraph retrieveKGML
 #' @importFrom KEGGgraph parseKGML2Graph
 #' @importFrom KEGGgraph nodes
 #' @importFrom KEGGgraph parseKGML2DataFrame
-#' @name get_network_matrix
-#' @rdname get_network_matrix
-#' @aliases get_network_matrix,pathway-method
 setMethod('get_network_matrix', signature='pathway', 
           definition = function(object, directed=TRUE, method='auto'){    
       

@@ -20,7 +20,8 @@ data(rs10243170_info)
 An object of class \code{\link{snp_info}} for rs10243170.
 }
 \examples{
+\dontrun{
 snp_info("rs10243170")
-
+}
 }
 \keyword{datasets}
