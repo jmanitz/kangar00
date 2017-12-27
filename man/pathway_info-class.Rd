@@ -53,8 +53,8 @@ pathways with columns 'pathway', 'gene_start', 'gene_end', 'chr' and 'gene'.}
 
 \examples{
 data(hsa04022_info) # pathway_info('hsa04020') 
-show(info)
-summary(info)
+show(hsa04022_info)
+summary(hsa04022_info)
 
 }
 \seealso{

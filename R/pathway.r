@@ -510,8 +510,8 @@ setMethod('pathway_info', signature='character',
 #' @return \code{show} Basic information on \code{\link{pathway_info}} object.
 #' @examples
 #' data(hsa04022_info) # pathway_info('hsa04020') 
-#' show(info)
-#' summary(info)
+#' show(hsa04022_info)
+#' summary(hsa04022_info)
 #'
 #' @export
 #' @rdname pathway_info-class
