@@ -259,7 +259,7 @@ setMethod('get_genes', signature='pathway',
 #' @exportMethod plot
 if (!isGeneric("plot")) setGeneric('plot')
 
-#' \code{plot} plots \code{\link{pathway}} as \code{\link[igraph]{igraph}} object
+#' \code{plot} visualizes the \code{\link{pathway}} as \code{\link[igraph]{igraph}} object
 #'
 #' @export 
 #' @rdname pathway-class
@@ -288,7 +288,7 @@ if (!isGeneric("plot")) setGeneric('plot')
 setMethod('plot', signature(x='pathway',y='missing'),
           function(x, y=NA,
                    highlight.genes = NULL, 
-                   gene.names=c('legend','nodes',NA), main=NULL, 
+                   gene.names=c(NULL,'legend','nodes'), main=NULL, 
                    asp=0.95, vertex.size=11, vertex.color='khaki1', 
                    vertex.label.cex=0.8,
                    edge.width=2, edge.color='olivedrab4', ...){
@@ -298,8 +298,8 @@ setMethod('plot', signature(x='pathway',y='missing'),
     
     # define vertex label
     gene.names <- match.arg(gene.names)
-    if(gene.names == 'legend')  vertex.label <- 1:length(igraph::V(g))
     if(is.null(gene.names))    vertex.label <- NA
+    if(gene.names == 'legend')  vertex.label <- 1:length(igraph::V(g))
     if(gene.names == 'nodes'){
        vertex.label <- igraph::V(g)$names
     }
@@ -337,7 +337,7 @@ setMethod('plot', signature(x='pathway',y='missing'),
 #' @exportMethod sample_genes
 setGeneric('sample_genes', function(object, ...) standardGeneric('sample_genes'))
 
-#' \code{sample_genes} function randomly selects effect gene in a 
+#' \code{sample_genes} randomly selects effect gene in a 
 #' \code{\link{pathway}} according the betweenness centrality and (no -1) neighors
 #'
 #' @return \code{sample_genes} returns a \code{vector} of length \code{no} with 

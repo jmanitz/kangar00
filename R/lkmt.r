@@ -16,8 +16,7 @@
 #' @slot statistic A \code{vector} giving the value of the variance component
 #' test statistic.
 #' @slot df A \code{vector} containing the number of degrees of freedom.
-#' @slot p.value A \code{vector} giving the p-value calculated for the \
-#' code{\link{pathway}} object considered in the variance component test.
+#' @slot p.value A \code{vector} giving the p-value calculated for the \code{\link{pathway}} object considered in the variance component test.
 #'
 #' For details on the variance component test see the references.
 #' @references
@@ -59,7 +58,7 @@ setValidity('lkmt', function(object){
 	}
 })
 
-#' \code{show} Shows basic information on \code{lkmt} object
+#' \code{show} displays basic information on \code{lkmt} object
 #'
 #' @param object An object of class \code{lkmt}.
 #' @return \code{show} Basic information on \code{lkmt} object.
@@ -92,7 +91,7 @@ setMethod('show', signature='lkmt',
 ## summary
 setGeneric('summary', function(object, ...) standardGeneric('summary'))
 
-#' \code{summary} Summarizes information on \code{lkmt} object
+#' \code{summary} generates a \code{lkmt} object summary including the used kernel, pathway and the test result
 #'
 ## @param object An object of class \code{\link{lkmt}}.
 #' @param ... Further arguments can be added to the function
