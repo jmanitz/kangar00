@@ -197,7 +197,7 @@ setMethod('calc_kernel', signature(object = 'GWASdata'),
 # calculate linear kernel
 setGeneric('lin_kernel', function(object, ...) standardGeneric('lin_kernel'))
 #' @describeIn calc_kernel Calculates a linear kernel 
-# @export
+#' @export
 setMethod('lin_kernel', signature(object = 'GWASdata'),
           definition = function(object, pathway, knots=NULL,
                        calculation = c('cpu', 'gpu'), ...) {
@@ -239,7 +239,7 @@ setMethod('lin_kernel', signature(object = 'GWASdata'),
 # create size-adjusted kernel
 setGeneric('sia_kernel', function(object, ...) standardGeneric('sia_kernel'))
 #' @describeIn calc_kernel Calculates a size adjusted-kernel
-# @export 
+#' @export 
 setMethod('sia_kernel', signature(object = 'GWASdata'),
           definition = function(object, pathway, knots=NULL,
                        calculation = c('cpu', 'gpu'), ...) {
@@ -344,7 +344,7 @@ setMethod('sia_kernel', signature(object = 'GWASdata'),
 # calculate network-based kernel
 setGeneric('net_kernel', function(object, ...) standardGeneric('net_kernel'))
 #' @describeIn calc_kernel Calculates a network-based kernel 
-# @export
+#' @export
 setMethod('net_kernel', signature(object = 'GWASdata'),
           definition = function(object, pathway, knots=NULL,
                        calculation = c('cpu', 'gpu'), ...) {

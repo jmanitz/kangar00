@@ -115,6 +115,7 @@ The following example creates a new pathway object, to which gene-interaction in
 
 ``` {r}
 pathw_shell <- pathway(id='hsa04710', adj=matrix(0), sign=as.vector(matrix(0)[matrix(0)!=0]))
+str(pathw_shell)
 ```
 
 ### Network Matrix
@@ -129,12 +130,12 @@ A network matrix can be created using the function `get_network_matrix()`. Gene 
 
 ``` {r, warning=FALSE}
 pathw <- get_network_matrix(pathw_shell, directed=FALSE)
-?get_network_matrix # add example
+str(pathw)
 ``` 
 
 A KEGG XML file for the pathway with ID *hsa04710* is downloaded and saved in the working directory. Furthermore, the function converts the data into a network matrix and adds it to the given pathway object. The updated pathway object is returned. The user can specify whether the gene-interaction matrix should be given directed (`directed=TRUE`) or undirected (`directed=FALSE`).
 
-### Helper Functions
+### Pathway Object Helper Functions
 
 Several helper functions are available to handle objects of S4 class `pathway`.
 The functions `show()` displays the pathway object briefly and `summary()` generates a pathway object summary including basic network properties.
@@ -209,8 +210,11 @@ The data frame will have the following format
 
 ## GWAS data
 
-Genome-wide association study data from a case control study is basis for a test of a pathway's influence on a disease risk with the logistic kernel machine test. In `kangar00`, all needed information is captured by the S4 `GWASdata` object, which can be constructed by 
+Genome-wide association study data from a case control study is basis for a test of a pathway's influence on a disease risk with the logistic kernel machine test. 
 
+### GWASdata Object
+
+In `kangar00`, all needed information is captured by the S4 `GWASdata` object, which can be constructed by 
 ``` {r}  
 my_gwas <- GWASdata(pheno=pheno, geno=geno, anno=anno, desc="study xy")
 ```
@@ -237,6 +241,8 @@ It includes the slots which have to fullfill certain requirements
 * `desc`: A `character` value describing the data can be added to the `GWASdata` object. This 
     could for instance be the name of the study.    
 
+### GWASdata Helper Functions
+
 Available methods for objects of class `GWASdata` are `show()`, `summary()` and `GeneSNPsize()`.
 The function `GeneSNPsize()` results in a data frame of pathway names with numbers of snps and genes in each pathway, which is also displayed by `summary()`.
 
@@ -250,7 +256,6 @@ Once a `GWASdata` object is created, we can start to calculate kernel matrices t
 test a pathways influence on disease risk. The package `kangar00` offers three different
 kernel functions to compute a similarity matrix for the individuals in analysis. 
 They will be explained in the following.
-
 
 ## Linear Kernel (Lin) 
 
@@ -268,11 +273,11 @@ It requires as arguments
     calculated. Options are `cpu` for calculation on cpu and `gpu`
     for gpu calculation.  
  
-```
-#K_lin <- lin_kernel(my_gwas, hsa04022, calculation='cpu') 
+``` {r}
+K_lin <- lin_kernel(my_gwas, pathw, calculation='cpu') 
+summary(K_lin)
 # Error: could not find function "lin_kernel"
-
-K_lin <- calc_kernel(gwas, hsa04022, type='lin')
+# K_lin <- calc_kernel(gwas, pathw, type='lin')
 plot(K_lin)
 ```
 
@@ -302,10 +307,10 @@ the following arguments
 *   A value for argument `calculation` to decide how the kernel should be 
     calculated. Currently only `cpu` for cpu calculation is available.  
  
-```
-#K_sia <- sia_kernel(gwas, p, calculation='cpu')
+``` {r}
+K_sia <- sia_kernel(gwas, p, calculation='cpu')
+summary(K_sia)
 # Error: could not find function "sia_kernel"
-
 #K_sia <- calc_kernel(gwas, pathw, type='sia')
 ```
 will return a quadratic `matrix` of dimension equal to the number of individuals
@@ -329,10 +334,9 @@ The network based kernel matrix for a pathway can be calculated with the functio
 *   A value for argument 'calculation' to decide how the kernel should be 
     calculated.   
  
-```
-#K_net <- net_kernel(gwas, p, calculation='cpu')
+``` {r}
+K_net <- net_kernel(gwas, p, calculation='cpu')
 # Error: could not find function "net_kernel"
-
 #K_net <- calc_kernel(gwas, pathw, type='net')
 # Error in A.star %*% N : non-conformable arguments 
 ```
