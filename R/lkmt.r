@@ -74,7 +74,6 @@ setValidity('lkmt', function(object){
 #' summary(res)
 ## data(lkmt.net.kernel.hsa04020)
 ## lkmt.net.kernel.hsa04020
-## @author Juliane Manitz
 #' @export
 #' @rdname lkmt-class
 #' @aliases show,GWASdata,ANY-method
@@ -116,6 +115,7 @@ setMethod('summary', signature='lkmt',
           })
 
 
+setGeneric('lkmt_test', function(object, ...) standardGeneric('lkmt_test'))
 #' A function to calculate the p-values for kernel matrices. 
 #'
 #' @param formula The formula to be used for the regression nullmodel.  

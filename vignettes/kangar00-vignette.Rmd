@@ -246,15 +246,21 @@ It includes the slots which have to fullfill certain requirements
 Available methods for objects of class `GWASdata` are `show()`, `summary()` and `GeneSNPsize()`.
 The function `GeneSNPsize()` results in a data frame of pathway names with numbers of snps and genes in each pathway, which is also displayed by `summary()`.
 
-``` {r}
-summary(my_gwas)
-```
-
 # Calculation of Kernel Matrices
 
-Once a `GWASdata` object is created, we can start to calculate kernel matrices to
-test a pathways influence on disease risk. The package `kangar00` offers three different
-kernel functions to compute a similarity matrix for the individuals in analysis. 
+Once a `GWASdata` and an appropriate `pathway` objects are created, we can start to calculate kernel matrices to test a pathways influence on disease risk. 
+
+``` {r}
+# GWAS data
+my_gwas <- GWASdata(pheno=pheno, geno=geno, anno=anno, desc="study xy")
+summary(my_gwas)
+
+# Pathway information
+pathw_shell <- pathway(id='hsa04022', adj=matrix(0), sign=as.vector(matrix(0)[matrix(0)!=0]))
+hsa04022 <- get_network_matrix(pathw_shell, directed=FALSE)
+```
+
+The package `kangar00` offers three different kernel functions to compute a similarity matrix for the individuals in analysis. 
 They will be explained in the following.
 
 ## Linear Kernel (Lin) 
@@ -274,11 +280,8 @@ It requires as arguments
     for gpu calculation.  
  
 ``` {r}
-K_lin <- lin_kernel(my_gwas, pathw, calculation='cpu') 
+K_lin <- lin_kernel(my_gwas, hsa04022, calculation='cpu') 
 summary(K_lin)
-# Error: could not find function "lin_kernel"
-# K_lin <- calc_kernel(gwas, pathw, type='lin')
-plot(K_lin)
 ```
 
 will return a quadratic `matrix` of dimension equal to the number of individuals
@@ -308,14 +311,11 @@ the following arguments
     calculated. Currently only `cpu` for cpu calculation is available.  
  
 ``` {r}
-K_sia <- sia_kernel(gwas, p, calculation='cpu')
+K_sia <- sia_kernel(my_gwas, hsa04022, calculation='cpu')
 summary(K_sia)
-# Error: could not find function "sia_kernel"
-#K_sia <- calc_kernel(gwas, pathw, type='sia')
 ```
 will return a quadratic `matrix` of dimension equal to the number of individuals
 in the `GWASdata` object.
-
 
 ## Network Kernel (Net) 
 
@@ -335,21 +335,18 @@ The network based kernel matrix for a pathway can be calculated with the functio
     calculated.   
  
 ``` {r}
-K_net <- net_kernel(gwas, p, calculation='cpu')
-# Error: could not find function "net_kernel"
-#K_net <- calc_kernel(gwas, pathw, type='net')
-# Error in A.star %*% N : non-conformable arguments 
+K_net <- net_kernel(my_gwas, hsa04022, calculation='cpu')
+summary(K_net)
 ```
 will return a quadratic `matrix` of dimension equal to the number of individuals
 in the `GWASdata` object.
-
 
 Alternatively, kernel matrices can be calculated using the function `calc_kernel()`.
 Here the kernel type is specified via an additional argument `type`. It can be 
 set to lin, sia or net. 
 
 ``` {r}
-K <- calc_kernel(my_gwas, pathw, type='lin', parallel='none')
+K <- calc_kernel(my_gwas, hsa04022, type='lin', parallel='none')
 ```
 This function will simply call the suitable kernel function as described above 
 and therefore has the same output. 
@@ -365,10 +362,6 @@ Standard methods are available for objects of S4 class `kernel`:
 ``` {r}
 summary(K)
 plot(K)
-
-#data(hsa04020)
-#net_kernel <- calc_kernel(my_gwas, hsa04020, knots=NULL, type='net', 
-                          
 ```
 
 # Variance Component Test
@@ -400,11 +393,9 @@ defining a pathway with the function `lkmt`. It needs the following arguments
 *    A `character` specifying which method should be used to calculate the 
      p-value. Available are options `'satt'` for the Satterthwaite approximation (Schaid, 2010) or `'davies'` for Davies method (Davies, 1980). 
      
-```
-pval_net <- lkmt(pheno ~ 1+sex+age, K_mat, my_gwas, method='satt')
-
-pval_net <- lkmt(pheno ~ 1+sex+age, K_lin, gwas, method='satt')
-?lkmt
+``` {r}
+lkmt_test(pheno ~ 1+sex+age, K, my_gwas, method='satt')
+lkmt_test(pheno ~ 1+sex+age, K, my_gwas, method='davies')
 ```
 will return an object of type `lkmt` giving the test result for the pathway 
 on which the kernel matrix 'K_mat' was calculated. The `GWASdata` object 
