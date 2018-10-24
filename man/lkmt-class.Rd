@@ -27,9 +27,9 @@
 \description{
 An S4 class to represent the variance component test.
 
-\code{show} Shows basic information on \code{lkmt} object
+\code{show} displays basic information on \code{lkmt} object
 
-\code{summary} Summarizes information on \code{lkmt} object
+\code{summary} generates a \code{lkmt} object summary including the used kernel, pathway and the test result
 }
 \section{Slots}{
 
@@ -48,8 +48,7 @@ test statistic.}
 
 \item{\code{df}}{A \code{vector} containing the number of degrees of freedom.}
 
-\item{\code{p.value}}{A \code{vector} giving the p-value calculated for the \
-code{\link{pathway}} object considered in the variance component test.
+\item{\code{p.value}}{A \code{vector} giving the p-value calculated for the \code{\link{pathway}} object considered in the variance component test.
 
 For details on the variance component test see the references.}
 }}

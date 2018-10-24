@@ -43,7 +43,7 @@ pathway(object, ...)
 \S4method{get_genes}{pathway}(object)
 
 \S4method{plot}{pathway,missing}(x, y = NA, highlight.genes = NULL,
-  gene.names = c("legend", "nodes", NA), main = NULL, asp = 0.95,
+  gene.names = c(NULL, "legend", "nodes"), main = NULL, asp = 0.95,
   vertex.size = 11, vertex.color = "khaki1", vertex.label.cex = 0.8,
   edge.width = 2, edge.color = "olivedrab4", ...)
 
@@ -126,9 +126,9 @@ analyze \code{\link{pathway}} network properties
 \code{\link{pathway}} and returns a \code{vector} containing \code{character}
 elements of gene names
 
-\code{plot} plots \code{\link{pathway}} as \code{\link[igraph]{igraph}} object
+\code{plot} visualizes the \code{\link{pathway}} as \code{\link[igraph]{igraph}} object
 
-\code{sample_genes} function randomly selects effect gene in a 
+\code{sample_genes} randomly selects effect gene in a 
 \code{\link{pathway}} according the betweenness centrality and (no -1) neighors
 }
 \section{Methods (by generic)}{
