@@ -1,8 +1,8 @@
 ---
 title: "kangar00: Kernel Approaches for Nonlinear Genetic Association Regression"
-author: "Stefanie Friedrichs and Juliane Manitz"
+author: "Juliane Manitz and Stefanie Friedrichs"
 date: "`r Sys.Date()`"
-output: pdf_document
+output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{Kernel Approaches for Nonlinear Genetic Association Regression}
   %\VignetteEngine{knitr::rmarkdown}

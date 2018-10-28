@@ -15,8 +15,9 @@ test_that("Test network kernel calculation and dimension", {
   expect_equal(dim(net_kernel@kernel)[1],dim(gwas@geno)[1])
   expect_equal(dim(net_kernel@kernel)[2],dim(gwas@geno)[1])
 
-  expect_equal(dim(net_kernel@kernel), net_kernel@kernel)
-
+  expect_equal(dim(net_kernel@kernel), dim(net.kernel.hsa04020@kernel))
+  expect_equal(net_kernel@kernel, net.kernel.hsa04020@kernel)
+  
 })
 
 test_that("Test lowrank kernel dimension", {
