@@ -102,7 +102,7 @@ setValidity('lowrank_kernel', function(object){
 
 # calculate kernel object
 setGeneric('calc_kernel', function(object, ...) standardGeneric('calc_kernel'))
-#' Calculates the kernel-matrix for a pathway
+#' Calculate the kernel-matrix for a pathway
 #'
 #' Uses individuals' genotypes to create a \code{\link{kernel}} object including 
 #' the calculated kernel \code{matrix} for a specific \code{\link{pathway}}.
@@ -149,6 +149,7 @@ setGeneric('calc_kernel', function(object, ...) standardGeneric('calc_kernel'))
 #'  \item Freytag S, Manitz J, Schlather M, Kneib T, Amos CI, Risch A, Chang-Claude J, Heinrich J, Bickeboeller H: A network-based kernel machine test for the identification of risk pathways in genome-wide association studies. Hum Hered. 2013, 76(2):64-75.
 #' }
 #'
+#' @author Stefanie Friedrichs, Juliane Manitz
 #' @examples
 #' data(gwas)
 #' data(hsa04020)
@@ -157,11 +158,11 @@ setGeneric('calc_kernel', function(object, ...) standardGeneric('calc_kernel'))
 #' net_kernel <- calc_kernel(gwas, hsa04020, knots=NULL, type='net', calculation='cpu')
 #' summary(net_kernel)
 #' 
-#' @author Stefanie Friedrichs, Juliane Manitz
-#' @rdname calc_kernel
-#' @name calc_kernel
-#' @aliases calc_kernel,GWASdata-method
 #' @export
+#' @name calc_kernel
+#' @rdname calc_kernel
+#' @aliases calc_kernel,GWASdata-method
+#' 
 #' @seealso \code{\link{kernel-class}},\code{\link{pathway}}
 setMethod('calc_kernel', signature(object = 'GWASdata'),
        definition = function(object, pathway, knots = NULL,
@@ -196,8 +197,13 @@ setMethod('calc_kernel', signature(object = 'GWASdata'),
 ############################### kernel functions ##############################
 # calculate linear kernel
 setGeneric('lin_kernel', function(object, ...) standardGeneric('lin_kernel'))
-#' @describeIn calc_kernel Calculates a linear kernel 
+#' \code{lin_kernel} calculate a linear kernel 
+#' 
 #' @export
+#' @describeIn calc_kernel
+#' 
+#' @aliases lin_kernel calc_kernel 
+#' 
 setMethod('lin_kernel', signature(object = 'GWASdata'),
           definition = function(object, pathway, knots=NULL,
                        calculation = c('cpu', 'gpu'), ...) {
@@ -238,8 +244,13 @@ setMethod('lin_kernel', signature(object = 'GWASdata'),
 
 # create size-adjusted kernel
 setGeneric('sia_kernel', function(object, ...) standardGeneric('sia_kernel'))
-#' @describeIn calc_kernel Calculates a size adjusted-kernel
+#' \code{sia_kernel} calculates a size-adjusted kernel
+#' 
 #' @export 
+#' @describeIn calc_kernel 
+#' 
+#' @aliases sia_kernel calc_kernel 
+#' 
 setMethod('sia_kernel', signature(object = 'GWASdata'),
           definition = function(object, pathway, knots=NULL,
                        calculation = c('cpu', 'gpu'), ...) {
@@ -343,8 +354,13 @@ setMethod('sia_kernel', signature(object = 'GWASdata'),
 
 # calculate network-based kernel
 setGeneric('net_kernel', function(object, ...) standardGeneric('net_kernel'))
-#' @describeIn calc_kernel Calculates a network-based kernel 
+#' \code{net_kernel} calculates a network-based kernel
+#' 
 #' @export
+#' @describeIn calc_kernel  
+#' 
+#' @aliases net_kernel calc_kernel 
+# @aliases net_kernel,GWASdata-method
 setMethod('net_kernel', signature(object = 'GWASdata'),
           definition = function(object, pathway, knots=NULL,
                        calculation = c('cpu', 'gpu'), ...) {
