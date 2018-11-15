@@ -19,8 +19,8 @@ build_script:
   - R -e  "0" --args --bootstrap-packrat
 
 test_script:
+  - travis-tool.sh install_bioc KEGGgraph biomaRt
   - travis-tool.sh install_deps
-  - travis-tool.sh install_bioc KEGGgraph biomaRt  
   - travis-tool.sh run_tests
 
 cache:
