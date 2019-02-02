@@ -18,13 +18,13 @@ Collate:
     'pathway.r'
     'GWASdata.r'
     'data.R'
+    'get_network_matrix.r'
     'kernel.r'
     'lkmt.r'
 Depends:
     R (>= 3.1.0)
 Imports:
     methods,
-    KEGGgraph (>= 1.37.2),
     biomaRt,
     bigmemory,
     sqldf,
@@ -34,9 +34,6 @@ Imports:
     igraph
 LazyData: true
 Suggests:
-    knitr,
-    rmarkdown,
     testthat
-VignetteBuilder: knitr
 NeedsCompilation: no
 RoxygenNote: 6.1.1
