@@ -10,7 +10,7 @@ Maintainer: Juliane Manitz <r@manitz.org>
 Description: Methods to extract information on pathways, genes and SNPs from
     online databases. It provides functions for data preparation and evaluation
     of genetic influence on a binary outcome using the logistic kernel machine
-    test (LKMT). Three different kernel functions are offered to analyze genotype
+    test. Three different kernel functions are offered to analyze genotype
     information in this variance component test: A linear kernel, a size-adjusted
     kernel and a network based kernel.
 License: GPL-2
