@@ -10,22 +10,15 @@
 \alias{summary,pathway,ANY-method}
 \alias{pathway2igraph,pathway-method}
 \alias{pathway2igraph}
-\alias{pathway}
 \alias{ANY-method}
 \alias{analyze,pathway-method}
 \alias{analyze}
-\alias{pathway}
-\alias{ANY-method}
 \alias{get_genes,pathway-method}
 \alias{get_genes}
-\alias{pathway}
-\alias{ANY-method}
 \alias{plot,pathway,missing-method}
 \alias{plot,pathway,ANY-method}
 \alias{sample_genes,pathway-method}
 \alias{sample_genes}
-\alias{pathway}
-\alias{ANY-method}
 \title{An S4 class to represent a gene-gene interaction network}
 \usage{
 pathway(object, ...)

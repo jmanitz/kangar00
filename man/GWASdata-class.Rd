@@ -8,7 +8,6 @@
 \alias{summary,GWASdata-method}
 \alias{GeneSNPsize,GWASdata-method}
 \alias{GeneSNPsize}
-\alias{GWASdata}
 \title{S4 class for an object representing a Genome-wide Assocaition Study.}
 \usage{
 GWASdata(object, ...)

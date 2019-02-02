@@ -6,13 +6,10 @@
 \alias{calc_kernel,GWASdata-method}
 \alias{lin_kernel,GWASdata-method}
 \alias{lin_kernel}
-\alias{calc_kernel}
 \alias{sia_kernel,GWASdata-method}
 \alias{sia_kernel}
-\alias{calc_kernel}
 \alias{net_kernel,GWASdata-method}
 \alias{net_kernel}
-\alias{calc_kernel}
 \title{Calculate the kernel-matrix for a pathway}
 \usage{
 \S4method{calc_kernel}{GWASdata}(object, pathway, knots = NULL,
@@ -62,12 +59,6 @@ similiarity of the individuals. Association between the \code{\link{pathway}} an
 binary phenotype (case-control status) can be evaluated
 in the logistic kernel machine test, based on the \code{\link{kernel}} object. 
 Three kernel functions are available.
-
-\code{lin_kernel} calculate a linear kernel
-
-\code{sia_kernel} calculates a size-adjusted kernel
-
-\code{net_kernel} calculates a network-based kernel
 }
 \details{
 Different types of kernels can be constructed:

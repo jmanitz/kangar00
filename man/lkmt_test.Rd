@@ -51,8 +51,6 @@ in the variance component test.
 }
 }
 \description{
-A function to calculate the p-values for kernel matrices.
-
 For parameter \code{'satt'} a pathway's influence on the probability of 
 beeing a case is evaluated in the logistic kernel machine test and p-values 
 are determined using a Sattherthwaite approximation as described by Dan Schaid.

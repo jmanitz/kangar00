@@ -9,8 +9,8 @@
 can be passed to a GWASdata object \code{\link{GWASdata}}.}
 \usage{
 \S4method{read_geno}{character}(file.path, save.path = NULL, sep = " ",
-  header = TRUE, use.fread = TRUE, use.big = FALSE, row.names = FALSE,
-  ...)
+  header = TRUE, use.fread = TRUE, use.big = FALSE,
+  row.names = FALSE, ...)
 }
 \arguments{
 \item{file.path}{\code{character} giving the path to the data file to be read}
