@@ -90,7 +90,7 @@ setGeneric('GWASdata', function(object, ...) standardGeneric('GWASdata'))
 #' @param pheno A \code{data.frame} specifying individual IDs, phenotypes and
 #' covariates to be included in the regression model.
 #' @param desc A \code{character} giving the GWAS description, e.g. name of study. 
-#' @param ... Further arguments can be added to the function.
+# #' @param ... Further arguments can be added to the function.
 #' @export
 #' @rdname GWASdata-class
 setMethod('GWASdata',
@@ -115,7 +115,7 @@ setGeneric('read_geno', function(file.path, ...) standardGeneric('read_geno'))
 #' @param use.big \code{logical}. Should the dataset be read using the function 
 #' \code{\link[bigmemory]{read.big.matrix}} from package \pkg{bigmemory}?
 #' @param row.names \code{logical}. Does the dataset include rownames?
-#' @param ... further arguments to be passed to \code{read_geno}.
+# #' @param ... further arguments to be passed to \code{read_geno}.
 #' @details If the data set contains rownames specified, set option \code{has.row.names = TRUE}.
 #'
 #' @importFrom bigmemory as.big.matrix read.big.matrix
@@ -463,7 +463,7 @@ setGeneric('snp_info', function(x, ...) standardGeneric('snp_info'))
 #'
 #' @param x A \code{character} \code{vector} of SNP rsnumbers for which 
 #' positions will be extracted.
-#' @param ... further arguments can be added.
+# #' @param ... further arguments can be added.
 #' @return A \code{data.frame} including the SNP positions with columns
 #' 'chromosome', 'position' and 'snp'. SNPs not found in the Ensemble database
 #' will not be listed in the returned \code{snp_info} object, SNPs with multiple
@@ -540,7 +540,7 @@ setGeneric('get_anno', function(object1, object2, ...) standardGeneric('get_anno
 #' contained in pathways. It is created by the \code{\link{pathway_info}} 
 #' function and contains a \code{data frame} with columns 
 #' 'pathway', 'gene_start', 'gene_end', 'chr', 'gene'.
-#' @param ... further argdata(hsa04020)
+# #' @param ... further argdata(hsa04020)
 #' @return A \code{data.frame} mapping SNPs to genes and genes to
 #' pathways. It includes the columns 'pathway', 'gene', 'chr', 'snp' and 
 #' 'position'.

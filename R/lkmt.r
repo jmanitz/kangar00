@@ -93,7 +93,7 @@ setGeneric('summary', function(object, ...) standardGeneric('summary'))
 #' \code{summary} generates a \code{lkmt} object summary including the used kernel, pathway and the test result
 #'
 ## @param object An object of class \code{\link{lkmt}}.
-#' @param ... Further arguments can be added to the function
+# #' @param ... Further arguments can be added to the function
 #' @return \code{summary} Summarized information on \code{lkmt} object.
 #' @examples
 #' # summary method
@@ -126,7 +126,7 @@ setGeneric('lkmt_test', function(object, ...) standardGeneric('lkmt_test'))
 #' p-value calculation. Available are \code{'satt'} for the Satterthwaite 
 #' approximation and \code{'davies'} for Davies' algorithm. For more details 
 #' see the references.
-#' @param ... Further arguments can be given to the function.
+# #' @param ... Further arguments can be given to the function.
 #' @return 
 #' An \code{lkmt} object including the following test results
 #' \itemize{

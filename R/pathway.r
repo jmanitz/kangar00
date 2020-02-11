@@ -61,7 +61,7 @@ setGeneric('pathway', function(object, ...) standardGeneric('pathway'))
 #' equaling the number of genes (1 interaction, 0 otherwise)
 #' @param sign A \code{numeric} \code{vector} indicating the interaction type for  
 #' each link (1 activation, -1 inhibition) in the interaction network for the \code{\link{pathway}}.
-## @param ... Further arguments can be added to the function.
+# # @param ... Further arguments can be added to the function.
 #' @export
 #'
 #' @examples
@@ -276,7 +276,7 @@ if (!isGeneric("plot")) setGeneric('plot')
 #' @param vertex.label.cex a \code{numeric} constant specifying the the vertex label size, default is 0.8,
 #' @param edge.width a \code{numeric} constant specifying the edge width, default is 2
 #' @param edge.color a \code{character} or \code{numeric} constant specifying the edge color, default is 'olivedrab4'
-#' @param ... further arguments specifying plotting options in \code{plot.igraph}
+# #' @param ... further arguments specifying plotting options in \code{plot.igraph}
 #'
 #' @examples
 #' # plot pathway as igraph object
