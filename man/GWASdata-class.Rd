@@ -23,8 +23,6 @@ GWASdata(object, ...)
 \arguments{
 \item{object}{A \code{\link{GWASdata}} object.}
 
-\item{...}{Further arguments can be added to the function.}
-
 \item{geno}{An object of any type, including the genotype information.}
 
 \item{anno}{A \code{data.frame} containing the annotation file for the 

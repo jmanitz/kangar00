@@ -29,8 +29,6 @@ can be passed to a GWASdata object \code{\link{GWASdata}}.}
 \code{\link[bigmemory]{read.big.matrix}} from package \pkg{bigmemory}?}
 
 \item{row.names}{\code{logical}. Does the dataset include rownames?}
-
-\item{...}{further arguments to be passed to \code{read_geno}.}
 }
 \description{
 read genotype data from file to one of several available objects, which 

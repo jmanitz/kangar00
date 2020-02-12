@@ -26,8 +26,6 @@ p-value calculation. Available are \code{'satt'} for the Satterthwaite
 approximation and \code{'davies'} for Davies' algorithm. For more details 
 see the references.}
 
-\item{...}{Further arguments can be given to the function.}
-
 \item{x1}{A \code{\link{matrix}} which is the
 similarity matrix calculated for the pathway to be tested.}
 

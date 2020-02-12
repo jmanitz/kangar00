@@ -45,8 +45,6 @@ pathway(object, ...)
 \arguments{
 \item{object}{An object of class \code{pathway-class}}
 
-\item{...}{further arguments specifying plotting options in \code{plot.igraph}}
-
 \item{id}{A \code{character} repesenting the \code{\link{pathway}} id.}
 
 \item{adj}{A \code{matrix} respresenting the network adjacency matrix of dimension 

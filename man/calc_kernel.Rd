@@ -40,8 +40,6 @@ size-adjusted or \code{'net'} for the network-based kernel.}
 
 \item{calculation}{\code{character} specifying if the kernel \code{matrix} 
 is computed on CPU or GPU.}
-
-\item{...}{further arguments to be passed to \code{\link{kernel}} computations.}
 }
 \value{
 Returns an object of class \code{\link{kernel}}, including the similarity 

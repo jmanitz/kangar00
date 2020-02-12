@@ -20,8 +20,6 @@ snp_info(x, ...)
 \item{x}{A \code{character} \code{vector} of SNP rsnumbers for which 
 positions will be extracted.}
 
-\item{...}{further arguments can be added.}
-
 \item{object}{An \code{object} of class \code{\link{snp_info}}.}
 }
 \value{
