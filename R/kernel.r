@@ -125,7 +125,7 @@ setGeneric('calc_kernel', function(object, ...) standardGeneric('calc_kernel'))
 #' will be computed.
 #' @param calculation \code{character} specifying if the kernel \code{matrix} 
 #' is computed on CPU or GPU. 
-# #' @param ... further arguments to be passed to \code{\link{kernel}} computations.
+#' @param ... further arguments to be passed to \code{\link{kernel}} computations.
 #'
 #' @return Returns an object of class \code{\link{kernel}}, including the similarity 
 #' \code{matrix} of the \code{\link{pathway}} for the considered individuals. \cr
@@ -614,7 +614,7 @@ if (!isGeneric("plot")) setGeneric('plot')
 #' @param x the \code{kernel} object to be plotted.
 #' @param y missing (placeholder).
 #' @param hclust \code{logical}, indicating whether a dendrogram should be added.
-# #' @param ... further arguments to be passed to the function.
+#' @param ... further arguments to be passed to the function.
 #'
 #' @import lattice
 #' @export

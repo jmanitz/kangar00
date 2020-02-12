@@ -25,6 +25,8 @@
 \item{y}{missing (placeholder).}
 
 \item{hclust}{\code{logical}, indicating whether a dendrogram should be added.}
+
+\item{...}{further arguments to be passed to the function.}
 }
 \description{
 An S4 class representing a kernel matrix calculated for a pathway

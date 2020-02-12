@@ -61,7 +61,7 @@ setGeneric('pathway', function(object, ...) standardGeneric('pathway'))
 #' equaling the number of genes (1 interaction, 0 otherwise)
 #' @param sign A \code{numeric} \code{vector} indicating the interaction type for  
 #' each link (1 activation, -1 inhibition) in the interaction network for the \code{\link{pathway}}.
-# # @param ... Further arguments can be added to the function.
+#' @param ... Further arguments can be added to the function.
 #' @export
 #'
 #' @examples
