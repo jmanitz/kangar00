@@ -126,7 +126,7 @@ setGeneric('lkmt_test', function(object, ...) standardGeneric('lkmt_test'))
 #' p-value calculation. Available are \code{'satt'} for the Satterthwaite 
 #' approximation and \code{'davies'} for Davies' algorithm. For more details 
 #' see the references.
-#' @param ... Further arguments can be given to the function.
+# #' @param ... Further arguments can be given to the function.
 #' @return 
 #' An \code{lkmt} object including the following test results
 #' \itemize{
