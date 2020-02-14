@@ -9,8 +9,8 @@ setGeneric('get_network_matrix', function(object, ...) standardGeneric('get_netw
 #' should return directed (\code{TRUE}) or undirected (\code{FALSE}) links. 
 #' @param method Download method to be used for downloading files, passed to via \code{KEGGgraph::retrieveKGML} to \code{utils::download.file} function. Currently supports \code{'auto'} (default), \code{'internal'}, \code{'wininet'} (Windows only), \code{'libcurl'}, \code{'wget'} and \code{'curl'}. 
 #' @return \code{get_network_matrix} returns the modified \code{\link{pathway}} object, where the slots \code{adj} and \code{sign} are altered according to the downloaded information in the KEGG kgml file. 
-#' @examples
-#' get_network_matrix(pathway(id="hsa04020"), directed=TRUE)
+# #' @examples
+# #' get_network_matrix(pathway(id="hsa04020"), directed=TRUE)
 #'
 #' @author Stefanie Friedrichs, Patricia Burger, Juliane Manitz
 #' @export 

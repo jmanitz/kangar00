@@ -24,10 +24,6 @@ should return directed (\code{TRUE}) or undirected (\code{FALSE}) links.}
 \code{get_network_matrix} creates the adjacency matrix representing the gene-gene interaction structure within a particular \code{\link{pathway}}. Note that a 
 KEGG kgml file is downloaded and saved in the working directory.
 }
-\examples{
-get_network_matrix(pathway(id="hsa04020"), directed=TRUE)
-
-}
 \author{
 Stefanie Friedrichs, Patricia Burger, Juliane Manitz
 }
