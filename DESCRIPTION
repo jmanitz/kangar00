@@ -13,15 +13,12 @@ Collate:
     'pathway.r'
     'GWASdata.r'
     'data.R'
-    'get_network_matrix.r'
     'kernel.r'
     'lkmt.r'
 Depends:
     R (>= 3.1.0)
 Imports:
     methods,
-    biomaRt,
-    KEGGgraph,
     bigmemory,
     sqldf,
     CompQuadForm,
