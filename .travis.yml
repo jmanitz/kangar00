@@ -3,7 +3,7 @@ cache: packages
 
 #Define multiple R-versions, one from bioconductor
 r:
-  - oldrel
+#  - oldrel
   - release
   - bioc-release
 
