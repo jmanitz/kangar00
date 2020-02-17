@@ -29,7 +29,7 @@ cache:
 on_failure:
   - travis-tool.sh dump_logs
   ## push complete mboost.Rcheck folder as artifact
-  - appveyor PushArtifact mboost.Rcheck
+ # - appveyor PushArtifact mboost.Rcheck
 
 artifacts:
   - path: '*.Rcheck\**\*.log'
