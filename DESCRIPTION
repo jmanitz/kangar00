@@ -21,6 +21,7 @@ Imports:
     methods,
     bigmemory,
     sqldf,
+    biomaRt,
     CompQuadForm,
     data.table,
     lattice,
