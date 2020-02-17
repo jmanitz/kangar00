@@ -26,8 +26,8 @@ test_script:
 cache:
   - packages -> appveyor.yml    # or any other file
   
-on_failure:
-  - travis-tool.sh dump_logs
+# on_failure:
+ # - travis-tool.sh dump_logs
   ## push complete mboost.Rcheck folder as artifact
  # - appveyor PushArtifact mboost.Rcheck
 
