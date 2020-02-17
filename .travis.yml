@@ -13,8 +13,8 @@ repos:
 r_github_packages:
   - jimhester/covr
   
-after_failure:
-  - ./travis-tool.sh dump_logs
+#after_failure:
+#  - ./travis-tool.sh dump_logs
 
 after_success:
   - Rscript -e 'library(covr); coveralls(type = "all")'
