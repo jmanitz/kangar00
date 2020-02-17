@@ -13,6 +13,7 @@ Collate:
     'pathway.r'
     'GWASdata.r'
     'data.R'
+    'get_network_matrix.r'
     'kernel.r'
     'lkmt.r'
 Depends:
@@ -22,6 +23,7 @@ Imports:
     bigmemory,
     sqldf,
     biomaRt,
+    KEGGgraph, 
     CompQuadForm,
     data.table,
     lattice,
