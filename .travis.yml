@@ -5,7 +5,6 @@ cache: packages
 r:
   - oldrel
   - release
-  - devel
   - bioc-release
 
 repos:
