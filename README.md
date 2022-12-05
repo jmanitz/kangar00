@@ -2,9 +2,20 @@
 
 [![Build Status (Linux)](https://travis-ci.org/jmanitz/kangar00.svg?branch=master)](https://travis-ci.org/jmanitz/kangar00)
 [![Build status (Windows)](https://ci.appveyor.com/api/projects/status/github/jmanitz/kangar00?branch=master&svg=true)](https://ci.appveyor.com/project/jmanitz/kangar00/branch/master)
-[![CRAN Status Badge](http://www.r-pkg.org/badges/version/kangar00)](https://CRAN.R-project.org/package=kangar00)
 [![Coverage Status](https://coveralls.io/repos/github/jmanitz/kangar00/badge.svg?branch=master)](https://coveralls.io/github/jmanitz/kangar00?branch=master)
-[![](http://cranlogs.r-pkg.org/badges/kangar00)](https://CRAN.R-project.org/package=kangar00)
+![GitHub repo
+size](https://img.shields.io/github/repo-size/jmanitz/kangar00)
+![GitHub issues](https://img.shields.io/github/issues/jmanitz/kangar00)
+
+
+[![CRAN Status Badge](http://www.r-pkg.org/badges/version/kangar00)](https://CRAN.R-project.org/package=kangar00)
+[![CRAN Downloads](http://cranlogs.r-pkg.org/badges/kangar00)](https://CRAN.R-project.org/package=kangar00)
+
+
+![CRAN License](https://img.shields.io/cran/l/kangar00) 
+![CRAN dependencies status](https://img.shields.io/librariesio/release/CRAN/kangar00)
+![Website](https://img.shields.io/website?url=http%3A%2F%2Fkangar00.manitz.org%2F)
+
 
 Methods to extract information on pathways, genes and SNPs from online databases. It provides functions for data preparation and evaluation of genetic influence on a binary outcome using the logistic kernel machine test (LKMT). Three different kernel functions are offered to analyze genotype information in this variance component test: A linear kernel, a size-adjusted kernel and a network based kernel.
 
