@@ -4,11 +4,13 @@
 \name{geno}
 \alias{geno}
 \title{Example genotypes for 50 individuals.}
-\format{A \code{matrix} with 5 rows and 4056 columns:
+\format{
+A \code{matrix} with 5 rows and 4056 columns:
 \describe{
  each entry in the matrix represents a simulated minor allele count for the
 corresponding SNP and individual.
-}}
+}
+}
 \source{
 simulated data
 }

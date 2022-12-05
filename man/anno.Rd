@@ -4,14 +4,16 @@
 \name{anno}
 \alias{anno}
 \title{Example annotation file for three pathways.}
-\format{A \code{data frame} with 4056 rows and 5 variables:
+\format{
+A \code{data frame} with 4056 rows and 5 variables:
 \describe{
  \item{pathway}{includes KEGG identifiers of three example pathways}
  \item{gene}{names of genes in the pathways}
  \item{chr}{specifies the chromosome}
  \item{snp}{includes rs-numbers of example SNPs}
  \item{position}{gives positions of example SNPs}
-}}
+}
+}
 \source{
 simulated data
 }

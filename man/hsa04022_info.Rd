@@ -4,11 +4,13 @@
 \name{hsa04022_info}
 \alias{hsa04022_info}
 \title{Example \code{\link{pathway_info}} object for \code{\link{pathway}} hsa04022.}
-\format{A \code{\link{pathway_info}} object including information on 163 genes.
+\format{
+A \code{\link{pathway_info}} object including information on 163 genes.
 \describe{
  \item{info}{a \code{data frame} including information on genes included in 
 pathway. Has columns 'pathway', 'gene_start', 'gene_end', 'chr', and 'gene'}
-}}
+}
+}
 \source{
 Ensembl extract
 }

@@ -9,6 +9,7 @@ Author: Juliane Manitz [aut], Stefanie Friedrichs [aut], Patricia Burger [aut],
 Maintainer: Juliane Manitz <r@manitz.org>
 Description: Methods to extract information on pathways, genes and various single-nucleotid polymorphisms (SNPs) from online databases. It provides functions for data preparation and evaluation of genetic influence on a binary outcome using the logistic kernel machine test (LKMT). Three different kernel functions are offered to analyze genotype information in this variance component test: A linear kernel, a size-adjusted kernel and a network-based kernel (Friedrichs et al., 2017, <doi:10.1155/2017/6742763>).
 License: GPL-2
+Encoding: UTF-8
 Collate:
     'pathway.r'
     'GWASdata.r'

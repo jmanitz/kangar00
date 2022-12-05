@@ -4,12 +4,14 @@
 \name{rs10243170_info}
 \alias{rs10243170_info}
 \title{Example \code{\link{snp_info}} object for SNP rs10243170.}
-\format{A \code{\link{snp_info}} object including information on the SNP as 
+\format{
+A \code{\link{snp_info}} object including information on the SNP as 
 extracted from the Ensembl database.
 \describe{
  \item{info}{a \code{data frame} including the extracted information on the 
 SNP. Columns given are 'chr', 'position', and 'rsnumber'}
-}}
+}
+}
 \source{
 Ensembl extract
 }

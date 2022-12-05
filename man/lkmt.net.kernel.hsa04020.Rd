@@ -5,7 +5,8 @@
 \alias{lkmt.net.kernel.hsa04020}
 \title{Example test result for the network-based \code{\link{kernel}} for 
 \code{\link{pathway}} hsa04020.}
-\format{An object of class \code{\link{lkmt}} for the network-based  
+\format{
+An object of class \code{\link{lkmt}} for the network-based  
 \code{\link{kernel}} and the \code{\link{pathway}} hsa04020.
 \describe{
  \item{formular}{gives a formular defining the nullmodel used in the 
@@ -17,7 +18,8 @@ considered in testing}
 \item{statistic}{gives the value of the test statistic}
 \item{df}{specifies the degrees of freedom}
 \item{p.value}{includes teh p-value resulting from the test}
-}}
+}
+}
 \source{
 simulated data and Ensembl extract
 }

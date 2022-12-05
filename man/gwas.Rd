@@ -4,13 +4,15 @@
 \name{gwas}
 \alias{gwas}
 \title{Example \code{\link{GWASdata}} object.}
-\format{An object of class \code{\link{GWASdata}}:
+\format{
+An object of class \code{\link{GWASdata}}:
 \describe{
  \item{geno}{contains example genotypes}
  \item{anno}{example annotation for three pathways}
  \item{pheno}{exemplary phenotypes for all 'genotyped' individuals}
  \item{desc}{a description of the GWAS study, here 'example study'}
-}}
+}
+}
 \source{
 simulated data
 }

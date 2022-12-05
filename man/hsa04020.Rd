@@ -4,7 +4,8 @@
 \name{hsa04020}
 \alias{hsa04020}
 \title{Example \code{\link{pathway}} object for pathway hsa04020.}
-\format{A \code{\link{pathway}} object including 180 genes.
+\format{
+A \code{\link{pathway}} object including 180 genes.
 \describe{
  \item{id}{KEGG identifier of the example pathways}
  \item{adj}{gives the quadratic adjacency \code{matrix} for the pathway and with 
@@ -12,7 +13,8 @@ that the network topology. Matrix dimensions equal the number of genes in the
 pathway}
  \item{sign}{includes a \code{vector} of signs to distinguish activations and 
 inhibitions in the adjacency \code{matrix} }
-}}
+}
+}
 \source{
 simulated data and Ensembl extract
 }
