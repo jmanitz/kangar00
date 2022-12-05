@@ -7,11 +7,8 @@
 size](https://img.shields.io/github/repo-size/jmanitz/kangar00)
 ![GitHub issues](https://img.shields.io/github/issues/jmanitz/kangar00)
 
-
 [![CRAN Status Badge](http://www.r-pkg.org/badges/version/kangar00)](https://CRAN.R-project.org/package=kangar00)
 [![CRAN Downloads](http://cranlogs.r-pkg.org/badges/kangar00)](https://CRAN.R-project.org/package=kangar00)
-
-
 ![CRAN License](https://img.shields.io/cran/l/kangar00) 
 ![CRAN dependencies status](https://img.shields.io/librariesio/release/CRAN/kangar00)
 ![Website](https://img.shields.io/website?url=http%3A%2F%2Fkangar00.manitz.org%2F)
