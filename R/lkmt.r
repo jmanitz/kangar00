@@ -21,7 +21,7 @@
 #' For details on the variance component test see the references.
 #' @references
 #' \itemize{
-#' \item  Liu D, Lin X, Ghosh D: Semiparametric regression of multidimensional genetic pathway data: least-squares kernel machines and linear mixed models. Biometrics 2007, 63(4):1079-88.
+#'  \item Liu D, Lin X, Ghosh D: Semiparametric regression of multidimensional genetic pathway data: least-squares kernel machines and linear mixed models. Biometrics 2007, 63(4):1079-88.
 #'  \item Wu MC, Kraft P, Epstein MP, Taylor DM, Chanock SJ, Hunter DJ, Lin X: Powerful SNP-Set Analysis for Case-Control Genome-Wide Association Studies. Am J Hum Genet 2010, 86:929-42
 #' }
 #'
@@ -36,7 +36,7 @@ lkmt <- setClass('lkmt',
 setValidity('lkmt', function(object){ 
  	msg  <- NULL
 	valid <- TRUE
-  if(!(class(object@GWASdata)=="GWASdata")){
+  if(!(inherits(object@GWASdata, "GWASdata"))){
 	  valid=FALSE
 	  msg <- c(msg, "GWASdata object is missing!")
 	}
@@ -130,23 +130,18 @@ setGeneric('lkmt_test', function(object, ...) standardGeneric('lkmt_test'))
 #' @return 
 #' An \code{lkmt} object including the following test results
 #' \itemize{
-#' \item The formula of the regression nullmodel used in the variance 
-#' component test.
-#' \item An object of class \code{\link{kernel}} including the similarity
-#' matrix of the individuals based on which the pathways influence is evaluated.
-#' \item An object of class \code{\link{GWASdata}} stating the data on
-#' which the test was conducted.
-#' \item statistic A \code{vector} giving the value of the variance component
-#' test statistic.
-#' \item df A \code{vector} giving the number of degrees of freedom.
-#' \item p.value A \code{vector} giving the p-value calculated for the pathway
-#' in the variance component test.
+#'  \item The formula of the regression nullmodel used in the variance component test.
+#'  \item An object of class \code{\link{kernel}} including the similarity matrix of the individuals based on which the pathways influence is evaluated.
+#'  \item An object of class \code{\link{GWASdata}} stating the data on which the test was conducted.
+#'  \item statistic A \code{vector} giving the value of the variance component test statistic.
+#'  \item df A \code{vector} giving the number of degrees of freedom.
+#'  \item p.value A \code{vector} giving the p-value calculated for the pathway in the variance component test.
 #' }
 #' @references
 #' For details on the variance component test 
 #' \itemize{
 #'  \item Wu MC, Kraft P, Epstein MP, Taylor DM, Chanock SJ, Hunter DJ, Lin X: Powerful SNP-Set Analysis for Case-Control Genome-Wide Association Studies. Am J Hum Genet 2010, 86:929-42
-#' \item  Liu D, Lin X, Ghosh D: Semiparametric regression of multidimensional genetic pathway data: least-squares kernel machines and linear mixed models. Biometrics 2007, 63(4):1079-88.
+#'  \item  Liu D, Lin X, Ghosh D: Semiparametric regression of multidimensional genetic pathway data: least-squares kernel machines and linear mixed models. Biometrics 2007, 63(4):1079-88.
 #' }
 #' @examples
 #' data(hsa04020)
@@ -189,8 +184,7 @@ setGeneric('score_test', function(x1, x2, ...) standardGeneric('score_test'))
 #' @references
 #' For details on the p-value calculation see
 #' \itemize{
-#' \item Schaid DJ: Genomic Similarity and Kernel Methods I: Advancements by 
-#' Building on Mathematical and Statistical Foundations. Hum Hered 2010, 70:109-31
+#'  \item Schaid DJ: Genomic Similarity and Kernel Methods I: Advancements by Building on Mathematical and Statistical Foundations. Hum Hered 2010, 70:109-31
 #' }
 #' @rdname lkmt_test
 setMethod('score_test', signature(x1 = 'matrix'), 
@@ -245,8 +239,7 @@ setGeneric('davies_test', function(x1, x2, ...) standardGeneric('davies_test'))
 ## @author Stefanie Friedrichs
 #' @references
 #' \itemize{
-#' \item Davies R: Algorithm as 155: the distribution of a linear combination of
-#'      chi-2 random variables. J R Stat Soc Ser C 1980, 29:323-333.
+#'  \item Davies R: Algorithm as 155: the distribution of a linear combination of chi-2 random variables. J R Stat Soc Ser C 1980, 29:323-333.
 #' }
 #' @import CompQuadForm
 #' @rdname lkmt_test

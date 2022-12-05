@@ -182,7 +182,7 @@ setMethod('calc_kernel', signature(object = 'GWASdata'),
 	   }
      
 	   pwIdTest <- try(unique(object@anno$snp[which(object@anno$pathway == pathway@id)]))
-     if(class(pwIdTest) == "try-error"){
+     if(inherits(pwIdTest, "try-error")){
        print(setdiff(pathway@id, object@anno$pathway))
        stop("The above-mentioned pathways cannot be found in the annotation file. \n")
      }
