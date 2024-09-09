@@ -1,16 +1,19 @@
 Package: kangar00
 Type: Package
 Title: Kernel Approaches for Nonlinear Genetic Association Regression
-Version: 1.4.1
-Date: 2022-12-05
-Author: Juliane Manitz [aut], Stefanie Friedrichs [aut], Patricia Burger [aut],
-    Benjamin Hofner [aut], Ngoc Thuy Ha [aut], Saskia Freytag [ctb],
-    Heike Bickeboeller [ctb]
-Maintainer: Juliane Manitz <r@manitz.org>
-Repository: CRAN
+Version: 1.4.2
+Date: 2024-05-09
+Authors@R: c(
+    person("Juliane", "Manitz", role =  c("aut","cre"), email = "r@manitz.org"), 
+    person("Benjamin", "Hofner", role= "aut"), 
+    person("Stefanie", "Friedrichs", role = "aut"),  
+    person("Patricia", "Burger", role = "aut"),  
+    person("Ngoc Thuy", "Ha", role="aut"), 
+    person("Saskia", "Freytag", role="ctb"),
+    person("Heike", "Bickeboeller", role="ctb"))
 URL: https://kangar00.manitz.org/
 BugReports: https://github.com/jmanitz/kangar00/issues
-Description: Methods to extract information on pathways, genes and various single-nucleotid polymorphisms (SNPs) from online databases. It provides functions for data preparation and evaluation of genetic influence on a binary outcome using the logistic kernel machine test (LKMT). Three different kernel functions are offered to analyze genotype information in this variance component test: A linear kernel, a size-adjusted kernel and a network-based kernel (Friedrichs et al., 2017, <doi:10.1155/2017/6742763>).
+Description: Methods to extract information on pathways, genes and various single-nucleotid polymorphisms (SNPs) from online databases. It provides functions for data preparation and evaluation of genetic influence on a binary outcome using the logistic kernel machine test (LKMT). Three different kernel functions are offered to analyze genotype information in this variance component test: A linear kernel, a size-adjusted kernel and a network-based kernel).
 License: GPL-2
 Encoding: UTF-8
 Collate:
@@ -26,14 +29,14 @@ Imports:
     methods,
     bigmemory,
     sqldf,
-    biomaRt,
-    KEGGgraph, 
     CompQuadForm,
     data.table,
     lattice,
     igraph
 LazyData: true
 Suggests:
+    biomaRt,
+    KEGGgraph, 
     testthat
 NeedsCompilation: no
-RoxygenNote: 7.2.2
+RoxygenNote: 7.3.1

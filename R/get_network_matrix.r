@@ -17,25 +17,25 @@ setGeneric('get_network_matrix', function(object, ...) standardGeneric('get_netw
 #' @name get_network_matrix
 #' @rdname get_network_matrix
 #' @aliases get_network_matrix,pathway-method
-#' @importFrom KEGGgraph retrieveKGML
-#' @importFrom KEGGgraph parseKGML2Graph
-#' @importFrom KEGGgraph nodes
-#' @importFrom KEGGgraph parseKGML2DataFrame
+# @importFrom KEGGgraph retrieveKGML
+# @importFrom KEGGgraph parseKGML2Graph
+# @importFrom KEGGgraph nodes
+# @importFrom KEGGgraph parseKGML2DataFrame
 setMethod('get_network_matrix', signature='pathway', 
           definition = function(object, directed=TRUE, method='auto'){    
             
             x <- object@id      
-            retrieveKGML(substr(x,4,nchar(x)), organism="hsa",
+            KEGGgraph::retrieveKGML(substr(x,4,nchar(x)), organism="hsa",
                          destfile=paste(x,".xml",sep=""), method=method)
             liste     <- gene_name_number(x)
-            pathgraph <- parseKGML2Graph(paste(x,".xml",sep=""), expandGenes=TRUE)
+            pathgraph <- KEGGgraph::parseKGML2Graph(paste(x,".xml",sep=""), expandGenes=TRUE)
             
             # parseKGML2Graph can also be split up in two steps 
             # pathgraph.s1 <- parseKGML(paste(x, ".xml", sep = ""))
             # pathgraph  <- KEGGpathway2Graph(pathgraph.s1, expandGenes = TRUE)
             
-            nodes     <- nodes(pathgraph) #vector of gene no. (format: "hsa:226")
-            edgelist  <- parseKGML2DataFrame(paste(x,".xml",sep=""))
+            nodes     <- KEGGgraph::nodes(pathgraph) #vector of gene no. (format: "hsa:226")
+            edgelist  <- KEGGgraph::parseKGML2DataFrame(paste(x,".xml",sep=""))
             if(length(edgelist) != 0){
               edgelist  <- edgelist[!is.na(edgelist[,3]),] #delete NA-types 
             }

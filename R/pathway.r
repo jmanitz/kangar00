@@ -483,7 +483,7 @@ setGeneric('pathway_info', function(x) standardGeneric('pathway_info'))
 #' \code{\link{pathway}}. for each gene its name, the start and end point and the chromosome 
 #' it lies on are given.
 #'
-#' @import biomaRt  
+# @import biomaRt  
 #' @export
 #' @seealso \code{\link{snp_info}}, \code{\link{get_anno}}
 #' @rdname pathway_info-class
@@ -491,9 +491,9 @@ setMethod('pathway_info', signature='character',
          definition = function(x){              
    g       <- gene_name_number(x)[,2] 
    #ensembl <- useMart("ensembl", dataset="hsapiens_gene_ensembl")  
-   ensembl <- useMart(biomart="ENSEMBL_MART_ENSEMBL",
+   ensembl <- biomaRt::useMart(biomart="ENSEMBL_MART_ENSEMBL",
               dataset="hsapiens_gene_ensembl",host = "jul2015.archive.ensembl.org") 
-   info    <- stats::na.omit(getBM(attributes=c("start_position","end_position",
+   info    <- stats::na.omit(biomaRt::getBM(attributes=c("start_position","end_position",
               "chromosome_name","hgnc_symbol"), filters=c("hgnc_symbol"),
               values=g, mart=ensembl))
 #   info$chromosome_name <- as.numeric(info$chromosome_name)

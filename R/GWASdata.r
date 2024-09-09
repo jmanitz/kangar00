@@ -472,7 +472,7 @@ setGeneric('snp_info', function(x, ...) standardGeneric('snp_info'))
 #' data(rs10243170_info) # snp_info("rs10243170")
 #'
 ## @author Stefanie Friedrichs
-#' @import biomaRt
+# @import biomaRt
 #' @rdname snp_info-class 
 #' @export 
 setMethod('snp_info', signature='character', 
@@ -480,9 +480,9 @@ setMethod('snp_info', signature='character',
   #set database; Homo sapiens Short Variation (SNPs and indels):
   # snp <- useMart("snp", dataset="hsapiens_snp") ##server unavailable!
   #listMarts(host = "jul2015.archive.ensembl.org")
-  ensembl <- useMart(biomart="ENSEMBL_MART_SNP",dataset="hsapiens_snp", 
+  ensembl <- biomaRt::useMart(biomart="ENSEMBL_MART_SNP",dataset="hsapiens_snp", 
                      host = "jul2015.archive.ensembl.org")                         
-  info <- getBM(attributes=c("chr_name","chrom_start","refsnp_id"),
+  info <- biomaRt::getBM(attributes=c("chr_name","chrom_start","refsnp_id"),
                 filters=c("snp_filter"),values=x, mart=ensembl)
   colnames(info) <- c("chr","position","snp")
   ret <- new('snp_info', info=info)
